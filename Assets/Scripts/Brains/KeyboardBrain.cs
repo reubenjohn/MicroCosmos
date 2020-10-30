@@ -49,7 +49,7 @@ public class KeyboardBrain : Brain, IBrain
                 {
                     cell.OnLoad(reader, serializer);
                 }
-                Debug.Log("Saved to " + filePath);
+                Debug.Log("Loaded from " + filePath);
             }
         }
         base.Update();

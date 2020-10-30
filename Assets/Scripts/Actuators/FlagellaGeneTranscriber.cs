@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 
 public class FlagellaGeneTranscriber : IGeneTranscriber<FlagellaGene>
 {
-    public override string Serialize(FlagellaGene gene) => JsonConvert.SerializeObject(gene);
+    public override string Serialize(FlagellaGene gene) => JsonConvert.SerializeObject(gene, Formatting.None);
 
     public override FlagellaGene Deserialize(string sequence) => JsonConvert.DeserializeObject<FlagellaGene>(sequence);
 

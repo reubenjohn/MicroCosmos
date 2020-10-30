@@ -20,3 +20,15 @@ public interface IOrganelle<T> : IOrganelle
     new IGeneTranscriber<T> GetGeneTranscriber();
     new T GetGene();
 }
+
+public class OrganelleUtils
+{
+    public static Dictionary<string, object> ToSerializable(IOrganelle organelle)
+    {
+        var organelleInfo = new Dictionary<string, object>();
+        organelleInfo["type"] = organelle.GetType().FullName;
+        organelleInfo["state"] = organelle.GetState();
+        organelleInfo["gene"] = organelle.GetGeneTranscriber().Serialize(organelle.GetGene());
+        return organelleInfo;
+    }
+}

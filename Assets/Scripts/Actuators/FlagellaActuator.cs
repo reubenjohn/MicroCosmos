@@ -45,7 +45,7 @@ public class FlagellaActuator : MonoBehaviour, IActuator, IOrganelle<FlagellaGen
     public Dictionary<string, object> GetState()
     {
         var dict = new Dictionary<string, object>();
-        dict.Add("gene", GENE_TRANSCRIBER.Serialize(gene));
+        // dict.Add("gene", GENE_TRANSCRIBER.Serialize(gene));
         return dict;
     }
     public void SetState(Dictionary<string, object> state)
