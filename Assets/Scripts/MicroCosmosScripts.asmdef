@@ -1,0 +1,17 @@
+{
+    "name": "MicroCosmosScripts",
+    "references": [
+        "GUID:23ffc7b4c55025442958275b12c7eec1",
+        "GUID:926eb82c0f8776a4eb79fb89df99f3c4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [
+        "Newtonsoft.Json.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

@@ -42,6 +42,7 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+.vscode/
 
 # Unity3D generated meta files
 *.pidb.meta
@@ -57,4 +58,15 @@ sysinfo.txt
 
 # Crashlytics generated file
 crashlytics-build.properties
+debug.log
 
+
+# Unecessary Packages
+Assets/Five Seamless Tileable Ground Textures/
+Assets/Five Seamless Tileable Ground Textures.meta
+Assets/Hand Painted Texture Pack/
+Assets/Hand Painted Texture Pack.meta
+Assets/Cartoon_Texture_Pack/
+Assets/Cartoon_Texture_Pack.meta
+Assets/Rounded Blocks/
+Assets/Rounded Blocks.meta
