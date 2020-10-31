@@ -10,7 +10,7 @@ public class FlagellaGeneTranscriber : IGeneTranscriber<FlagellaGene>
     public override FlagellaGene Deserialize(JToken gene) => gene.ToObject<FlagellaGene>();
 
     public override FlagellaGene Mutate(FlagellaGene gene) => new FlagellaGene(
-            gene.linearPower.MutateClamped(10f, .1f, float.MaxValue),
-            gene.angularPower.MutateClamped(10f, .1f, float.MaxValue)
+            gene.linearPower.MutateClamped(gene.linearPower * .1f, .1f, float.MaxValue),
+            gene.angularPower.MutateClamped(gene.angularPower * .1f, .1f, float.MaxValue)
         );
 }

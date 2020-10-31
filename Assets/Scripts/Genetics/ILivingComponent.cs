@@ -43,9 +43,21 @@ public static class LivingComponentUtils
         };
     }
 
+    public static GameObject LoadGeneTree(GeneNode geneNode, Transform container, Vector3 position, Quaternion rotation)
+    {
+        GameObject gameObject = (GameObject)GameObject.Instantiate(Resources.Load(geneNode.resource), position, rotation, container);
+        return LoadGeneTree(geneNode, gameObject);
+    }
+
     public static GameObject LoadGeneTree(GeneNode geneNode, Transform container)
     {
         GameObject gameObject = (GameObject)GameObject.Instantiate(Resources.Load(geneNode.resource), container);
+        return LoadGeneTree(geneNode, gameObject);
+    }
+
+    private static GameObject LoadGeneTree(GeneNode geneNode, GameObject newlyInstantiatedTarget)
+    {
+        GameObject gameObject = newlyInstantiatedTarget;
         ILivingComponent livingComponent = gameObject.GetComponent<ILivingComponent>();
         gameObject.name = geneNode.name;
         Transform subLivingComponentContainer = livingComponent.OnInheritGene(geneNode.gene);
@@ -54,6 +66,19 @@ public static class LivingComponentUtils
             LoadGeneTree(subGeneNode, subLivingComponentContainer);
         }
         return gameObject;
+    }
+
+    public static GeneNode GetMutatedGeneTree(this ILivingComponent livingComponent)
+    {
+        return new GeneNode()
+        {
+            resource = livingComponent.GetResourcePath(),
+            name = livingComponent.GetNodeName(),
+            gene = livingComponent.GetGeneTranscriber().Mutate(livingComponent.GetGene()),
+            children = livingComponent.GetSubLivingComponents()
+                .Select(subLivingComponent => subLivingComponent.GetMutatedGeneTree())
+                .ToArray()
+        };
     }
 
     public static StateNode SaveStateTree(this ILivingComponent livingComponent)

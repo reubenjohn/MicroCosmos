@@ -22,7 +22,11 @@ public class KeyboardBrain : Brain, IBrain
 
         if (transform.TryGetComponent<Cell>(out Cell cell))
         {
-            if (Input.GetKeyDown(KeyCode.F6))
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                cell.GiveBirth();
+            }
+            else if (Input.GetKeyDown(KeyCode.F6))
             {
                 string filePath = Application.persistentDataPath + "/save1.json";
                 JsonSerializer serializer = new JsonSerializer();

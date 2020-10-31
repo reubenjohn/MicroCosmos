@@ -18,6 +18,12 @@ public class Cell : MonoBehaviour, ILivingComponent<CellGene>
 
     void Update() { }
 
+    public void GiveBirth()
+    {
+        GeneNode geneTree = this.GetMutatedGeneTree();
+        LivingComponentUtils.LoadGeneTree(geneTree, transform.parent, transform.position - transform.up * .3f, transform.rotation);
+    }
+
     public string GetNodeName() => gameObject.name;
 
     public Transform OnInheritGene(CellGene inheritedGene)
