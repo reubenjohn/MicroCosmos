@@ -26,30 +26,6 @@ public class KeyboardBrain : Brain, IBrain
             {
                 cell.GiveBirth();
             }
-            else if (Input.GetKeyDown(KeyCode.F6))
-            {
-                string filePath = Application.persistentDataPath + "/save1.json";
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Formatting = Formatting.Indented;
-                using (StreamWriter sw = new StreamWriter(filePath))
-                using (JsonWriter writer = new JsonTextWriter(sw))
-                {
-                    serializer.Serialize(writer, CellData.Save(cell));
-                }
-                Debug.Log("Saved to " + filePath);
-            }
-            else if (Input.GetKeyDown(KeyCode.F7))
-            {
-                string filePath = Application.persistentDataPath + "/save1.json";
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Formatting = Formatting.Indented;
-                using (StreamReader sr = new StreamReader(filePath))
-                using (JsonReader reader = new JsonTextReader(sr))
-                {
-                    CellData.Load(serializer.Deserialize<CellData>(reader), transform.parent);
-                }
-                Debug.Log("Loaded from " + filePath);
-            }
         }
         base.Update();
     }
