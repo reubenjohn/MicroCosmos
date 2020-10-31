@@ -7,13 +7,13 @@ public class CellData
 
     public static CellData Save(Cell cell) => new CellData()
     {
-        geneTree = cell.SaveGeneTree(),
-        stateTree = cell.SaveStateTree(),
+        geneTree = GeneNode.Save(cell),
+        stateTree = StateNode.Save(cell),
     };
 
     public static void Load(CellData cellData, Transform container)
     {
-        GameObject gameObject = LivingComponentUtils.LoadGeneTree(cellData.geneTree, container);
-        gameObject.GetComponent<ILivingComponent>().LoadStateTree(cellData.stateTree);
+        GameObject gameObject = GeneNode.Load(cellData.geneTree, container);
+        StateNode.Load(cellData.geneTree.livingComponent, cellData.stateTree);
     }
 }

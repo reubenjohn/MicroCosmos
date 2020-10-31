@@ -20,8 +20,8 @@ public class Cell : MonoBehaviour, ILivingComponent<CellGene>
 
     public void GiveBirth()
     {
-        GeneNode geneTree = this.GetMutatedGeneTree();
-        LivingComponentUtils.LoadGeneTree(geneTree, transform.parent, transform.position - transform.up * .3f, transform.rotation);
+        GeneNode geneTree = GeneNode.GetMutated(this);
+        GeneNode.Load(geneTree, transform.parent, transform.position - transform.up * .3f, transform.rotation);
     }
 
     public string GetNodeName() => gameObject.name;
