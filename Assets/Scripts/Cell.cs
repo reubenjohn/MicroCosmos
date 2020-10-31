@@ -8,62 +8,69 @@ using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-public class Cell : MonoBehaviour
+public class Cell : MonoBehaviour, ILivingComponent<CellGene>
 {
-    // Start is called before the first frame update
+    private Rigidbody2D rb;
     void Start()
     {
-
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-    }
+    void Update() { }
 
-    public void GiveBirth()
+    public string GetNodeName() => gameObject.name;
+
+    public Transform OnInheritGene(CellGene inheritedGene)
     {
-        // Regex regex = new Regex(@"(a-zA-Z0-9_)\[[0-9]+\]");
-        // Group match = regex.Match(bodyPart.name).Groups[1];
-        // match.Success
-        Debug.Log("Giving birth");
-        GameObject child = (GameObject)Instantiate(Resources.Load("Cells/Cell1"), transform.position - transform.up * .25f, transform.rotation);
-        var childOrganelleTransform = child.transform.Find("Organelles");
-        foreach (Transform childTransform in transform.Find("Organelles"))
+        var organellesTransform = transform;
+        foreach (Transform existingSubTransforms in organellesTransform)
         {
-            var organelle = childTransform.GetComponent<IOrganelle>();
-            if (organelle != null)
-            {
-                IGeneTranscriber geneTranscriber = organelle.GetGeneTranscriber();
-                object inheritedGene = geneTranscriber.Mutate(organelle.GetGene());
-                GameObject childOrganelleObject = (GameObject)Instantiate(organelle.LoadResource(), childOrganelleTransform);
-                IOrganelle childOrganelle = childOrganelleObject.GetComponent<IOrganelle>();
-                childOrganelle.OnInheritGene(inheritedGene);
-            }
+            Destroy(existingSubTransforms.gameObject);
         }
+        return organellesTransform;
     }
 
-    public void OnSave(JsonWriter writer, JsonSerializer serializer)
+    public IGeneTranscriber<CellGene> GetGeneTranscriber() => CellGeneTranscriber.SINGLETON;
+
+    Transform ILivingComponent.OnInheritGene(object inheritedGene) => OnInheritGene((CellGene)inheritedGene);
+
+    IGeneTranscriber ILivingComponent.GetGeneTranscriber() => GetGeneTranscriber();
+
+    public CellGene GetGene()
     {
-        var dict = new Dictionary<string, object>();
-        dict.Add("position", Serialization.ToSerializable(transform.position));
-        dict.Add("rotation", Serialization.ToSerializable(transform.rotation));
-        IOrganelle[] organelles = transform.Find("Organelles").GetComponentsInChildren<IOrganelle>();
-        dict.Add("organelles", organelles.Select(org => OrganelleUtils.ToSerializable(org)).ToArray());
-        serializer.Serialize(writer, dict);
+        return new CellGene();
     }
 
-    internal void OnLoad(JsonReader reader, JsonSerializer serializer)
+    object ILivingComponent.GetGene() => ((ILivingComponent<CellGene>)this).GetGene();
+
+    public string GetResourcePath() => "Cells/Cell1";
+
+    public JObject GetState()
     {
-        var dict = serializer.Deserialize<Dictionary<string, JToken>>(reader);
-        transform.position = dict.TryGetValue("position", out var v) ? Serialization.ToVector2(v.ToObject<float[]>()) : new Vector2();
-        transform.rotation = dict.TryGetValue("rotation", out var q) ? Serialization.ToQuaternion(q.ToObject<float[]>()) : new Quaternion();
-        Dictionary<string, object>[] organelleInfos = dict.TryGetValue("organelles", out var o) ? o.ToObject<Dictionary<string, object>[]>() : new Dictionary<string, object>[] { };
-        Transform organellesTransform = transform.Find("Organelles");
-        // IOrganelle[] organelles = organellesTransform.GetComponentsInChildren<IOrganelle>();
-        foreach (Dictionary<string, object> organelleInfo in organelleInfos)
+        var state = new JObject();
+        state["position"] = Serialization.ToSerializable(transform.position);
+        state["rotation"] = transform.rotation.eulerAngles.z;
+        return state;
+    }
+
+    public void SetState(JObject state)
+    {
+        if (rb != null)
         {
-            // dict.Add("organelles", organelles.Select(org => org.GetState().ToArray()));
+            rb.velocity = Vector2.zero;
+            rb.angularVelocity = 0;
         }
+        JToken position = state["position"];
+        transform.position = position != null ? Serialization.ToVector2(position.ToObject<float[]>()) : new Vector2();
+        JToken rotation = state["rotation"];
+        transform.rotation = rotation != null ? Quaternion.Euler(0, 0, (float)rotation) : new Quaternion();
+    }
+
+    public ILivingComponent[] GetSubLivingComponents()
+    {
+        return transform.Children()
+            .Select(organelleTransform => organelleTransform.GetComponent<ILivingComponent>())
+            .Where(e => e != null)
+            .ToArray();
     }
 }

@@ -1,8 +1,9 @@
+using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 public static class Serialization
 {
-    public static float[] ToSerializable(Vector2 vec) => new float[] { vec.x, vec.y };
+    public static JArray ToSerializable(Vector2 vec) => new JArray(vec.x, vec.y);
     public static float[] ToSerializable(Quaternion rot) => new float[] { rot.x, rot.y, rot.z, rot.w };
 
     public static Quaternion ToQuaternion(float[] vs)

@@ -1,10 +1,13 @@
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 public class FlagellaGeneTranscriber : IGeneTranscriber<FlagellaGene>
 {
-    public override string Serialize(FlagellaGene gene) => JsonConvert.SerializeObject(gene, Formatting.None);
+    public static FlagellaGeneTranscriber SINGLETON = new FlagellaGeneTranscriber();
 
-    public override FlagellaGene Deserialize(string sequence) => JsonConvert.DeserializeObject<FlagellaGene>(sequence);
+    private FlagellaGeneTranscriber() { }
+
+    public override FlagellaGene Deserialize(JToken gene) => gene.ToObject<FlagellaGene>();
 
     public override FlagellaGene Mutate(FlagellaGene gene) => new FlagellaGene(
             gene.linearPower.MutateClamped(10f, .1f, float.MaxValue),

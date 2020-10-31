@@ -22,11 +22,6 @@ public class KeyboardBrain : Brain, IBrain
 
         if (transform.TryGetComponent<Cell>(out Cell cell))
         {
-            if (Input.GetKeyDown(KeyCode.B))
-            {
-                cell.GiveBirth();
-            }
-
             if (Input.GetKeyDown(KeyCode.F6))
             {
                 string filePath = Application.persistentDataPath + "/save1.json";
@@ -35,7 +30,7 @@ public class KeyboardBrain : Brain, IBrain
                 using (StreamWriter sw = new StreamWriter(filePath))
                 using (JsonWriter writer = new JsonTextWriter(sw))
                 {
-                    cell.OnSave(writer, serializer);
+                    serializer.Serialize(writer, CellData.Save(cell));
                 }
                 Debug.Log("Saved to " + filePath);
             }
@@ -47,7 +42,7 @@ public class KeyboardBrain : Brain, IBrain
                 using (StreamReader sr = new StreamReader(filePath))
                 using (JsonReader reader = new JsonTextReader(sr))
                 {
-                    cell.OnLoad(reader, serializer);
+                    CellData.Load(serializer.Deserialize<CellData>(reader), transform.parent);
                 }
                 Debug.Log("Loaded from " + filePath);
             }

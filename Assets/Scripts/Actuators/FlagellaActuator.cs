@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-public class FlagellaActuator : MonoBehaviour, IActuator, IOrganelle<FlagellaGene>, IOrganelle
+public class FlagellaActuator : MonoBehaviour, IActuator, ILivingComponent<FlagellaGene>, ILivingComponent
 {
     public static readonly string IDENTIFFIER = "FlagellaActuator";
+    public static readonly string RESOURCE_PATH = "Organelles/Flagella1";
+
     public FlagellaGene gene = new FlagellaGene(250f, 10f);
-
-    private static FlagellaGeneTranscriber GENE_TRANSCRIBER = new FlagellaGeneTranscriber();
-
     public Rigidbody2D rb { get; private set; }
 
     void Start()
@@ -31,26 +31,30 @@ public class FlagellaActuator : MonoBehaviour, IActuator, IOrganelle<FlagellaGen
         rb.AddTorque(logits[1] * gene.angularPower * Time.deltaTime);
     }
 
-    public void OnInheritGene(FlagellaGene inheritedGene) => this.gene = inheritedGene;
-    void IOrganelle.OnInheritGene(object inheritedGene) => OnInheritGene((FlagellaGene)inheritedGene);
+    public string GetNodeName() => gameObject.name;
 
-    IGeneTranscriber<FlagellaGene> IOrganelle<FlagellaGene>.GetGeneTranscriber() => GENE_TRANSCRIBER;
-    IGeneTranscriber IOrganelle.GetGeneTranscriber() => GENE_TRANSCRIBER;
+    public Transform OnInheritGene(FlagellaGene inheritedGene)
+    {
+        this.gene = inheritedGene;
+        return null;
+    }
+    Transform ILivingComponent.OnInheritGene(object inheritedGene) => OnInheritGene((FlagellaGene)inheritedGene);
+
+    public IGeneTranscriber<FlagellaGene> GetGeneTranscriber() => FlagellaGeneTranscriber.SINGLETON;
+    IGeneTranscriber ILivingComponent.GetGeneTranscriber() => GetGeneTranscriber();
 
     public FlagellaGene GetGene() => gene;
-    object IOrganelle.GetGene() => GetGene();
+    object ILivingComponent.GetGene() => GetGene();
 
-    UnityEngine.Object IOrganelle.LoadResource() => Resources.Load("Organelles/Flagella1");
+    string ILivingComponent.GetResourcePath() => RESOURCE_PATH;
 
-    public Dictionary<string, object> GetState()
+    public JObject GetState()
     {
-        var dict = new Dictionary<string, object>();
+        var dict = new JObject();
         // dict.Add("gene", GENE_TRANSCRIBER.Serialize(gene));
         return dict;
     }
-    public void SetState(Dictionary<string, object> state)
-    {
-        throw new NotImplementedException();
-    }
+    public void SetState(JObject state) { }
 
+    public ILivingComponent[] GetSubLivingComponents() => new ILivingComponent[] { };
 }
