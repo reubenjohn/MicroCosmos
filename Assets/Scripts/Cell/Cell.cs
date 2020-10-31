@@ -67,7 +67,7 @@ public class Cell : MonoBehaviour, ILivingComponent<CellGene>
             rb.angularVelocity = 0;
         }
         JToken position = state["position"];
-        transform.position = position != null ? Serialization.ToVector2(position.ToObject<float[]>()) : new Vector2();
+        transform.position = position != null ? Serialization.ToVector2((string)position) : new Vector2();
         JToken rotation = state["rotation"];
         transform.rotation = rotation != null ? Quaternion.Euler(0, 0, (float)rotation) : new Quaternion();
     }

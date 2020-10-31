@@ -7,7 +7,6 @@ using Newtonsoft.Json.Linq;
 
 public class FlagellaActuator : MonoBehaviour, IActuator, ILivingComponent<FlagellaGene>, ILivingComponent
 {
-    public static readonly string IDENTIFFIER = "FlagellaActuator";
     public static readonly string RESOURCE_PATH = "Organelles/Flagella1";
 
     public FlagellaGene gene = new FlagellaGene(250f, 10f);
