@@ -1,30 +1,36 @@
+using System;
+using System.Data;
 using System.Linq;
 using Newtonsoft.Json.Linq;
 
+[Serializable]
 public class StateNode
 {
     public JObject state;
     public StateNode[] children;
 
-
-    public static StateNode Save(ILivingComponent livingComponent)
-    {
-        return new StateNode()
+    public static StateNode Save(ILivingComponent livingComponent) =>
+        new StateNode
         {
             state = livingComponent.GetState(),
             children = livingComponent.GetSubLivingComponents()
-                .Select(subLivingComponent => StateNode.Save(subLivingComponent))
+                .Select(Save)
                 .ToArray()
         };
-    }
 
     public static void Load(ILivingComponent livingComponent, StateNode stateNode)
     {
         livingComponent.SetState(stateNode.state);
-        Enumerable.Zip(livingComponent.GetSubLivingComponents(), stateNode.children, (subLivingComponent, subStateNode) =>
+
+        var subLivingComponents = livingComponent.GetSubLivingComponents();
+        var subStateNodes = stateNode.children;
+        if (subLivingComponents.Length != subStateNodes.Length)
         {
-            StateNode.Load(subLivingComponent, subStateNode);
-            return true;
-        });
+            throw new DataException($"Number of sub living components (${subLivingComponents.Length}) " +
+                                    $"must match that of corresponding state node children (${subStateNodes.Length})");
+        }
+
+        for (var i = 0; i < subStateNodes.Length; i++)
+            Load(subLivingComponents[i], subStateNodes[i]);
     }
 }
