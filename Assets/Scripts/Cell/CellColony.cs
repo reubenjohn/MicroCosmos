@@ -5,49 +5,59 @@ using System.Linq;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Cell
 {
     public class CellColony : MonoBehaviour
     {
+        public string saveFile;
+
+        private void Start()
+        {
+            saveFile = saveFile ?? $"{Application.persistentDataPath}/save2.json";
+        }
+
         private void Update()
         {
             if (Input.GetKeyDown(KeyCode.F6))
-            {
-                var filePath = $"{Application.persistentDataPath}/save2.json";
-                var serializer = new JsonSerializer {Formatting = Formatting.Indented};
-                using (var sw = new StreamWriter(filePath))
-                using (JsonWriter writer = new JsonTextWriter(sw))
-                {
-                    serializer.Serialize(writer, Save());
-                }
-
-                Debug.Log("Saved to " + filePath);
-            }
-            else if (Input.GetKeyDown(KeyCode.F7))
-            {
-                var filePath = $"{Application.persistentDataPath}/save2.json";
-                var serializer = new JsonSerializer {Formatting = Formatting.Indented};
-                using (var sr = new StreamReader(filePath))
-                using (JsonReader reader = new JsonTextReader(sr))
-                {
-                    Load(reader, serializer);
-                }
-
-                Debug.Log("Loaded from " + filePath);
-            }
+                OnSave();
+            else if (Input.GetKeyDown(KeyCode.F7)) OnLoad();
         }
 
-        private CellColonyData Save()
+        public void OnSave()
         {
-            return new CellColonyData {cells = GetCells().Select(CellData.Save).ToArray()};
+            var serializer = new JsonSerializer {Formatting = Formatting.Indented};
+            using (var sw = new StreamWriter(saveFile))
+            using (JsonWriter writer = new JsonTextWriter(sw))
+            {
+                serializer.Serialize(writer, SaveCellData());
+            }
+
+            Debug.Log("Saved to " + saveFile);
         }
+
+        public void OnLoad()
+        {
+            var serializer = new JsonSerializer {Formatting = Formatting.Indented};
+            using (var sr = new StreamReader(saveFile))
+            using (JsonReader reader = new JsonTextReader(sr))
+            {
+                Load(reader, serializer);
+            }
+
+            Debug.Log("Loaded from " + saveFile);
+        }
+
+        private CellColonyData SaveCellData() =>
+            new CellColonyData {cells = GetCells().Select(CellData.Save).ToArray()};
 
         private void Load(JsonReader reader, JsonSerializer serializer)
         {
             AssertToken(reader.Read() && reader.TokenType == JsonToken.StartObject);
 
-            AssertToken(reader.Read() && reader.TokenType == JsonToken.PropertyName && (string) reader.Value == "cells");
+            AssertToken(reader.Read() && reader.TokenType == JsonToken.PropertyName &&
+                        (string) reader.Value == "cells");
             AssertToken(reader.Read() && reader.TokenType == JsonToken.StartArray);
             foreach (var child in transform.Children()) Destroy(child.gameObject);
 
@@ -70,7 +80,7 @@ namespace Cell
                 yield return serializer.Deserialize<CellData>(reader);
         }
 
-        public Cell[] GetCells()
+        private Cell[] GetCells()
         {
             return transform.GetComponentsInChildren<Cell>();
         }

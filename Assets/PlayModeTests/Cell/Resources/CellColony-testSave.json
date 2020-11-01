@@ -1,0 +1,71 @@
+﻿{
+  "cells": [
+    {
+      "geneTree": {
+        "resource": "Cells/Cell1",
+        "name": "Cell1[0]",
+        "gene": {},
+        "children": [
+          {
+            "resource": "Organelles/Flagella1",
+            "name": "Flagella1-0",
+            "gene": {
+              "linearPower": 250.0,
+              "angularPower": 10.0
+            },
+            "children": []
+          },
+          {
+            "resource": "Organelles/Membrane1",
+            "name": "Membrane1-0",
+            "gene": {},
+            "children": []
+          }
+        ]
+      },
+      "stateTree": {
+        "state": {
+          "position": "0.2252748 0.3537433",
+          "rotation": 254.19635
+        },
+        "children": [
+          {
+            "state": {},
+            "children": []
+          },
+          {
+            "state": {},
+            "children": []
+          }
+        ]
+      }
+    },
+    {
+      "geneTree": {
+        "resource": "Cells/Cell1",
+        "name": "Cell1[1]",
+        "gene": {},
+        "children": [
+          {
+            "resource": "Organelles/Membrane1",
+            "name": "Membrane1-0",
+            "gene": {},
+            "children": []
+          }
+        ]
+      },
+      "stateTree": {
+        "state": {
+          "position": "1 0",
+          "rotation": 0.0
+        },
+        "children": [
+          {
+            "state": {},
+            "children": []
+          }
+        ]
+      }
+    }
+  ]
+}
