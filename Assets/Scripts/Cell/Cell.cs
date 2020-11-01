@@ -11,17 +11,17 @@ using Newtonsoft.Json.Linq;
 public class Cell : MonoBehaviour, ILivingComponent<CellGene>
 {
     private Rigidbody2D rb;
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
     }
 
-    void Update() { }
-
     public void GiveBirth()
     {
-        GeneNode geneTree = GeneNode.GetMutated(this);
-        GeneNode.Load(geneTree, transform.parent, transform.position - transform.up * .3f, transform.rotation);
+        var geneTree = GeneNode.GetMutated(this);
+        var tran = transform;
+        GeneNode.Load(geneTree, tran.parent, tran.position - tran.up * .3f, tran.rotation);
     }
 
     public string GetNodeName() => gameObject.name;
@@ -33,12 +33,13 @@ public class Cell : MonoBehaviour, ILivingComponent<CellGene>
         {
             Destroy(existingSubTransforms.gameObject);
         }
+
         return organellesTransform;
     }
 
     public IGeneTranscriber<CellGene> GetGeneTranscriber() => CellGeneTranscriber.SINGLETON;
 
-    Transform ILivingComponent.OnInheritGene(object inheritedGene) => OnInheritGene((CellGene)inheritedGene);
+    Transform ILivingComponent.OnInheritGene(object inheritedGene) => OnInheritGene((CellGene) inheritedGene);
 
     IGeneTranscriber ILivingComponent.GetGeneTranscriber() => GetGeneTranscriber();
 
@@ -47,15 +48,17 @@ public class Cell : MonoBehaviour, ILivingComponent<CellGene>
         return new CellGene();
     }
 
-    object ILivingComponent.GetGene() => ((ILivingComponent<CellGene>)this).GetGene();
+    object ILivingComponent.GetGene() => ((ILivingComponent<CellGene>) this).GetGene();
 
     public string GetResourcePath() => "Cells/Cell1";
 
     public JObject GetState()
     {
-        var state = new JObject();
-        state["position"] = Serialization.ToSerializable(transform.position);
-        state["rotation"] = transform.rotation.eulerAngles.z;
+        var state = new JObject
+        {
+            ["position"] = Serialization.ToSerializable(transform.position),
+            ["rotation"] = transform.rotation.eulerAngles.z
+        };
         return state;
     }
 
@@ -66,10 +69,11 @@ public class Cell : MonoBehaviour, ILivingComponent<CellGene>
             rb.velocity = Vector2.zero;
             rb.angularVelocity = 0;
         }
-        JToken position = state["position"];
-        transform.position = position != null ? Serialization.ToVector2((string)position) : new Vector2();
-        JToken rotation = state["rotation"];
-        transform.rotation = rotation != null ? Quaternion.Euler(0, 0, (float)rotation) : new Quaternion();
+
+        var position = state["position"];
+        transform.position = position != null ? Serialization.ToVector2((string) position) : new Vector2();
+        var rotation = state["rotation"];
+        transform.rotation = rotation != null ? Quaternion.Euler(0, 0, (float) rotation) : new Quaternion();
     }
 
     public ILivingComponent[] GetSubLivingComponents()

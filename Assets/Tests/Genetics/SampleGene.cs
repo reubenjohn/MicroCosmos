@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using Newtonsoft.Json;
@@ -22,16 +23,15 @@ public class SampleGene
     public override bool Equals(object obj)
     {
         return obj is SampleGene gene &&
-               furryness == gene.furryness &&
+               Math.Abs(furryness - gene.furryness) < 1e-5 &&
                nEyes == gene.nEyes &&
                dietaryRestriction == gene.dietaryRestriction &&
-               (limbs == null) == (gene.limbs == null) &&
-               (limbs == null || Enumerable.SequenceEqual(limbs, gene.limbs));
+               (limbs == gene.limbs || limbs != null && gene.limbs != null && limbs.SequenceEqual(gene.limbs));
     }
 
     public override int GetHashCode()
     {
-        int hashCode = -362057520;
+        var hashCode = -362057520;
         hashCode = hashCode * -1521134295 + furryness.GetHashCode();
         hashCode = hashCode * -1521134295 + nEyes.GetHashCode();
         hashCode = hashCode * -1521134295 + dietaryRestriction.GetHashCode();
@@ -40,18 +40,18 @@ public class SampleGene
     }
 
     public override string ToString() => JsonConvert.SerializeObject(this);
-
 }
 
 public enum DietaryRestriction
 {
-    HERBIVORE, CARNIVORE
+    HERBIVORE,
+    CARNIVORE
 }
 
 public class Limb
 {
     public static readonly Mutator.ClampedFloat LENTH_MUTATOR = new Mutator.ClampedFloat(.1f, 0f, float.MaxValue);
-    public static readonly System.Func<Limb, Limb> MUTATOR = limb => Limb.Mutate(limb);
+    public static readonly System.Func<Limb, Limb> MUTATOR = Mutate;
 
     public float length { get; private set; }
 

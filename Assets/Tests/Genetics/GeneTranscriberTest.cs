@@ -11,7 +11,7 @@ namespace Tests
         public void SerializationDeserialization()
         {
             var gene = new SampleGene(.5f, 2, DietaryRestriction.HERBIVORE, new Limb[] { new Limb(3.4f), new Limb(3.4f) });
-            string sequence = JsonConvert.SerializeObject(gene);
+            var sequence = JsonConvert.SerializeObject(gene);
             Assert.AreEqual("{\"furryness\":0.5,\"nEyes\":2,\"dietaryRestriction\":0,\"limbs\":[{\"length\":3.4},{\"length\":3.4}]}", sequence);
             var deserializedGene = SampleGeneTranscriber.SINGLETON.Deserialize(JObject.Parse(sequence));
             Assert.AreNotSame(gene, deserializedGene);

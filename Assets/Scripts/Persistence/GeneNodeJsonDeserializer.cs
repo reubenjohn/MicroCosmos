@@ -16,17 +16,17 @@ public class GeneNodeJsonDeserializer : JsonConverter
         if (reader.TokenType == JsonToken.Null)
             return null;
 
-        JObject jsonObject = JObject.Load(reader);
+        var jsonObject = JObject.Load(reader);
 
         var geneNode = (existingValue as GeneNode ?? new GeneNode());
 
-        JToken resource = jsonObject["resource"];
+        var resource = jsonObject["resource"];
         geneNode.resource = (string)resource;
         resource.Parent.Remove();
 
         geneNode.livingComponent = ((GameObject)Resources.Load(geneNode.resource)).GetComponent<ILivingComponent>();
 
-        JToken gene = jsonObject["gene"];
+        var gene = jsonObject["gene"];
         geneNode.gene = geneNode.livingComponent.GetGeneTranscriber().Deserialize(gene);
         gene.Parent.Remove();
 

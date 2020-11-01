@@ -11,7 +11,7 @@ public class Membrane : MonoBehaviour, ILivingComponent<MembraneGene>
 
     void Start() { }
 
-    void Update() { }
+    private void Update() { }
 
     public MembraneGene GetGene() => new MembraneGene();
 

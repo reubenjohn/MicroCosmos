@@ -1,6 +1,7 @@
 using System;
 using System.Data;
 using System.Linq;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 [Serializable]
@@ -26,8 +27,11 @@ public class StateNode
         var subStateNodes = stateNode.children;
         if (subLivingComponents.Length != subStateNodes.Length)
         {
-            throw new DataException($"Number of sub living components (${subLivingComponents.Length}) " +
-                                    $"must match that of corresponding state node children (${subStateNodes.Length})");
+            throw new DataException(
+                $"Living component '{livingComponent.GetNodeName()}' has " +
+                $"{subLivingComponents.Length} sub living components " +
+                $"and thus can't be loaded with {subStateNodes.Length} state nodes:\n" +
+                $"{JsonConvert.SerializeObject(subStateNodes, Formatting.Indented)}");
         }
 
         for (var i = 0; i < subStateNodes.Length; i++)
