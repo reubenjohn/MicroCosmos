@@ -8,6 +8,9 @@ namespace Tests.Genetics
 {
     public class SampleGene
     {
+        public const string Serialized1 =
+            @"{""furriness"":0.5,""nEyes"":2,""dietaryRestriction"":0,""limbs"":[{""length"":3.4},{""length"":3.4}]}";
+
         public SampleGene(float furriness, uint nEyes, DietaryRestriction dietaryRestriction, Limb[] limbs)
         {
             this.furriness = furriness;

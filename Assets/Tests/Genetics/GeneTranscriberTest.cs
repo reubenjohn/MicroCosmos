@@ -12,7 +12,7 @@ namespace Tests.Genetics
         {
             var gene = new SampleGene(.5f, 2, DietaryRestriction.Herbivore, new[] { new Limb(3.4f), new Limb(3.4f) });
             var sequence = JsonConvert.SerializeObject(gene);
-            Assert.AreEqual("{\"furriness\":0.5,\"nEyes\":2,\"dietaryRestriction\":0,\"limbs\":[{\"length\":3.4},{\"length\":3.4}]}", sequence);
+            Assert.AreEqual(SampleGene.Serialized1, sequence);
             var deserializedGene = SampleGeneTranscriber.Singleton.Deserialize(JObject.Parse(sequence));
             Assert.AreNotSame(gene, deserializedGene);
             Assert.AreEqual(gene, deserializedGene);

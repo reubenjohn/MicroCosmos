@@ -1,0 +1,15 @@
+{
+    "name": "TestCommon",
+    "references": [
+        "GUID:926eb82c0f8776a4eb79fb89df99f3c4"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

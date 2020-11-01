@@ -5,7 +5,7 @@ namespace Tests.Genetics
 {
     public class SampleGeneTranscriber : GeneTranscriber<SampleGene>
     {
-        internal static readonly SampleGeneTranscriber Singleton = new SampleGeneTranscriber();
+        public static readonly SampleGeneTranscriber Singleton = new SampleGeneTranscriber();
         public static readonly Mutator.ClampedFloat FurrinessMutator = new Mutator.ClampedFloat(0.1f, 0f, 1f);
 
         private SampleGeneTranscriber() { }

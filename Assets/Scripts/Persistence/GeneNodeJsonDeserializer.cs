@@ -15,7 +15,8 @@ namespace Persistence
             return typeof(GeneNode).IsAssignableFrom(objectType);
         }
 
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
+            JsonSerializer serializer)
         {
             if (reader.TokenType == JsonToken.Null)
                 return null;
@@ -28,7 +29,10 @@ namespace Persistence
             geneNode.resource = (string) resource;
             resource.Parent.Remove();
 
-            geneNode.livingComponent = ((GameObject) Resources.Load(geneNode.resource)).GetComponent<ILivingComponent>();
+            var gameObject = (GameObject) Resources.Load(geneNode.resource);
+            if (gameObject == null)
+                throw new ArgumentNullException($"Resource {geneNode.resource} not found");
+            geneNode.livingComponent = gameObject.GetComponent<ILivingComponent>();
 
             var gene = jsonObject["gene"];
             geneNode.gene = geneNode.livingComponent.GetGeneTranscriber().Deserialize(gene);
