@@ -1,11 +1,15 @@
 using System;
-using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 public class GeneNodeJsonDeserializer : JsonConverter
 {
+    public override bool CanWrite
+    {
+        get => false;
+    }
+
     public override bool CanConvert(Type objectType)
     {
         return typeof(GeneNode).IsAssignableFrom(objectType);
@@ -18,13 +22,13 @@ public class GeneNodeJsonDeserializer : JsonConverter
 
         var jsonObject = JObject.Load(reader);
 
-        var geneNode = (existingValue as GeneNode ?? new GeneNode());
+        var geneNode = existingValue as GeneNode ?? new GeneNode();
 
         var resource = jsonObject["resource"];
-        geneNode.resource = (string)resource;
+        geneNode.resource = (string) resource;
         resource.Parent.Remove();
 
-        geneNode.livingComponent = ((GameObject)Resources.Load(geneNode.resource)).GetComponent<ILivingComponent>();
+        geneNode.livingComponent = ((GameObject) Resources.Load(geneNode.resource)).GetComponent<ILivingComponent>();
 
         var gene = jsonObject["gene"];
         geneNode.gene = geneNode.livingComponent.GetGeneTranscriber().Deserialize(gene);
@@ -32,12 +36,13 @@ public class GeneNodeJsonDeserializer : JsonConverter
 
 
         using (var subReader = jsonObject.CreateReader())
+        {
             serializer.Populate(subReader, geneNode);
+        }
 
         return geneNode;
     }
 
-    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) => throw new NotImplementedException();
-
-    public override bool CanWrite { get => false; }
+    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer) =>
+        throw new NotImplementedException();
 }

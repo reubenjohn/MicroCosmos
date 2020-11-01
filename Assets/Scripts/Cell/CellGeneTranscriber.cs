@@ -1,12 +1,12 @@
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using System.Linq;
 
-public class CellGeneTranscriber : IGeneTranscriber<CellGene>
+public class CellGeneTranscriber : GeneTranscriber<CellGene>
 {
-    public static readonly CellGeneTranscriber SINGLETON = new CellGeneTranscriber();
+    public static readonly CellGeneTranscriber Singleton = new CellGeneTranscriber();
 
-    private CellGeneTranscriber() { }
+    private CellGeneTranscriber()
+    {
+    }
 
     public override CellGene Deserialize(JToken gene) => gene.ToObject<CellGene>();
 

@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Linq;
 
-public class MembraneGeneTranscriber : IGeneTranscriber<MembraneGene>
+public class MembraneGeneTranscriber : GeneTranscriber<MembraneGene>
 {
     public override MembraneGene Deserialize(JToken gene) => gene.ToObject<MembraneGene>();
 

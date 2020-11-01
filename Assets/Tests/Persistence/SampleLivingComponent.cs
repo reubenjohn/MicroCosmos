@@ -17,7 +17,7 @@ namespace Tests
         public Transform OnInheritGene(object inheritedGene) => new RectTransform
             {name = "childTransform", position = new Vector3(1, 2)};
 
-        public IGeneTranscriber<SampleGene> GetGeneTranscriber() => throw new System.NotImplementedException();
+        public GeneTranscriber<SampleGene> GetGeneTranscriber() => throw new System.NotImplementedException();
 
         public SampleGene GetGene() => throw new System.NotImplementedException();
 

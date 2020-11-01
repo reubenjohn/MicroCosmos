@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 
 public class Brain : MonoBehaviour
@@ -24,9 +22,6 @@ public class Brain : MonoBehaviour
 
     public virtual void Update()
     {
-        for (var i = 0; i < actuators.Length; i++)
-        {
-            actuators[i].Actuate(actuatorLogits[i]);
-        }
+        for (var i = 0; i < actuators.Length; i++) actuators[i].Actuate(actuatorLogits[i]);
     }
 }

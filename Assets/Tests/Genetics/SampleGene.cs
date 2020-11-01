@@ -1,17 +1,10 @@
 ﻿using System;
-using UnityEngine;
-using System.Linq;
 using System.Collections.Generic;
+using System.Linq;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 public class SampleGene
 {
-    public float furryness { get; }
-    public uint nEyes { get; }
-    public DietaryRestriction dietaryRestriction { get; }
-    public Limb[] limbs { get; }
-
     public SampleGene(float furryness, uint nEyes, DietaryRestriction dietaryRestriction, Limb[] limbs)
     {
         this.furryness = furryness;
@@ -19,6 +12,11 @@ public class SampleGene
         this.dietaryRestriction = dietaryRestriction;
         this.limbs = limbs;
     }
+
+    public float furryness { get; }
+    public uint nEyes { get; }
+    public DietaryRestriction dietaryRestriction { get; }
+    public Limb[] limbs { get; }
 
     public override bool Equals(object obj)
     {
@@ -44,23 +42,23 @@ public class SampleGene
 
 public enum DietaryRestriction
 {
-    HERBIVORE,
-    CARNIVORE
+    Herbivore,
+    Carnivore
 }
 
 public class Limb
 {
-    public static readonly Mutator.ClampedFloat LENTH_MUTATOR = new Mutator.ClampedFloat(.1f, 0f, float.MaxValue);
-    public static readonly System.Func<Limb, Limb> MUTATOR = Mutate;
-
-    public float length { get; private set; }
+    public static readonly Mutator.ClampedFloat LenthMutator = new Mutator.ClampedFloat(.1f, 0f, float.MaxValue);
+    public static readonly Func<Limb, Limb> Mutator = Mutate;
 
     public Limb(float length)
     {
         this.length = length;
     }
 
-    public static Limb Mutate(Limb limb) => new Limb(LENTH_MUTATOR.Mutate(limb.length));
+    public float length { get; }
+
+    public static Limb Mutate(Limb limb) => new Limb(LenthMutator.Mutate(limb.length));
 
     public override bool Equals(object obj)
     {

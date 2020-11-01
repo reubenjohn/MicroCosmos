@@ -7,10 +7,10 @@ public class CellData
     public GeneNode geneTree { get; set; }
     public StateNode stateTree { get; set; }
 
-    public static CellData Save(Cell cell) => new CellData()
+    public static CellData Save(Cell cell) => new CellData
     {
         geneTree = GeneNode.Save(cell),
-        stateTree = StateNode.Save(cell),
+        stateTree = StateNode.Save(cell)
     };
 
     public static void Load(CellData cellData, Transform container)

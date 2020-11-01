@@ -19,6 +19,6 @@ public interface ILivingComponent
 public interface ILivingComponent<T> : ILivingComponent
 {
     Transform OnInheritGene(T inheritedGene);
-    new IGeneTranscriber<T> GetGeneTranscriber();
+    new GeneTranscriber<T> GetGeneTranscriber();
     new T GetGene();
 }

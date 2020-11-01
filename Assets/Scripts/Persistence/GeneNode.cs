@@ -5,17 +5,17 @@ using UnityEngine;
 [JsonConverter(typeof(GeneNodeJsonDeserializer))]
 public class GeneNode
 {
-    public string resource;
-    public string name;
-    public object gene;
     public GeneNode[] children;
+    public object gene;
 
     [JsonIgnore] public ILivingComponent livingComponent;
+    public string name;
+    public string resource;
 
 
     public static GeneNode Save(ILivingComponent livingComponent)
     {
-        return new GeneNode()
+        return new GeneNode
         {
             resource = livingComponent.GetResourcePath(),
             name = livingComponent.GetNodeName(),
@@ -57,7 +57,7 @@ public class GeneNode
 
     public static GeneNode GetMutated(ILivingComponent livingComponent)
     {
-        return new GeneNode()
+        return new GeneNode
         {
             resource = livingComponent.GetResourcePath(),
             name = livingComponent.GetNodeName(),

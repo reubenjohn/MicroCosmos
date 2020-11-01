@@ -1,11 +1,34 @@
-﻿using System.Collections;
-using System.Linq;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public static class Mutator
 {
+    public static float Mutate(this float val, float mutationRate) => Float.Mutate(val, mutationRate);
+
+    public static float MutateClamped(this float val, float mutationRate, float min, float max) =>
+        ClampedFloat.Mutate(val, mutationRate, min, max);
+
+    public static int Mutate(this int val, float mutationRate) => Int.Mutate(val, mutationRate);
+
+    public static int MutateClamped(this int val, float mutationRate, int min, int max) =>
+        ClampedInt.Mutate(val, mutationRate, min, max);
+
+    public static uint Mutate(this uint val, float mutationRate) => UnsignedInt.Mutate(val, mutationRate);
+
+    public static T Mutate<T>(this T val, float mutationRate) where T : System.Enum => Enum.Mutate(val, mutationRate);
+
+    public static IEnumerable<T> Mutate<T>(this IEnumerable<T> val, Func<T, T> elementMutation) =>
+        MutationEnumerable<T>.Mutate(val, elementMutation);
+
+    public static T[] Mutate<T>(this T[] val, Func<T, T> elementMutation) =>
+        MutationEnumerable<T>.Mutate(val.AsEnumerable(), elementMutation).ToArray();
+
+    public static IEnumerable<T> Mutate<T>(this IEnumerable<T> val, IMutator<T> elementMutator) =>
+        MutatorEnumerable<T>.Mutate(val, elementMutator);
     // public static readonly float SIGMA = 0.68f;
     // public static float Normal(float x, float mean, float std)
     // {
@@ -19,41 +42,39 @@ public static class Mutator
 
     public class Float : IMutator<float>
     {
-        public float mutationRate { get; }
-
-        public static float Mutate(float val, float mutationRate)
-        {
-            return Random.Range(val - mutationRate, val + mutationRate);
-        }
-
         public Float(float mutationRate)
         {
             this.mutationRate = mutationRate;
         }
 
+        public float mutationRate { get; }
+
         public float Mutate(float logit)
         {
             return Mutate(logit, mutationRate);
         }
+
+        public static float Mutate(float val, float mutationRate)
+        {
+            return Random.Range(val - mutationRate, val + mutationRate);
+        }
     }
 
-    public static float Mutate(this float val, float mutationRate) => Float.Mutate(val, mutationRate);
-
-    public class ClampedFloat : Mutator.Float
+    public class ClampedFloat : Float
     {
+        public ClampedFloat(float mutationRate, float min, float max) : base(mutationRate)
+        {
+            this.min = min;
+            this.max = max;
+        }
+
         public float min { get; }
         public float max { get; }
 
         public static float Mutate(float logit, float mutationRate, float min, float max)
         {
-            var unclamped = Mutator.Float.Mutate(logit, mutationRate);
+            var unclamped = Mutate(logit, mutationRate);
             return Mathf.Clamp(unclamped, min, max);
-        }
-
-        public ClampedFloat(float mutationRate, float min, float max) : base(mutationRate)
-        {
-            this.min = min;
-            this.max = max;
         }
 
         public new float Mutate(float logit)
@@ -62,17 +83,14 @@ public static class Mutator
         }
     }
 
-    public static float MutateClamped(this float val, float mutationRate, float min, float max) =>
-        ClampedFloat.Mutate(val, mutationRate, min, max);
-
     public class Int : IMutator<int>
     {
-        public float mutationRate { get; }
-
         public Int(float mutationRate)
         {
             this.mutationRate = mutationRate;
         }
+
+        public float mutationRate { get; }
 
         public int Mutate(int count)
         {
@@ -88,18 +106,16 @@ public static class Mutator
         }
     }
 
-    public static int Mutate(this int val, float mutationRate) => Int.Mutate(val, mutationRate);
-
     public class ClampedInt : Int
     {
-        public int min { get; }
-        public int max { get; }
-
         public ClampedInt(float mutationRate, int min, int max) : base(mutationRate)
         {
             this.min = min;
             this.max = max;
         }
+
+        public int min { get; }
+        public int max { get; }
 
         public new int Mutate(int val)
         {
@@ -108,22 +124,19 @@ public static class Mutator
 
         public static int Mutate(int val, float mutationRate, int min, int max)
         {
-            var mutated = Mutator.Int.Mutate(val, mutationRate);
+            var mutated = Mutate(val, mutationRate);
             return Mathf.Clamp(mutated, min, max);
         }
     }
 
-    public static int MutateClamped(this int val, float mutationRate, int min, int max) =>
-        ClampedInt.Mutate(val, mutationRate, min, max);
-
     public class UnsignedInt : IMutator<uint>
     {
-        public float mutationRate { get; }
-
         public UnsignedInt(float mutationRate)
         {
             this.mutationRate = mutationRate;
         }
+
+        public float mutationRate { get; }
 
         public uint Mutate(uint val)
         {
@@ -140,26 +153,24 @@ public static class Mutator
         }
     }
 
-    public static uint Mutate(this uint val, float mutationRate) => UnsignedInt.Mutate(val, mutationRate);
-
     public class Enum
     {
-        public float mutationRate { get; }
-
         public Enum(float mutationRate)
         {
             this.mutationRate = mutationRate;
         }
 
+        public float mutationRate { get; }
+
         public T Mutate<T>(T enumeration) where T : System.Enum
         {
-            return Mutate(enumeration, this.mutationRate);
+            return Mutate(enumeration, mutationRate);
         }
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
         public static T Mutate<T>(T enumeration, float mutationRate) where T : System.Enum
         {
-            var val = System.Convert.ToInt32(enumeration);
+            var val = Convert.ToInt32(enumeration);
             var vals = System.Enum.GetValues(typeof(T)).Cast<int>();
             var min = vals.FirstOrDefault();
             var max = vals.LastOrDefault();
@@ -168,11 +179,8 @@ public static class Mutator
         }
     }
 
-    public static T Mutate<T>(this T val, float mutationRate) where T : System.Enum => Enum.Mutate(val, mutationRate);
-
     public class Enum<T> : IMutator<T> where T : System.Enum
     {
-        public float mutationRate { get; private set; }
         private readonly uint min, max;
 
         [SuppressMessage("ReSharper", "PossibleMultipleEnumeration")]
@@ -184,20 +192,22 @@ public static class Mutator
             max = vals.LastOrDefault();
         }
 
+        public float mutationRate { get; }
+
         public T Mutate(T enumeration)
         {
-            var val = System.Convert.ToInt32(enumeration);
+            var val = Convert.ToInt32(enumeration);
             var mutated = Int.Mutate(val, mutationRate);
-            var clamped = (uint) Mathf.Clamp(mutated, this.min, this.max);
+            var clamped = (uint) Mathf.Clamp(mutated, min, max);
             return (T) System.Enum.ToObject(typeof(T), clamped);
         }
     }
 
     public class MutationEnumerable<T> : IMutator<IEnumerable<T>>
     {
-        private readonly System.Func<T, T> elementMutation;
+        private readonly Func<T, T> elementMutation;
 
-        public MutationEnumerable(System.Func<T, T> elementMutation)
+        public MutationEnumerable(Func<T, T> elementMutation)
         {
             this.elementMutation = elementMutation;
         }
@@ -207,17 +217,11 @@ public static class Mutator
             return enumerable.Select(elementMutation);
         }
 
-        public static IEnumerable<T> Mutate(IEnumerable<T> enumerable, System.Func<T, T> elementMutation)
+        public static IEnumerable<T> Mutate(IEnumerable<T> enumerable, Func<T, T> elementMutation)
         {
             return enumerable.Select(elementMutation);
         }
     }
-
-    public static IEnumerable<T> Mutate<T>(this IEnumerable<T> val, System.Func<T, T> elementMutation) =>
-        MutationEnumerable<T>.Mutate(val, elementMutation);
-
-    public static T[] Mutate<T>(this T[] val, System.Func<T, T> elementMutation) =>
-        MutationEnumerable<T>.Mutate(val.AsEnumerable(), elementMutation).ToArray();
 
     public class MutatorEnumerable<T> : MutationEnumerable<T>
     {
@@ -230,7 +234,4 @@ public static class Mutator
             return enumerable.Select(elementMutator.Mutate);
         }
     }
-
-    public static IEnumerable<T> Mutate<T>(this IEnumerable<T> val, IMutator<T> elementMutator) =>
-        MutatorEnumerable<T>.Mutate(val, elementMutator);
 }

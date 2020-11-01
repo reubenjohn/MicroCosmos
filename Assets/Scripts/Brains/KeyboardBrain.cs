@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.IO;
-using Newtonsoft.Json;
+﻿using UnityEngine;
 
 public class KeyboardBrain : Brain, IBrain
 {
@@ -21,12 +16,8 @@ public class KeyboardBrain : Brain, IBrain
         UpdateFlagellaLogits(actuatorLogits[0]);
 
         if (transform.TryGetComponent<Cell>(out var cell))
-        {
             if (Input.GetKeyDown(KeyCode.B))
-            {
                 cell.GiveBirth();
-            }
-        }
 
         base.Update();
     }

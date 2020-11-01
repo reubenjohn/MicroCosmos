@@ -1,18 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json.Linq;
 using UnityEngine;
-using System;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 public class FlagellaActuator : MonoBehaviour, IActuator, ILivingComponent<FlagellaGene>, ILivingComponent
 {
-    public static readonly string RESOURCE_PATH = "Organelles/Flagella1";
+    public static readonly string ResourcePath = "Organelles/Flagella1";
 
     public FlagellaGene gene = new FlagellaGene(250f, 10f);
     public Rigidbody2D rb { get; private set; }
 
-    void Start()
+    private void Start()
     {
         rb = GetComponentInParent<Rigidbody2D>();
     }
@@ -34,18 +30,19 @@ public class FlagellaActuator : MonoBehaviour, IActuator, ILivingComponent<Flage
 
     public Transform OnInheritGene(FlagellaGene inheritedGene)
     {
-        this.gene = inheritedGene;
+        gene = inheritedGene;
         return null;
     }
-    Transform ILivingComponent.OnInheritGene(object inheritedGene) => OnInheritGene((FlagellaGene)inheritedGene);
 
-    public IGeneTranscriber<FlagellaGene> GetGeneTranscriber() => FlagellaGeneTranscriber.SINGLETON;
+    Transform ILivingComponent.OnInheritGene(object inheritedGene) => OnInheritGene((FlagellaGene) inheritedGene);
+
+    public GeneTranscriber<FlagellaGene> GetGeneTranscriber() => FlagellaGeneTranscriber.Singleton;
     IGeneTranscriber ILivingComponent.GetGeneTranscriber() => GetGeneTranscriber();
 
     public FlagellaGene GetGene() => gene;
     object ILivingComponent.GetGene() => GetGene();
 
-    string ILivingComponent.GetResourcePath() => RESOURCE_PATH;
+    string ILivingComponent.GetResourcePath() => ResourcePath;
 
     public JObject GetState()
     {
@@ -53,7 +50,10 @@ public class FlagellaActuator : MonoBehaviour, IActuator, ILivingComponent<Flage
         // dict.Add("gene", GENE_TRANSCRIBER.Serialize(gene));
         return dict;
     }
-    public void SetState(JObject state) { }
+
+    public void SetState(JObject state)
+    {
+    }
 
     public ILivingComponent[] GetSubLivingComponents() => new ILivingComponent[] { };
 }

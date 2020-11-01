@@ -1,9 +1,9 @@
-using Newtonsoft.Json.Linq;
 using UnityEngine;
 
 public static class Serialization
 {
     public static string ToSerializable(Vector2 vec) => $"{vec.x} {vec.y}";
+
     public static Vector2 ToVector2(string vs)
     {
         var xy = vs.Split(' ');

@@ -39,7 +39,7 @@ public class CellColony : MonoBehaviour
 
     private CellColonyData Save()
     {
-        return new CellColonyData() {cells = GetCells().Select(CellData.Save).ToArray()};
+        return new CellColonyData {cells = GetCells().Select(CellData.Save).ToArray()};
     }
 
     private void Load(JsonReader reader, JsonSerializer serializer)
@@ -48,35 +48,24 @@ public class CellColony : MonoBehaviour
 
         AssertToken(reader.Read() && reader.TokenType == JsonToken.PropertyName && (string) reader.Value == "cells");
         AssertToken(reader.Read() && reader.TokenType == JsonToken.StartArray);
-        foreach (var child in transform.Children())
-        {
-            Destroy(child.gameObject);
-        }
+        foreach (var child in transform.Children()) Destroy(child.gameObject);
 
-        foreach (var cellData in LazyLoadCells(reader, serializer))
-        {
-            CellData.Load(cellData, transform);
-        }
+        foreach (var cellData in LazyLoadCells(reader, serializer)) CellData.Load(cellData, transform);
 
         AssertToken(reader.TokenType == JsonToken.EndArray);
 
         AssertToken(reader.Read() && reader.TokenType == JsonToken.EndObject);
     }
 
-    void AssertToken(bool condition)
+    private void AssertToken(bool condition)
     {
-        if (!condition)
-        {
-            throw new Exception("Unexpected token");
-        }
+        if (!condition) throw new Exception("Unexpected token");
     }
 
     private IEnumerable<CellData> LazyLoadCells(JsonReader reader, JsonSerializer serializer)
     {
         while (reader.Read() && reader.TokenType == JsonToken.StartObject)
-        {
             yield return serializer.Deserialize<CellData>(reader);
-        }
     }
 
     public Cell[] GetCells()

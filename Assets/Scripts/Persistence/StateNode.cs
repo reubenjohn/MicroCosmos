@@ -7,8 +7,8 @@ using Newtonsoft.Json.Linq;
 [Serializable]
 public class StateNode
 {
-    public JObject state;
     public StateNode[] children;
+    public JObject state;
 
     public static StateNode Save(ILivingComponent livingComponent) =>
         new StateNode
@@ -26,13 +26,11 @@ public class StateNode
         var subLivingComponents = livingComponent.GetSubLivingComponents();
         var subStateNodes = stateNode.children;
         if (subLivingComponents.Length != subStateNodes.Length)
-        {
             throw new DataException(
                 $"Living component '{livingComponent.GetNodeName()}' has " +
                 $"{subLivingComponents.Length} sub living components " +
                 $"and thus can't be loaded with {subStateNodes.Length} state nodes:\n" +
                 $"{JsonConvert.SerializeObject(subStateNodes, Formatting.Indented)}");
-        }
 
         for (var i = 0; i < subStateNodes.Length; i++)
             Load(subLivingComponents[i], subStateNodes[i]);

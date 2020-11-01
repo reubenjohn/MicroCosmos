@@ -1,27 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.IO;
-using System.Linq;
-using Newtonsoft.Json;
+﻿using System.Linq;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 
 public class Cell : MonoBehaviour, ILivingComponent<CellGene>
 {
     private Rigidbody2D rb;
 
-    void Start()
+    private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
-    }
-
-    public void GiveBirth()
-    {
-        var geneTree = GeneNode.GetMutated(this);
-        var tran = transform;
-        GeneNode.Load(geneTree, tran.parent, tran.position - tran.up * .3f, tran.rotation);
     }
 
     public string GetNodeName() => gameObject.name;
@@ -29,15 +16,12 @@ public class Cell : MonoBehaviour, ILivingComponent<CellGene>
     public Transform OnInheritGene(CellGene inheritedGene)
     {
         var organellesTransform = transform;
-        foreach (Transform existingSubTransforms in organellesTransform)
-        {
-            Destroy(existingSubTransforms.gameObject);
-        }
+        foreach (Transform existingSubTransforms in organellesTransform) Destroy(existingSubTransforms.gameObject);
 
         return organellesTransform;
     }
 
-    public IGeneTranscriber<CellGene> GetGeneTranscriber() => CellGeneTranscriber.SINGLETON;
+    public GeneTranscriber<CellGene> GetGeneTranscriber() => CellGeneTranscriber.Singleton;
 
     Transform ILivingComponent.OnInheritGene(object inheritedGene) => OnInheritGene((CellGene) inheritedGene);
 
@@ -82,5 +66,12 @@ public class Cell : MonoBehaviour, ILivingComponent<CellGene>
             .Select(organelleTransform => organelleTransform.GetComponent<ILivingComponent>())
             .Where(e => e != null)
             .ToArray();
+    }
+
+    public void GiveBirth()
+    {
+        var geneTree = GeneNode.GetMutated(this);
+        var tran = transform;
+        GeneNode.Load(geneTree, tran.parent, tran.position - tran.up * .3f, tran.rotation);
     }
 }
