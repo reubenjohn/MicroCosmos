@@ -1,24 +1,27 @@
 ﻿using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-public interface ILivingComponent
+namespace Genetics
 {
-    string GetNodeName();
-    Transform OnInheritGene(object inheritedGene);
-    IGeneTranscriber GetGeneTranscriber();
-    object GetGene();
-    string GetResourcePath();
+    public interface ILivingComponent
+    {
+        string GetNodeName();
+        Transform OnInheritGene(object inheritedGene);
+        IGeneTranscriber GetGeneTranscriber();
+        object GetGene();
+        string GetResourcePath();
 
-    JObject GetState();
-    void SetState(JObject state);
+        JObject GetState();
+        void SetState(JObject state);
 
-    ILivingComponent[] GetSubLivingComponents();
-}
+        ILivingComponent[] GetSubLivingComponents();
+    }
 
 
-public interface ILivingComponent<T> : ILivingComponent
-{
-    Transform OnInheritGene(T inheritedGene);
-    new GeneTranscriber<T> GetGeneTranscriber();
-    new T GetGene();
+    public interface ILivingComponent<T> : ILivingComponent
+    {
+        Transform OnInheritGene(T inheritedGene);
+        new GeneTranscriber<T> GetGeneTranscriber();
+        new T GetGene();
+    }
 }

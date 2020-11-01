@@ -1,5 +1,8 @@
-internal interface IActuator
+namespace Actuators
 {
-    float[] Connect();
-    void Actuate(float[] logits);
+    internal interface IActuator
+    {
+        float[] Connect();
+        void Actuate(float[] logits);
+    }
 }

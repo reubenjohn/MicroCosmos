@@ -1,21 +1,26 @@
 using System;
+using Genetics;
+using Persistence;
 using UnityEngine;
 
-[Serializable]
-public class CellData
+namespace Cell
 {
-    public GeneNode geneTree { get; set; }
-    public StateNode stateTree { get; set; }
-
-    public static CellData Save(Cell cell) => new CellData
+    [Serializable]
+    public class CellData
     {
-        geneTree = GeneNode.Save(cell),
-        stateTree = StateNode.Save(cell)
-    };
+        public GeneNode geneTree { get; set; }
+        public StateNode stateTree { get; set; }
 
-    public static void Load(CellData cellData, Transform container)
-    {
-        var gameObject = GeneNode.Load(cellData.geneTree, container);
-        StateNode.Load(gameObject.GetComponent<ILivingComponent>(), cellData.stateTree);
+        public static CellData Save(Cell cell) => new CellData
+        {
+            geneTree = GeneNode.Save(cell),
+            stateTree = StateNode.Save(cell)
+        };
+
+        public static void Load(CellData cellData, Transform container)
+        {
+            var gameObject = GeneNode.Load(cellData.geneTree, container);
+            StateNode.Load(gameObject.GetComponent<ILivingComponent>(), cellData.stateTree);
+        }
     }
 }

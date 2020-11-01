@@ -1,6 +1,9 @@
 using System;
 
-[Serializable]
-public class CellGene
+namespace Cell
 {
+    [Serializable]
+    public class CellGene
+    {
+    }
 }

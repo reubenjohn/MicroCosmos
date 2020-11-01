@@ -1,6 +1,9 @@
 using System;
 
-[Serializable]
-public class MembraneGene
+namespace Actuators
 {
+    [Serializable]
+    public class MembraneGene
+    {
+    }
 }

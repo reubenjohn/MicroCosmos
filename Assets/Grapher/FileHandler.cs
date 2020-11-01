@@ -28,7 +28,7 @@ namespace NWH
             List<Sample> sampleList = new List<Sample>();
 
             string fileData = File.ReadAllText(Path.Combine(writePath, filename));
-            string[] lines = fileData.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+            string[] lines = fileData.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
             for (int i = 1; i < lines.Length - 1; i++)
             {
@@ -46,7 +46,7 @@ namespace NWH
         public static string LoadHeaderFromCSV(string filename)
         {
             string fileData = File.ReadAllText(Path.Combine(writePath, filename));
-            string[] lines = fileData.Split(new string[] { Environment.NewLine }, StringSplitOptions.None);
+            string[] lines = fileData.Split(new[] { Environment.NewLine }, StringSplitOptions.None);
 
             if (lines.Length > 0)
             {
@@ -90,7 +90,7 @@ namespace NWH
                 {
                     // Fetch all files for the recording
                     string fileData = File.ReadAllText(path);
-                    List<string> filenameList = fileData.Split(new string[] { Environment.NewLine }, StringSplitOptions.None).ToList();
+                    List<string> filenameList = fileData.Split(new[] { Environment.NewLine }, StringSplitOptions.None).ToList();
 
                     foreach (string s in filenameList)
                     {

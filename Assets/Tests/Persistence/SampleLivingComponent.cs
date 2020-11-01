@@ -1,16 +1,18 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Genetics;
+using Newtonsoft.Json.Linq;
+using Tests.Genetics;
 using UnityEngine;
 
-namespace Tests
+namespace Tests.Persistence
 {
     public class SampleLivingComponent : ILivingComponent<SampleGene>
     {
         private JObject state;
 
         private readonly ILivingComponent[] subLivingComponents =
-            {new SampleSubLivingComponent(), new SampleSubLivingComponent(),};
+            {new SampleSubLivingComponent(), new SampleSubLivingComponent()};
 
-        public SampleLivingComponent() => state = new JObject() {["x"] = 1, ["y"] = 2};
+        public SampleLivingComponent() => state = new JObject {["x"] = 1, ["y"] = 2};
 
         public string GetNodeName() => "MySampleLivingComponent";
 

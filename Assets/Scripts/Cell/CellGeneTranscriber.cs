@@ -1,14 +1,18 @@
+using Genetics;
 using Newtonsoft.Json.Linq;
 
-public class CellGeneTranscriber : GeneTranscriber<CellGene>
+namespace Cell
 {
-    public static readonly CellGeneTranscriber Singleton = new CellGeneTranscriber();
-
-    private CellGeneTranscriber()
+    public class CellGeneTranscriber : GeneTranscriber<CellGene>
     {
+        public static readonly CellGeneTranscriber Singleton = new CellGeneTranscriber();
+
+        private CellGeneTranscriber()
+        {
+        }
+
+        public override CellGene Deserialize(JToken gene) => gene.ToObject<CellGene>();
+
+        public override CellGene Mutate(CellGene gene) => new CellGene();
     }
-
-    public override CellGene Deserialize(JToken gene) => gene.ToObject<CellGene>();
-
-    public override CellGene Mutate(CellGene gene) => new CellGene();
 }

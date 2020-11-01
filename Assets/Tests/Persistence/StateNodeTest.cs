@@ -1,11 +1,9 @@
-﻿using System.Collections;
-using System.Data;
+﻿using System.Data;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
+using Persistence;
 
-namespace Tests
+namespace Tests.Persistence
 {
     public class StateNodeTest
     {

@@ -1,73 +1,77 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Genetics;
 using Newtonsoft.Json;
 
-public class SampleGene
+namespace Tests.Genetics
 {
-    public SampleGene(float furryness, uint nEyes, DietaryRestriction dietaryRestriction, Limb[] limbs)
+    public class SampleGene
     {
-        this.furryness = furryness;
-        this.nEyes = nEyes;
-        this.dietaryRestriction = dietaryRestriction;
-        this.limbs = limbs;
+        public SampleGene(float furriness, uint nEyes, DietaryRestriction dietaryRestriction, Limb[] limbs)
+        {
+            this.furriness = furriness;
+            this.nEyes = nEyes;
+            this.dietaryRestriction = dietaryRestriction;
+            this.limbs = limbs;
+        }
+
+        public float furriness { get; }
+        public uint nEyes { get; }
+        public DietaryRestriction dietaryRestriction { get; }
+        public Limb[] limbs { get; }
+
+        public override bool Equals(object obj)
+        {
+            return obj is SampleGene gene &&
+                   Math.Abs(furriness - gene.furriness) < 1e-5 &&
+                   nEyes == gene.nEyes &&
+                   dietaryRestriction == gene.dietaryRestriction &&
+                   (limbs == gene.limbs || limbs != null && gene.limbs != null && limbs.SequenceEqual(gene.limbs));
+        }
+
+        public override int GetHashCode()
+        {
+            var hashCode = -362057520;
+            hashCode = hashCode * -1521134295 + furriness.GetHashCode();
+            hashCode = hashCode * -1521134295 + nEyes.GetHashCode();
+            hashCode = hashCode * -1521134295 + dietaryRestriction.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<Limb[]>.Default.GetHashCode(limbs);
+            return hashCode;
+        }
+
+        public override string ToString() => JsonConvert.SerializeObject(this);
     }
 
-    public float furryness { get; }
-    public uint nEyes { get; }
-    public DietaryRestriction dietaryRestriction { get; }
-    public Limb[] limbs { get; }
-
-    public override bool Equals(object obj)
+    public enum DietaryRestriction
     {
-        return obj is SampleGene gene &&
-               Math.Abs(furryness - gene.furryness) < 1e-5 &&
-               nEyes == gene.nEyes &&
-               dietaryRestriction == gene.dietaryRestriction &&
-               (limbs == gene.limbs || limbs != null && gene.limbs != null && limbs.SequenceEqual(gene.limbs));
+        Herbivore,
+        Carnivore
     }
 
-    public override int GetHashCode()
+    public class Limb
     {
-        var hashCode = -362057520;
-        hashCode = hashCode * -1521134295 + furryness.GetHashCode();
-        hashCode = hashCode * -1521134295 + nEyes.GetHashCode();
-        hashCode = hashCode * -1521134295 + dietaryRestriction.GetHashCode();
-        hashCode = hashCode * -1521134295 + EqualityComparer<Limb[]>.Default.GetHashCode(limbs);
-        return hashCode;
-    }
+        public static readonly Mutator.ClampedFloat LengthMutator = new Mutator.ClampedFloat(.1f, 0f, float.MaxValue);
+        public static readonly Func<Limb, Limb> Mutator = Mutate;
 
-    public override string ToString() => JsonConvert.SerializeObject(this);
-}
+        public Limb(float length)
+        {
+            this.length = length;
+        }
 
-public enum DietaryRestriction
-{
-    Herbivore,
-    Carnivore
-}
+        public float length { get; }
 
-public class Limb
-{
-    public static readonly Mutator.ClampedFloat LenthMutator = new Mutator.ClampedFloat(.1f, 0f, float.MaxValue);
-    public static readonly Func<Limb, Limb> Mutator = Mutate;
+        public static Limb Mutate(Limb limb) => new Limb(LengthMutator.Mutate(limb.length));
 
-    public Limb(float length)
-    {
-        this.length = length;
-    }
+        public override bool Equals(object obj)
+        {
+            return obj is Limb limb &&
+                   Math.Abs(length - limb.length) < 1e-5;
+        }
 
-    public float length { get; }
-
-    public static Limb Mutate(Limb limb) => new Limb(LenthMutator.Mutate(limb.length));
-
-    public override bool Equals(object obj)
-    {
-        return obj is Limb limb &&
-               length == limb.length;
-    }
-
-    public override int GetHashCode()
-    {
-        return -1136221603 + length.GetHashCode();
+        public override int GetHashCode()
+        {
+            return -1136221603 + length.GetHashCode();
+        }
     }
 }

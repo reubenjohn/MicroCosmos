@@ -1,13 +1,16 @@
 ﻿using UnityEngine;
 
-public class OrificeActuator : MonoBehaviour, IActuator
+namespace Actuators
 {
-    public void Actuate(float[] logits)
+    public class OrificeActuator : MonoBehaviour, IActuator
     {
-    }
+        public void Actuate(float[] logits)
+        {
+        }
 
-    public float[] Connect()
-    {
-        return new float[0];
+        public float[] Connect()
+        {
+            return new float[0];
+        }
     }
 }

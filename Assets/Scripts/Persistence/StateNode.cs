@@ -1,38 +1,42 @@
 using System;
 using System.Data;
 using System.Linq;
+using Genetics;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-[Serializable]
-public class StateNode
+namespace Persistence
 {
-    public StateNode[] children;
-    public JObject state;
-
-    public static StateNode Save(ILivingComponent livingComponent) =>
-        new StateNode
-        {
-            state = livingComponent.GetState(),
-            children = livingComponent.GetSubLivingComponents()
-                .Select(Save)
-                .ToArray()
-        };
-
-    public static void Load(ILivingComponent livingComponent, StateNode stateNode)
+    [Serializable]
+    public class StateNode
     {
-        livingComponent.SetState(stateNode.state);
+        public JObject state;
+        public StateNode[] children;
 
-        var subLivingComponents = livingComponent.GetSubLivingComponents();
-        var subStateNodes = stateNode.children;
-        if (subLivingComponents.Length != subStateNodes.Length)
-            throw new DataException(
-                $"Living component '{livingComponent.GetNodeName()}' has " +
-                $"{subLivingComponents.Length} sub living components " +
-                $"and thus can't be loaded with {subStateNodes.Length} state nodes:\n" +
-                $"{JsonConvert.SerializeObject(subStateNodes, Formatting.Indented)}");
+        public static StateNode Save(ILivingComponent livingComponent) =>
+            new StateNode
+            {
+                state = livingComponent.GetState(),
+                children = livingComponent.GetSubLivingComponents()
+                    .Select(Save)
+                    .ToArray()
+            };
 
-        for (var i = 0; i < subStateNodes.Length; i++)
-            Load(subLivingComponents[i], subStateNodes[i]);
+        public static void Load(ILivingComponent livingComponent, StateNode stateNode)
+        {
+            livingComponent.SetState(stateNode.state);
+
+            var subLivingComponents = livingComponent.GetSubLivingComponents();
+            var subStateNodes = stateNode.children;
+            if (subLivingComponents.Length != subStateNodes.Length)
+                throw new DataException(
+                    $"Living component '{livingComponent.GetNodeName()}' has " +
+                    $"{subLivingComponents.Length} sub living components " +
+                    $"and thus can't be loaded with {subStateNodes.Length} state nodes:\n" +
+                    $"{JsonConvert.SerializeObject(subStateNodes, Formatting.Indented)}");
+
+            for (var i = 0; i < subStateNodes.Length; i++)
+                Load(subLivingComponents[i], subStateNodes[i]);
+        }
     }
 }

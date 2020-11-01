@@ -1,47 +1,50 @@
 ﻿using UnityEngine;
 
-public class KeyboardBrain : Brain, IBrain
+namespace Brains
 {
-    public float linearFlagellaSensitivity = 0.1f;
-    public float angularFlagellaSensitivity = 0.1f;
-
-    public new void Start()
+    public class KeyboardBrain : Brain, IBrain
     {
-        base.Start();
-    }
+        public float linearFlagellaSensitivity = 0.1f;
+        public float angularFlagellaSensitivity = 0.1f;
+
+        public new void Start()
+        {
+            base.Start();
+        }
 
 
-    public override void Update()
-    {
-        UpdateFlagellaLogits(actuatorLogits[0]);
+        public override void Update()
+        {
+            UpdateFlagellaLogits(actuatorLogits[0]);
 
-        if (transform.TryGetComponent<Cell>(out var cell))
-            if (Input.GetKeyDown(KeyCode.B))
-                cell.GiveBirth();
+            if (transform.TryGetComponent<Cell.Cell>(out var cell))
+                if (Input.GetKeyDown(KeyCode.B))
+                    cell.GiveBirth();
 
-        base.Update();
-    }
+            base.Update();
+        }
 
-    private void UpdateFlagellaLogits(float[] logits)
-    {
-        logits[0] = BinaryControlStep(logits[0], Input.GetKey(KeyCode.W), Input.GetKey(KeyCode.S),
-            linearFlagellaSensitivity);
-        logits[1] = BinaryControlStep(logits[1], Input.GetKey(KeyCode.A), Input.GetKey(KeyCode.D),
-            angularFlagellaSensitivity);
-    }
+        private void UpdateFlagellaLogits(float[] logits)
+        {
+            logits[0] = BinaryControlStep(logits[0], Input.GetKey(KeyCode.W), Input.GetKey(KeyCode.S),
+                linearFlagellaSensitivity);
+            logits[1] = BinaryControlStep(logits[1], Input.GetKey(KeyCode.A), Input.GetKey(KeyCode.D),
+                angularFlagellaSensitivity);
+        }
 
-    private static float BinaryControlStep(float value, bool positiveInput, bool negativeInput, float inputSensitivity)
-    {
-        var linearTarget = ToLogit(positiveInput) - ToLogit(negativeInput);
-        var remainingDistance = linearTarget - value;
-        var maxLinearStep = Time.deltaTime * inputSensitivity;
-        var linearStep = Mathf.Clamp(remainingDistance, -maxLinearStep, maxLinearStep);
-        value += linearStep;
-        return value;
-    }
+        private static float BinaryControlStep(float value, bool positiveInput, bool negativeInput, float inputSensitivity)
+        {
+            var linearTarget = ToLogit(positiveInput) - ToLogit(negativeInput);
+            var remainingDistance = linearTarget - value;
+            var maxLinearStep = Time.deltaTime * inputSensitivity;
+            var linearStep = Mathf.Clamp(remainingDistance, -maxLinearStep, maxLinearStep);
+            value += linearStep;
+            return value;
+        }
 
-    private static float ToLogit(bool boolean)
-    {
-        return boolean ? 1 : 0;
+        private static float ToLogit(bool boolean)
+        {
+            return boolean ? 1 : 0;
+        }
     }
 }

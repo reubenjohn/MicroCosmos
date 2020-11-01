@@ -1,3 +1,6 @@
-public interface IBrain
+namespace Brains
 {
+    public interface IBrain
+    {
+    }
 }

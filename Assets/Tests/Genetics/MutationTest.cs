@@ -1,7 +1,8 @@
-﻿using NUnit.Framework;
+﻿using Genetics;
+using NUnit.Framework;
 using UnityEngine;
 
-namespace Tests
+namespace Tests.Genetics
 {
     public class MutationTest
     {
@@ -93,7 +94,7 @@ namespace Tests
         public void MutationEnumerableMutation()
         {
             var elemMutator = new Mutator.Int(0.2f);
-            var mutator = new Mutator.MutationEnumerable<int>(elem => elemMutator.Mutate(elem));
+            var mutator = new Mutator.MutationEnumerable<int>(elemMutator.Mutate);
 
             TestEnumerableMutation(mutator);
         }
