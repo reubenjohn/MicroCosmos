@@ -1,9 +1,10 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using NUnit.Framework;
+using Tests.Common;
 using UnityEngine;
 
-namespace Tests.Genetics
+namespace Tests.EditMode.Genetics
 {
     public class GeneTranscriberTest
     {

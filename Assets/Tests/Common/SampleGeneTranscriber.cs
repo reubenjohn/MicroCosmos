@@ -1,7 +1,7 @@
 using Genetics;
 using Newtonsoft.Json.Linq;
 
-namespace Tests.Genetics
+namespace Tests.Common
 {
     public class SampleGeneTranscriber : GeneTranscriber<SampleGene>
     {

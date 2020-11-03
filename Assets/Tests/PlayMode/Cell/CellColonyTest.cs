@@ -2,17 +2,12 @@
 using System.IO;
 using System.Linq;
 using Cell;
-using Genetics;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using Persistence;
-using TestCommon;
-using Tests.Genetics;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
-namespace PlayModeTests.Cell
+namespace Tests.PlayMode.Cell
 {
     public class CellColonyTest
     {
@@ -21,7 +16,7 @@ namespace PlayModeTests.Cell
         [OneTimeSetUp]
         public void GeneNodeTestSimplePasses()
         {
-            SceneManager.LoadScene("PlayModeTests/Cell/CellColonyTestScene");
+            SceneManager.LoadScene("Tests/PlayMode/Cell/CellColonyTestScene");
 
             saveDir = $"{Application.temporaryCachePath}/testing/CellColonyTest";
             Directory.CreateDirectory(saveDir);

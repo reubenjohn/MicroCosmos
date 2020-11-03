@@ -2,7 +2,7 @@
 using NUnit.Framework;
 using UnityEngine;
 
-namespace Tests.Genetics
+namespace Tests.EditMode.Genetics
 {
     public class MutationTest
     {

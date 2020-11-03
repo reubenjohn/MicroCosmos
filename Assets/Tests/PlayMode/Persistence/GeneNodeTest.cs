@@ -4,12 +4,12 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using Persistence;
 using TestCommon;
-using Tests.Genetics;
+using Tests.Common;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
-namespace PlayModeTests.Persistence
+namespace Tests.PlayMode.Persistence
 {
     public class GeneNodeTest
     {
@@ -26,7 +26,7 @@ namespace PlayModeTests.Persistence
         [OneTimeSetUp]
         public void GeneNodeTestSimplePasses()
         {
-            SceneManager.LoadScene("PlayModeTests/Persistence/EmptyTestScene");
+            SceneManager.LoadScene("Tests/PlayMode/Persistence/EmptyTestScene");
         }
 
         [UnityTest]

@@ -4,7 +4,7 @@ using System.Linq;
 using Genetics;
 using Newtonsoft.Json;
 
-namespace Tests.Genetics
+namespace Tests.Common
 {
     public class SampleGene
     {

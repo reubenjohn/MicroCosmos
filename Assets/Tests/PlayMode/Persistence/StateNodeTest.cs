@@ -5,7 +5,7 @@ using Persistence;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace PlayModeTests.Persistence
+namespace Tests.PlayMode.Persistence
 {
     public class StateNodeTest
     {
@@ -17,7 +17,7 @@ namespace PlayModeTests.Persistence
         [OneTimeSetUp]
         public void GeneNodeTestSimplePasses()
         {
-            SceneManager.LoadScene("PlayModeTests/Persistence/EmptyTestScene");
+            SceneManager.LoadScene("Tests/PlayMode/Persistence/EmptyTestScene");
             var geneNode = JsonConvert.DeserializeObject<GeneNode>(GeneNodeTest.Serialized1);
             livingComponent = GeneNode.Load(geneNode, GameObject.Find("Container").transform)
                 .GetComponent<SampleLivingComponent>();

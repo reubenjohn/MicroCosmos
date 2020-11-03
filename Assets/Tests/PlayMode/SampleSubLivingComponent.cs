@@ -1,10 +1,10 @@
 ﻿using Genetics;
 using Newtonsoft.Json.Linq;
 using TestCommon;
-using Tests.Genetics;
+using Tests.Common;
 using UnityEngine;
 
-namespace PlayModeTests
+namespace Tests.PlayMode
 {
     public class SampleSubLivingComponent : MonoBehaviour, ILivingComponent<SampleSubGene>
     {
