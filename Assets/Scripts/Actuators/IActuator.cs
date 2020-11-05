@@ -1,6 +1,6 @@
 namespace Actuators
 {
-    internal interface IActuator
+    public interface IActuator
     {
         float[] Connect();
         void Actuate(float[] logits);

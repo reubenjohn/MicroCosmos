@@ -11,22 +11,26 @@ namespace Actuators
         public FlagellaGene gene = new FlagellaGene(250f, 10f);
         public Rigidbody2D rb { get; private set; }
 
-        private void Start()
-        {
-            rb = GetComponentInParent<Rigidbody2D>();
-        }
+        private void Start() => rb = GetComponentInParent<Rigidbody2D>();
 
-        public float[] Connect()
-        {
-            return new float[2];
-        }
+        public float[] Connect() => new float[2];
 
         public void Actuate(float[] logits)
         {
             Grapher.Log(logits[0], "Flagella[0]", Color.blue);
             Grapher.Log(logits[1], "Flagella[1]", Color.cyan);
-            rb.AddRelativeForce(logits[0] * gene.linearPower * Time.deltaTime * Vector2.up);
-            rb.AddTorque(logits[1] * gene.angularPower * Time.deltaTime);
+            rb.AddRelativeForce(CalculateRelativeForce(gene, logits, Time.deltaTime));
+            rb.AddTorque(CalculateTorque(gene, logits, Time.deltaTime));
+        }
+
+        public static Vector2 CalculateRelativeForce(FlagellaGene gene, float[] logits, float deltaTime)
+        {
+            return logits[0] * gene.linearPower * deltaTime * Vector2.up;
+        }
+
+        public static float CalculateTorque(FlagellaGene gene, float[] logits, float deltaTime)
+        {
+            return logits[1] * gene.angularPower * deltaTime;
         }
 
         public string GetNodeName() => gameObject.name;
