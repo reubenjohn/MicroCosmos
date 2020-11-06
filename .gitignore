@@ -74,3 +74,7 @@ Assets/Cartoon_Texture_Pack/
 Assets/Cartoon_Texture_Pack.meta
 Assets/Rounded Blocks/
 Assets/Rounded Blocks.meta
+
+# Temporary files
+Assets/InitTestScene*.unity
+Assets/InitTestScene*.unity.meta

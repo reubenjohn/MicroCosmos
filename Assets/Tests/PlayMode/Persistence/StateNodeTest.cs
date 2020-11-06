@@ -17,7 +17,7 @@ namespace Tests.PlayMode.Persistence
         [OneTimeSetUp]
         public void GeneNodeTestSimplePasses()
         {
-            SceneManager.LoadScene("Tests/PlayMode/Persistence/EmptyTestScene");
+            SceneManager.LoadScene("Tests/PlayMode/GeneralTestScene");
             var geneNode = JsonConvert.DeserializeObject<GeneNode>(GeneNodeTest.Serialized1);
             livingComponent = GeneNode.Load(geneNode, GameObject.Find("Container").transform)
                 .GetComponent<SampleLivingComponent>();

@@ -17,10 +17,11 @@ namespace Cell
             stateTree = StateNode.Save(cell)
         };
 
-        public static void Load(CellData cellData, Transform container)
+        public static GameObject Load(CellData cellData, Transform container)
         {
             var gameObject = GeneNode.Load(cellData.geneTree, container);
             StateNode.Load(gameObject.GetComponent<ILivingComponent>(), cellData.stateTree);
+            return gameObject;
         }
     }
 }

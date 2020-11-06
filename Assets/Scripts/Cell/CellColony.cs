@@ -34,7 +34,7 @@ namespace Cell
                 serializer.Serialize(writer, SaveCellData());
             }
 
-            Debug.Log("Saved to " + saveFile);
+            Debug.Log($"Saved cell colony to {saveFile}");
         }
 
         public void OnLoad()
@@ -46,7 +46,7 @@ namespace Cell
                 Load(reader, serializer);
             }
 
-            Debug.Log("Loaded from " + saveFile);
+            Debug.Log($"Loaded cell colony from {saveFile}");
         }
 
         private CellColonyData SaveCellData() =>

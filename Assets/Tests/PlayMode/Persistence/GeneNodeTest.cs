@@ -26,7 +26,7 @@ namespace Tests.PlayMode.Persistence
         [OneTimeSetUp]
         public void GeneNodeTestSimplePasses()
         {
-            SceneManager.LoadScene("Tests/PlayMode/Persistence/EmptyTestScene");
+            SceneManager.LoadScene("Tests/PlayMode/GeneralTestScene");
         }
 
         [UnityTest]
