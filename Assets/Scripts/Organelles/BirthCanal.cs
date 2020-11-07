@@ -1,20 +1,12 @@
-﻿using System;
-using Cell;
+﻿using Cell;
 using DefaultNamespace;
 using Genetics;
 using Newtonsoft.Json.Linq;
 using Persistence;
 using UnityEngine;
 
-namespace Actuators
+namespace Organelles
 {
-    [Serializable]
-    public class BirthCanalGene
-    {
-        public float circularMembranePreferredAttachmentAngle = 180f;
-        public float circularMembraneAngularDisplacement = 30f;
-    }
-
     public class BirthCanal : MonoBehaviour, ILivingComponent<BirthCanalGene>, IActuator
     {
         private CircularAttachment attachment;

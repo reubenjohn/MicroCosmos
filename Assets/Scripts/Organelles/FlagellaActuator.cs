@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
-namespace Actuators
+namespace Organelles
 {
     public class FlagellaActuator : MonoBehaviour, IActuator, ILivingComponent<FlagellaGene>
     {

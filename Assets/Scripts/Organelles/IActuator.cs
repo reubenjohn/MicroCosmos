@@ -1,4 +1,4 @@
-namespace Actuators
+namespace Organelles
 {
     public interface IActuator
     {

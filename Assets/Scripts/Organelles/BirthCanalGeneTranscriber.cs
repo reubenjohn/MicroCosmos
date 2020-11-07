@@ -1,7 +1,7 @@
 ﻿using Genetics;
 using Newtonsoft.Json.Linq;
 
-namespace Actuators
+namespace Organelles
 {
     public class BirthCanalGeneTranscriber : GeneTranscriber<BirthCanalGene>
     {

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Actuators
+namespace Organelles
 {
     public class OrificeActuator : MonoBehaviour, IActuator
     {

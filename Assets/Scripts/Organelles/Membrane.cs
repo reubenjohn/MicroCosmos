@@ -1,12 +1,11 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using DefaultNamespace;
 using Genetics;
 using Newtonsoft.Json.Linq;
 using Structural;
 using UnityEngine;
 
-namespace Actuators
+namespace Organelles
 {
     public class Membrane : MonoBehaviour, ILivingComponent<MembraneGene>
     {
