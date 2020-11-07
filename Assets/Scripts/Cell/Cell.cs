@@ -17,13 +17,7 @@ namespace Cell
 
         public string GetNodeName() => gameObject.name;
 
-        public Transform OnInheritGene(CellGene inheritedGene)
-        {
-            var organellesTransform = transform;
-            foreach (Transform existingSubTransforms in organellesTransform) Destroy(existingSubTransforms.gameObject);
-
-            return organellesTransform;
-        }
+        public Transform OnInheritGene(CellGene inheritedGene) => transform.DestroyChildren();
 
         public GeneTranscriber<CellGene> GetGeneTranscriber() => CellGeneTranscriber.Singleton;
 
@@ -31,24 +25,18 @@ namespace Cell
 
         IGeneTranscriber ILivingComponent.GetGeneTranscriber() => GetGeneTranscriber();
 
-        public CellGene GetGene()
-        {
-            return new CellGene();
-        }
+        public CellGene GetGene() => new CellGene();
 
         object ILivingComponent.GetGene() => ((ILivingComponent<CellGene>) this).GetGene();
 
         public string GetResourcePath() => "Cells/Cell1";
 
-        public JObject GetState()
-        {
-            var state = new JObject
+        public JObject GetState() =>
+            new JObject
             {
                 ["position"] = Serialization.ToSerializable(transform.position),
                 ["rotation"] = transform.rotation.eulerAngles.z
             };
-            return state;
-        }
 
         public void SetState(JObject state)
         {
@@ -75,8 +63,8 @@ namespace Cell
         public void GiveBirth()
         {
             var geneTree = GeneNode.GetMutated(this);
-            var tran = transform;
-            GeneNode.Load(geneTree, tran.parent, tran.position - tran.up * .3f, tran.rotation);
+            var t = transform;
+            GeneNode.Load(geneTree, t.parent, t.position - t.up * .3f, t.rotation);
         }
     }
 }

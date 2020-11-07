@@ -24,8 +24,7 @@ namespace Cell
 
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.F6))
-                OnSave();
+            if (Input.GetKeyDown(KeyCode.F6)) OnSave();
             else if (Input.GetKeyDown(KeyCode.F7)) OnLoad();
         }
 
@@ -85,10 +84,7 @@ namespace Cell
                 yield return serializer.Deserialize<CellData>(reader);
         }
 
-        private Cell[] GetCells()
-        {
-            return transform.GetComponentsInChildren<Cell>();
-        }
+        private Cell[] GetCells() => transform.GetComponentsInChildren<Cell>();
     }
 
     public class CellColonyData
