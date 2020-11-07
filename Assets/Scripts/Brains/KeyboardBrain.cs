@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Actuators;
+using UnityEngine;
 
 namespace Brains
 {
@@ -17,9 +18,9 @@ namespace Brains
         {
             UpdateFlagellaLogits(actuatorLogits[0]);
 
-            if (transform.TryGetComponent<Cell.Cell>(out var cell))
-                if (Input.GetKeyDown(KeyCode.B))
-                    cell.GiveBirth();
+            var birthCanal = transform.GetComponentInChildren<BirthCanal>();
+            if (Input.GetKeyDown(KeyCode.B))
+                birthCanal.GiveBirth();
 
             base.Update();
         }
@@ -32,7 +33,8 @@ namespace Brains
                 angularFlagellaSensitivity);
         }
 
-        private static float BinaryControlStep(float value, bool positiveInput, bool negativeInput, float inputSensitivity)
+        private static float BinaryControlStep(float value, bool positiveInput, bool negativeInput,
+            float inputSensitivity)
         {
             var linearTarget = ToLogit(positiveInput) - ToLogit(negativeInput);
             var remainingDistance = linearTarget - value;

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6868620854165623886}
   - component: {fileID: 8882141152038949209}
   m_Layer: 0
-  m_Name: Flagella1[0]
+  m_Name: Flagella1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,5 +43,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6df91313a4b4d44b9fa4e6b8efef7b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  linearPower: 250
-  angularPower: 10
+  gene:
+    linearPower: 500
+    angularPower: 20

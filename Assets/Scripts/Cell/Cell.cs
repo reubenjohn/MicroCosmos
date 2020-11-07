@@ -59,12 +59,5 @@ namespace Cell
                 .Where(e => e != null)
                 .ToArray();
         }
-
-        public void GiveBirth()
-        {
-            var geneTree = GeneNode.GetMutated(this);
-            var t = transform;
-            GeneNode.Load(geneTree, t.parent, t.position - t.up * .3f, t.rotation);
-        }
     }
 }
