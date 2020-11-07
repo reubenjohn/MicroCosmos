@@ -5,18 +5,22 @@ using System.Linq;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace Cell
 {
     public class CellColony : MonoBehaviour
     {
-        public string saveFile;
+        public string saveDirectory;
+        public string saveFile = "save2";
+
+        public string SavePath => $"{saveDirectory}/{saveFile}.json";
 
         private void Start()
         {
-            saveFile = saveFile ?? $"{Application.persistentDataPath}/save2.json";
+            saveDirectory = saveDirectory == "" ? DefaultDirectory : saveDirectory;
         }
+
+        private string DefaultDirectory => $"{Application.persistentDataPath}/saves";
 
         private void Update()
         {
@@ -27,26 +31,27 @@ namespace Cell
 
         public void OnSave()
         {
+            Directory.CreateDirectory(saveDirectory);
             var serializer = new JsonSerializer {Formatting = Formatting.Indented};
-            using (var sw = new StreamWriter(saveFile))
+            using (var sw = new StreamWriter(SavePath))
             using (JsonWriter writer = new JsonTextWriter(sw))
             {
                 serializer.Serialize(writer, SaveCellData());
             }
 
-            Debug.Log($"Saved cell colony to {saveFile}");
+            Debug.Log($"Saved cell colony to {SavePath}");
         }
 
         public void OnLoad()
         {
             var serializer = new JsonSerializer {Formatting = Formatting.Indented};
-            using (var sr = new StreamReader(saveFile))
+            using (var sr = new StreamReader(SavePath))
             using (JsonReader reader = new JsonTextReader(sr))
             {
                 Load(reader, serializer);
             }
 
-            Debug.Log($"Loaded cell colony from {saveFile}");
+            Debug.Log($"Loaded cell colony from {SavePath}");
         }
 
         private CellColonyData SaveCellData() =>

@@ -11,37 +11,46 @@ namespace Tests.PlayMode.Cell
 {
     public class CellColonyTest
     {
-        private string saveDir;
-
         [OneTimeSetUp]
         public void GeneNodeTestSimplePasses()
         {
             SceneManager.LoadScene("Tests/PlayMode/Cell/CellColonyTestScene");
-
-            saveDir = $"{Application.temporaryCachePath}/testing/CellColonyTest";
-            Directory.CreateDirectory(saveDir);
         }
 
         [UnityTest]
         public IEnumerator SaveLoadTest()
         {
-            var loadFile = $"{saveDir}/testLoad.json";
+            var cellColony = GameObject.Find("CellColony").GetComponent<CellColony>();
+            cellColony.saveDirectory = $"{Application.temporaryCachePath}/testing/CellColonyTest";
+            cellColony.saveFile = "testSave";
+            Assert.AreEqual($"{Application.temporaryCachePath}/testing/CellColonyTest/testSave.json", cellColony.SavePath);
+            try
+            {
+                Directory.Delete(cellColony.saveDirectory, true);
+            }
+            catch (DirectoryNotFoundException)
+            {
+            }
+
+            cellColony.OnSave();
+            Assert.IsTrue(File.Exists($"{Application.temporaryCachePath}/testing/CellColonyTest/testSave.json"));
+
+            cellColony.saveFile = "testLoad";
+            var loadFile = cellColony.SavePath;
             using (var streamWriter = File.CreateText(loadFile))
             {
                 var saveResource = Resources.Load<TextAsset>("CellColony-testSave");
                 streamWriter.Write(saveResource.text);
             }
 
-            var cellColony = GameObject.Find("CellColony").GetComponent<CellColony>();
-            cellColony.saveFile = loadFile;
             cellColony.OnLoad();
 
             Assert.AreEqual(2, cellColony.transform.Children().Count());
             Assert.AreEqual(254.19635f, cellColony.transform.Find("Cell1[0]").rotation.eulerAngles.z);
 
-            cellColony.saveFile = $"{saveDir}/testSave.json";
+            cellColony.saveFile = "testSave";
             cellColony.OnSave();
-            Assert.IsTrue(File.ReadAllBytes(loadFile).SequenceEqual(File.ReadAllBytes(cellColony.saveFile)));
+            Assert.IsTrue(File.ReadAllBytes(loadFile).SequenceEqual(File.ReadAllBytes(cellColony.SavePath)));
 
             yield return null;
         }
