@@ -20,14 +20,6 @@ namespace Actuators
         private CircularAttachment attachment;
         public BirthCanalGene gene;
 
-        private void Start()
-        {
-        }
-
-        private void Update()
-        {
-        }
-
         public void GiveBirth()
         {
             var geneTree = GeneNode.GetMutated(GetComponentInParent<Cell.Cell>());

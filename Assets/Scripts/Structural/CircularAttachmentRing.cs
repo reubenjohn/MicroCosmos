@@ -5,13 +5,6 @@ namespace Structural
 {
     public class CircularAttachmentRing
     {
-        private float Radius { get; }
-
-        public CircularAttachmentRing(float radius)
-        {
-            Radius = radius;
-        }
-
         public void AttachAt(CircularAttachment attachment)
         {
             // TODO Handle displacement contention

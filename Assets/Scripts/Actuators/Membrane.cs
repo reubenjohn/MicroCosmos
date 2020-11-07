@@ -12,8 +12,8 @@ namespace Actuators
     {
         public static readonly string ResourcePath = "Organelles/Membrane1";
         public CircleCollider2D CircleCollider { get; private set; }
-        private CircularAttachmentRing attachmentAdapter;
-        public MembraneGene gene; 
+        private readonly CircularAttachmentRing attachmentAdapter = new CircularAttachmentRing();
+        public MembraneGene gene;
 
         public MembraneGene GetGene() => gene;
 
@@ -35,7 +35,6 @@ namespace Actuators
         {
             CircleCollider = GetComponent<CircleCollider2D>();
             CircleCollider.radius = inheritedGene.radius;
-            attachmentAdapter = new CircularAttachmentRing(inheritedGene.radius);
             return transform.Find("Attachments");
         }
 
