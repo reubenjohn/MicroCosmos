@@ -8,7 +8,7 @@ namespace Tests.EditMode.Structural
     public class CircularAttachmentRingTest
     {
         [Test]
-        public void NewTestScriptSimplePasses()
+        public void AttachmentsArePlacedCorrectly()
         {
             var membraneObj = (GameObject) Object.Instantiate(Resources.Load("Organelles/Membrane1"));
             var circularAttachmentRing = new CircularAttachmentRing();

@@ -11,9 +11,9 @@ namespace Organelles
     {
         private CircularAttachment attachment;
         public BirthCanalGene gene;
-        private readonly Control.BinaryControlVariable birthSignal = new Control.BinaryControlVariable(1);
+        public Control.BinaryControlVariable birthSignal = new Control.BinaryControlVariable(1);
 
-        public void GiveBirth()
+        private void GiveBirth()
         {
             birthSignal.Value = 0;
             var geneTree = GeneNode.GetMutated(GetComponentInParent<Cell.Cell>());

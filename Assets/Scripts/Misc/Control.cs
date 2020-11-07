@@ -1,11 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class Control
 {
+    [Serializable]
     public class BinaryControlVariable
     {
         public float Value { get; set; }
-        public float InputSensitivity { get; }
+        public float InputSensitivity;
 
         public BinaryControlVariable(float inputSensitivity)
         {
