@@ -8,8 +8,8 @@
         "resource": "Organelles/Flagella1",
         "name": "Flagella1-0",
         "gene": {
-          "linearPower": 50000.0,
-          "angularPower": 100.0
+          "linearPower": 5000.0,
+          "angularPower": 10.0
         },
         "children": []
       },

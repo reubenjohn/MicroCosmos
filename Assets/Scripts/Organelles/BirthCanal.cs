@@ -11,9 +11,11 @@ namespace Organelles
     {
         private CircularAttachment attachment;
         public BirthCanalGene gene;
+        private readonly Control.BinaryControlVariable birthSignal = new Control.BinaryControlVariable(1);
 
         public void GiveBirth()
         {
+            birthSignal.Value = 0;
             var geneTree = GeneNode.GetMutated(GetComponentInParent<Cell.Cell>());
             var t = transform;
             var cellColony = GetComponentInParent<CellColony>();
@@ -24,6 +26,11 @@ namespace Organelles
 
         public void Actuate(float[] logits)
         {
+            Grapher.Log(logits[0], "GiveBirth?", Color.magenta);
+            var giveBirthSignal = birthSignal.FeedInput(logits[0] > 0.5, logits[0] < .5, Time.deltaTime);
+            if (Mathf.Approximately(giveBirthSignal, 1))
+                GiveBirth();
+            Grapher.Log(giveBirthSignal, "GiveBirth!", Color.red);
         }
 
         public string GetNodeName() => gameObject.name;

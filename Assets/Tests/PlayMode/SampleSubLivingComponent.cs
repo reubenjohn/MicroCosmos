@@ -11,9 +11,6 @@ namespace Tests.PlayMode
         private SampleSubGene gene;
         private JObject state;
 
-        public static SampleSubLivingComponent NewInstance() =>
-            ((GameObject) Resources.Load("SampleSubOrganelle")).AddComponent<SampleSubLivingComponent>();
-
         public string GetNodeName() => gameObject.name;
 
         Transform ILivingComponent.OnInheritGene(object inheritedGene) => OnInheritGene((SampleSubGene) inheritedGene);

@@ -10,7 +10,7 @@ namespace Tests.EditMode.Structural
         [Test]
         public void NewTestScriptSimplePasses()
         {
-            var membraneObj = (GameObject) Resources.Load("Organelles/Membrane1");
+            var membraneObj = (GameObject) Object.Instantiate(Resources.Load("Organelles/Membrane1"));
             var circularAttachmentRing = new CircularAttachmentRing();
 
             circularAttachmentRing.AttachAt(new CircularAttachment(membraneObj.transform, 0f, 15f));

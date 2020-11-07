@@ -18,7 +18,9 @@
           {
             "resource": "Organelles/Membrane1",
             "name": "Membrane1-0",
-            "gene": {},
+            "gene": {
+              "radius": 0.5
+            },
             "children": []
           }
         ]
@@ -49,7 +51,9 @@
           {
             "resource": "Organelles/Membrane1",
             "name": "Membrane1-0",
-            "gene": {},
+            "gene": {
+              "radius": 0.5
+            },
             "children": []
           }
         ]

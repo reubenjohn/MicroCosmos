@@ -1,5 +1,4 @@
-﻿using Organelles;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Brains
 {
@@ -17,36 +16,22 @@ namespace Brains
         public override void Update()
         {
             UpdateFlagellaLogits(actuatorLogits[0]);
-
-            var birthCanal = transform.GetComponentInChildren<BirthCanal>();
-            if (Input.GetKeyDown(KeyCode.B))
-                birthCanal.GiveBirth();
+            UpdateBirthCanalLogits(actuatorLogits[1]);
 
             base.Update();
         }
 
         private void UpdateFlagellaLogits(float[] logits)
         {
-            logits[0] = BinaryControlStep(logits[0], Input.GetKey(KeyCode.W), Input.GetKey(KeyCode.S),
-                linearFlagellaSensitivity);
-            logits[1] = BinaryControlStep(logits[1], Input.GetKey(KeyCode.A), Input.GetKey(KeyCode.D),
-                angularFlagellaSensitivity);
+            logits[0] = Control.BinaryControlStep(logits[0], Input.GetKey(KeyCode.W), Input.GetKey(KeyCode.S),
+                linearFlagellaSensitivity, Time.deltaTime);
+            logits[1] = Control.BinaryControlStep(logits[1], Input.GetKey(KeyCode.A), Input.GetKey(KeyCode.D),
+                angularFlagellaSensitivity, Time.deltaTime);
         }
 
-        private static float BinaryControlStep(float value, bool positiveInput, bool negativeInput,
-            float inputSensitivity)
+        private void UpdateBirthCanalLogits(float[] logits)
         {
-            var linearTarget = ToLogit(positiveInput) - ToLogit(negativeInput);
-            var remainingDistance = linearTarget - value;
-            var maxLinearStep = Time.deltaTime * inputSensitivity;
-            var linearStep = Mathf.Clamp(remainingDistance, -maxLinearStep, maxLinearStep);
-            value += linearStep;
-            return value;
-        }
-
-        private static float ToLogit(bool boolean)
-        {
-            return boolean ? 1 : 0;
+            logits[0] = Input.GetKey(KeyCode.B) ? 1 : -1;
         }
     }
 }

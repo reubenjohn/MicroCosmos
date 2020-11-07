@@ -23,7 +23,8 @@ namespace Tests.PlayMode.Cell
             var cellColony = GameObject.Find("CellColony").GetComponent<CellColony>();
             cellColony.saveDirectory = $"{Application.temporaryCachePath}/testing/CellColonyTest";
             cellColony.saveFile = "testSave";
-            Assert.AreEqual($"{Application.temporaryCachePath}/testing/CellColonyTest/testSave.json", cellColony.SavePath);
+            Assert.AreEqual($"{Application.temporaryCachePath}/testing/CellColonyTest/testSave.json",
+                cellColony.SavePath);
             try
             {
                 Directory.Delete(cellColony.saveDirectory, true);
@@ -33,7 +34,8 @@ namespace Tests.PlayMode.Cell
             }
 
             cellColony.OnSave();
-            Assert.IsTrue(File.Exists($"{Application.temporaryCachePath}/testing/CellColonyTest/testSave.json"));
+            Assert.IsTrue(File.Exists($"{Application.temporaryCachePath}/testing/CellColonyTest/testSave.json"),
+                "Saving creates a test folder when it doesn't already exist");
 
             cellColony.saveFile = "testLoad";
             var loadFile = cellColony.SavePath;
@@ -50,7 +52,7 @@ namespace Tests.PlayMode.Cell
 
             cellColony.saveFile = "testSave";
             cellColony.OnSave();
-            Assert.IsTrue(File.ReadAllBytes(loadFile).SequenceEqual(File.ReadAllBytes(cellColony.SavePath)));
+            Assert.AreEqual(File.ReadAllText(loadFile), File.ReadAllText(cellColony.SavePath));
 
             yield return null;
         }
