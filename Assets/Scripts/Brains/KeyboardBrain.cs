@@ -2,23 +2,15 @@
 
 namespace Brains
 {
-    public class KeyboardBrain : Brain, IBrain
+    public class KeyboardBrain : AbstractBrain, IBrain
     {
         public float linearFlagellaSensitivity = 0.1f;
         public float angularFlagellaSensitivity = 0.1f;
 
-        public new void Start()
-        {
-            base.Start();
-        }
-
-
-        public override void Update()
+        public override void React(float[][] sensoryLogits)
         {
             UpdateFlagellaLogits(actuatorLogits[0]);
             UpdateBirthCanalLogits(actuatorLogits[1]);
-
-            base.Update();
         }
 
         private void UpdateFlagellaLogits(float[] logits)

@@ -93,7 +93,7 @@ GameObject:
   - component: {fileID: 3442152481961002583}
   - component: {fileID: 1335091943258292080}
   - component: {fileID: 1097071728635824033}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Membrane1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
