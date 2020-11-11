@@ -3,6 +3,7 @@ using DefaultNamespace;
 using Genetics;
 using Newtonsoft.Json.Linq;
 using Persistence;
+using UnityEditor;
 using UnityEngine;
 
 namespace Organelles
@@ -26,11 +27,14 @@ namespace Organelles
 
         public void Actuate(float[] logits)
         {
-            Grapher.Log(logits[0], "GiveBirth?", Color.magenta);
             var giveBirthSignal = birthSignal.FeedInput(logits[0] > 0.5, logits[0] < .5, Time.deltaTime);
             if (Mathf.Approximately(giveBirthSignal, 1))
                 GiveBirth();
-            Grapher.Log(giveBirthSignal, "GiveBirth!", Color.red);
+            if (GetComponentInParent<Cell.Cell>().gameObject == Selection.activeGameObject)
+            {
+                Grapher.Log(logits[0], "GiveBirth?", Color.magenta);
+                Grapher.Log(giveBirthSignal, "GiveBirth!", Color.red);
+            }
         }
 
         public string GetNodeName() => gameObject.name;

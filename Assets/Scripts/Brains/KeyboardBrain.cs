@@ -2,7 +2,7 @@
 
 namespace Brains
 {
-    public class KeyboardBrain : AbstractBrain, IBrain
+    public class KeyboardBrain : AbstractBrain
     {
         public float linearFlagellaSensitivity = 0.1f;
         public float angularFlagellaSensitivity = 0.1f;

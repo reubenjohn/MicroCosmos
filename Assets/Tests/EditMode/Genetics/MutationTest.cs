@@ -122,6 +122,23 @@ namespace Tests.EditMode.Genetics
             Assert.AreEqual(new[] {0}, mutator.Mutate(new[] {-1}));
         }
 
+        [Test]
+        public void TestFloat2DClampedMutation()
+        {
+            var mutator = new Mutator.Float2DClamped(0.2f, -1f, 1f);
+            Random.InitState(1); // sample ~= -0.99
+            Assert.AreEqual(-1f, mutator.Mutate(new[,] {{-.81f}})[0, 0]);
+
+            Random.InitState(0); // sample ~= -0.16
+            Assert.AreEqual(.166344151f, mutator.Mutate(new[,] {{.2f}})[0, 0]);
+
+            Random.InitState(2); // sample ~=  0.17
+            Assert.AreEqual(.23404859f, mutator.Mutate(new[,] {{.2f}})[0, 0]);
+
+            Random.InitState(18); // sample ~=  0.903
+            Assert.AreEqual(1f, mutator.Mutate(new[,] {{.85f}})[0, 0]);
+        }
+
         private enum MyEnum
         {
             A,

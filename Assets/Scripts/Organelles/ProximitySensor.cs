@@ -40,6 +40,7 @@ namespace Organelles
         public void Sense(float[] logits)
         {
             spriteRenderer.color = new Color(0, 0, 0, .2f);
+            // TODO Select closest one only
             foreach (var otherCollider in cellCollidersInRange)
             {
                 // var cell = otherCollider.GetComponent<Cell.Cell>();

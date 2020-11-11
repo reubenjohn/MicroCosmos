@@ -13,8 +13,8 @@ namespace Genetics
     {
         object IGeneTranscriber.Deserialize(JToken gene) => Deserialize(gene);
         object IGeneTranscriber.Mutate(object gene) => Mutate((T) gene);
-        public abstract T Deserialize(JToken gene);
 
+        public abstract T Deserialize(JToken gene);
         public abstract T Mutate(T gene);
     }
 }

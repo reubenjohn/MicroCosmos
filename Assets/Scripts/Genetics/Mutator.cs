@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using Newtonsoft.Json;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -236,5 +237,40 @@ namespace Genetics
                 return enumerable.Select(elementMutator.Mutate);
             }
         }
+
+        public class Float2DClamped : IMutator<float[,]>
+        {
+            private readonly float mutationRate;
+            private readonly float min;
+            private readonly float max;
+
+            public Float2DClamped(float mutationRate, float min, float max)
+            {
+                this.mutationRate = mutationRate;
+                this.min = min;
+                this.max = max;
+            }
+
+            public float[,] Mutate(float[,] val) => Mutate(val, mutationRate, min, max);
+
+            public static float[,] Mutate(float[,] val, float mutationRate, float min, float max)
+            {
+                var nX = val.GetLength(0);
+                var nY = val.GetLength(1);
+                var output = new float[nX, nY];
+                for (var x = 0; x < nX; x++)
+                {
+                    for (var y = 0; y < nY; y++)
+                    {
+                        output[x, y] = val[x, y].MutateClamped(mutationRate, min, max);
+                    }
+                }
+
+                return output;
+            }
+        }
+
+        public static float[,] MutateClamped(this float[,] val, float mutationRate, float min, float max) =>
+            Float2DClamped.Mutate(val, mutationRate, min, max);
     }
 }

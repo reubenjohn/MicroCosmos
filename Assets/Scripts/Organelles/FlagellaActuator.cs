@@ -1,5 +1,6 @@
 ﻿using Genetics;
 using Newtonsoft.Json.Linq;
+using UnityEditor;
 using UnityEngine;
 
 namespace Organelles
@@ -17,8 +18,11 @@ namespace Organelles
 
         public void Actuate(float[] logits)
         {
-            Grapher.Log(logits[0], "Flagella[0]", Color.blue);
-            Grapher.Log(logits[1], "Flagella[1]", Color.cyan);
+            if (GetComponentInParent<Cell.Cell>().gameObject == Selection.activeGameObject)
+            {
+                Grapher.Log(logits[0], "Flagella[0]", Color.blue);
+                Grapher.Log(logits[1], "Flagella[1]", Color.cyan);   
+            }
             rb.AddRelativeForce(CalculateRelativeForce(gene, logits, Time.deltaTime));
             rb.AddTorque(CalculateTorque(gene, logits, Time.deltaTime));
         }

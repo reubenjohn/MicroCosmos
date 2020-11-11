@@ -11,10 +11,9 @@ namespace Brains
         private IActuator[] actuators { get; set; }
         public float[][] actuatorLogits { get; private set; }
 
-        // Start is called before the first frame update
         public void Start()
         {
-            actuators = GetComponentsInChildren<IActuator>();
+            actuators = GetComponentInParent<Cell.Cell>().GetComponentsInChildren<IActuator>();
             Debug.Log($"Found {actuators.Length} actuators");
             actuatorLogits = actuators.Select(actuator =>
             {
@@ -23,7 +22,7 @@ namespace Brains
                 return logits;
             }).ToArray();
 
-            sensors = GetComponentsInChildren<ISensor>();
+            sensors = GetComponentInParent<Cell.Cell>().GetComponentsInChildren<ISensor>();
             Debug.Log($"Found {sensors.Length} sensors");
             sensorLogits = sensors.Select(sensor =>
             {
