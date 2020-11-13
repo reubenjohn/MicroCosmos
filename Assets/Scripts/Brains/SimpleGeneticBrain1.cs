@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Brains
 {
-    public class SimpleGeneticBrain : AbstractBrain, ILivingComponent<GeneticBrainGene>
+    public class SimpleGeneticBrain1 : AbstractBrain, ILivingComponent<GeneticBrainGene>
     {
         private GeneticBrainGene gene;
 
