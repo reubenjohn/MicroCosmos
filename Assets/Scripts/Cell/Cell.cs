@@ -1,44 +1,35 @@
 ﻿using System.Linq;
 using Genetics;
 using Newtonsoft.Json.Linq;
-using Persistence;
+using Organelles;
 using UnityEngine;
 
 namespace Cell
 {
-    public class Cell : MonoBehaviour, ILivingComponent<CellGene>
+    public class Cell : AbstractLivingComponent<CellGene>
     {
         private Rigidbody2D rb;
 
         private void Start()
         {
             rb = GetComponent<Rigidbody2D>();
+            gene = gene ?? new CellGene();
         }
 
-        public string GetNodeName() => gameObject.name;
+        public override Transform OnInheritGene(CellGene inheritedGene) => transform.DestroyChildren();
 
-        public Transform OnInheritGene(CellGene inheritedGene) => transform.DestroyChildren();
+        public override GeneTranscriber<CellGene> GetGeneTranscriber() => CellGeneTranscriber.Singleton;
 
-        public GeneTranscriber<CellGene> GetGeneTranscriber() => CellGeneTranscriber.Singleton;
+        public override string GetResourcePath() => "Cells/Cell1";
 
-        Transform ILivingComponent.OnInheritGene(object inheritedGene) => OnInheritGene((CellGene) inheritedGene);
-
-        IGeneTranscriber ILivingComponent.GetGeneTranscriber() => GetGeneTranscriber();
-
-        public CellGene GetGene() => new CellGene();
-
-        object ILivingComponent.GetGene() => ((ILivingComponent<CellGene>) this).GetGene();
-
-        public string GetResourcePath() => "Cells/Cell1";
-
-        public JObject GetState() =>
+        public override JObject GetState() =>
             new JObject
             {
                 ["position"] = Serialization.ToSerializable(transform.position),
                 ["rotation"] = transform.rotation.eulerAngles.z
             };
 
-        public void SetState(JObject state)
+        public override void SetState(JObject state)
         {
             if (rb != null)
             {
@@ -52,7 +43,7 @@ namespace Cell
             transform.rotation = rotation != null ? Quaternion.Euler(0, 0, (float) rotation) : new Quaternion();
         }
 
-        public ILivingComponent[] GetSubLivingComponents()
+        public override ILivingComponent[] GetSubLivingComponents()
         {
             return transform.Children()
                 .Select(organelleTransform => organelleTransform.GetComponent<ILivingComponent>())

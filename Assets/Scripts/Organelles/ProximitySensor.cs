@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Genetics;
 using Newtonsoft.Json.Linq;
 using UnityEditor;
@@ -7,21 +6,17 @@ using UnityEngine;
 
 namespace Organelles
 {
-    public class ProximitySensor : MonoBehaviour, ILivingComponent<ProximitySensorGene>, ISensor
+    public class ProximitySensor : AbstractLivingComponent<ProximitySensorGene>, ISensor
     {
-        public ProximitySensorGene gene;
         public ContactFilter2D contactFilter2D;
 
         private SpriteRenderer spriteRenderer;
         private readonly List<Collider2D> cellCollidersInRange = new List<Collider2D>();
 
-        private bool isInherited;
-
         private void Start()
         {
             spriteRenderer = transform.Find("Overlay").GetComponent<SpriteRenderer>();
-            if (!isInherited)
-                OnInheritGene(gene);
+            gene = gene ?? new ProximitySensorGene();
         }
 
         public float[] Connect() => new float[10]; // TODO Match number of substances
@@ -33,13 +28,11 @@ namespace Organelles
                 cellCollidersInRange.Add(other);
         }
 
-        public void OnTriggerExit2D(Collider2D other)
-        {
-            cellCollidersInRange.Remove(other);
-        }
+        public void OnTriggerExit2D(Collider2D other) => cellCollidersInRange.Remove(other);
 
         public void Sense(float[] logits)
         {
+            logits[0] = 0;
             spriteRenderer.color = new Color(0, 0, 0, .2f);
             // TODO Select closest one only
             foreach (var otherCollider in cellCollidersInRange)
@@ -55,39 +48,9 @@ namespace Organelles
             }
         }
 
-        public string GetNodeName() => gameObject.name;
+        public override GeneTranscriber<ProximitySensorGene> GetGeneTranscriber() =>
+            ProximitySensorGeneTranscriber.Singleton;
 
-        Transform ILivingComponent.OnInheritGene(object inheritedGene) =>
-            OnInheritGene((ProximitySensorGene) inheritedGene);
-
-        public GeneTranscriber<ProximitySensorGene> GetGeneTranscriber() => ProximitySensorGeneTranscriber.Singleton;
-
-        public ProximitySensorGene GetGene() => gene;
-
-        public Transform OnInheritGene(ProximitySensorGene inheritedGene)
-        {
-            gene = inheritedGene;
-            isInherited = true;
-            return transform;
-        }
-
-        IGeneTranscriber ILivingComponent.GetGeneTranscriber() => GetGeneTranscriber();
-
-        object ILivingComponent.GetGene() => GetGene();
-
-        public string GetResourcePath() => "Organelles/ProximitySensor";
-
-        public JObject GetState() => new JObject();
-
-        public void SetState(JObject state)
-        {
-        }
-
-        public ILivingComponent[] GetSubLivingComponents() => new ILivingComponent[] { };
-    }
-
-    [Serializable]
-    public class ProximitySensorGene
-    {
+        public override string GetResourcePath() => "Organelles/ProximitySensor";
     }
 }

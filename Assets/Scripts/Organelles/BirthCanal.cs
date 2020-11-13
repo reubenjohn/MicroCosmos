@@ -1,27 +1,16 @@
 ﻿using Cell;
 using DefaultNamespace;
 using Genetics;
-using Newtonsoft.Json.Linq;
 using Persistence;
 using UnityEditor;
 using UnityEngine;
 
 namespace Organelles
 {
-    public class BirthCanal : MonoBehaviour, ILivingComponent<BirthCanalGene>, IActuator
+    public class BirthCanal : AbstractLivingComponent<BirthCanalGene>, IActuator
     {
-        private CircularAttachment attachment;
-        public BirthCanalGene gene;
         public Control.BinaryControlVariable birthSignal = new Control.BinaryControlVariable(1);
-
-        private void GiveBirth()
-        {
-            birthSignal.Value = 0;
-            var geneTree = GeneNode.GetMutated(GetComponentInParent<Cell.Cell>());
-            var t = transform;
-            var cellColony = GetComponentInParent<CellColony>();
-            GeneNode.Load(geneTree, cellColony.transform, t.Find("SpawnPoint").position, t.rotation);
-        }
+        private CircularAttachment attachment;
 
         public float[] Connect() => new float[1];
 
@@ -37,17 +26,19 @@ namespace Organelles
             }
         }
 
-        public string GetNodeName() => gameObject.name;
-
-        Transform ILivingComponent.OnInheritGene(object inheritedGene) => OnInheritGene((BirthCanalGene) inheritedGene);
-
-        public GeneTranscriber<BirthCanalGene> GetGeneTranscriber() => BirthCanalGeneTranscriber.Singleton;
-
-        public BirthCanalGene GetGene() => gene;
-
-        public Transform OnInheritGene(BirthCanalGene inheritedGene)
+        private void GiveBirth()
         {
-            gene = inheritedGene;
+            birthSignal.Value = 0;
+            var geneTree = GeneNode.GetMutated(GetComponentInParent<Cell.Cell>());
+            var t = transform;
+            var cellColony = GetComponentInParent<CellColony>();
+            GeneNode.Load(geneTree, cellColony.transform, t.Find("SpawnPoint").position, t.rotation);
+        }
+
+        public override GeneTranscriber<BirthCanalGene> GetGeneTranscriber() => BirthCanalGeneTranscriber.Singleton;
+
+        public override Transform OnInheritGene(BirthCanalGene inheritedGene)
+        {
             attachment = new CircularAttachment(
                 transform,
                 inheritedGene.circularMembranePreferredAttachmentAngle,
@@ -55,21 +46,9 @@ namespace Organelles
             );
             var membrane = GetComponentInParent<Membrane>();
             membrane.Attach(attachment);
-            return transform;
+            return base.OnInheritGene(inheritedGene);
         }
 
-        IGeneTranscriber ILivingComponent.GetGeneTranscriber() => GetGeneTranscriber();
-
-        object ILivingComponent.GetGene() => GetGene();
-
-        public string GetResourcePath() => "Organelles/BirthCanal1";
-
-        public JObject GetState() => new JObject();
-
-        public void SetState(JObject state)
-        {
-        }
-
-        public ILivingComponent[] GetSubLivingComponents() => new ILivingComponent[] { };
+        public override string GetResourcePath() => "Organelles/BirthCanal1";
     }
 }

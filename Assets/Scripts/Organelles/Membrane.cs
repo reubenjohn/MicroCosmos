@@ -1,52 +1,35 @@
 ﻿using System.Linq;
 using DefaultNamespace;
 using Genetics;
-using Newtonsoft.Json.Linq;
 using Structural;
 using UnityEngine;
 
 namespace Organelles
 {
-    public class Membrane : MonoBehaviour, ILivingComponent<MembraneGene>
+    public class Membrane : AbstractLivingComponent<MembraneGene>
     {
         public static readonly string ResourcePath = "Organelles/Membrane1";
-        public CircleCollider2D CircleCollider { get; private set; }
         private readonly CircularAttachmentRing attachmentAdapter = new CircularAttachmentRing();
-        public MembraneGene gene;
+        public CircleCollider2D CircleCollider { get; private set; }
 
-        public MembraneGene GetGene() => gene;
+        public override GeneTranscriber<MembraneGene> GetGeneTranscriber() => MembraneGeneTranscriber.Singleton;
 
-        public GeneTranscriber<MembraneGene> GetGeneTranscriber() => MembraneGeneTranscriber.Singleton;
+        public override string GetResourcePath() => ResourcePath;
 
-        public string GetNodeName() => gameObject.name;
-
-        public string GetResourcePath() => ResourcePath;
-
-        public JObject GetState() => new JObject();
-
-        public ILivingComponent[] GetSubLivingComponents() => transform.Find("Attachments")
+        public override ILivingComponent[] GetSubLivingComponents() => transform.Find("Attachments")
             .Children()
             .Select(subTransform => subTransform.GetComponent<ILivingComponent>())
             .Where(e => e != null)
             .ToArray();
 
-        public Transform OnInheritGene(MembraneGene inheritedGene)
+        public override Transform OnInheritGene(MembraneGene inheritedGene)
         {
+            base.OnInheritGene(inheritedGene);
             CircleCollider = GetComponent<CircleCollider2D>();
             CircleCollider.radius = inheritedGene.radius;
             return transform.Find("Attachments");
         }
 
-        public Transform OnInheritGene(object inheritedGene) => OnInheritGene((MembraneGene) inheritedGene);
-
-        public void SetState(JObject state)
-        {
-        }
-
         public void Attach(CircularAttachment attachment) => attachmentAdapter.AttachAt(attachment);
-
-        object ILivingComponent.GetGene() => GetGene();
-
-        IGeneTranscriber ILivingComponent.GetGeneTranscriber() => GetGeneTranscriber();
     }
 }
