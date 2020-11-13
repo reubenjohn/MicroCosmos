@@ -1,22 +1,22 @@
 ﻿using System;
 using UnityEngine;
 
-public class Control
+public static class Control
 {
     [Serializable]
     public class BinaryControlVariable
     {
         public float Value { get; set; }
-        public float InputSensitivity;
+        public float inputSensitivity;
 
         public BinaryControlVariable(float inputSensitivity)
         {
-            InputSensitivity = inputSensitivity;
+            this.inputSensitivity = inputSensitivity;
         }
 
         public float FeedInput(bool positive, bool negative, float deltaTime)
         {
-            return Value = BinaryControlStep(Value, positive, negative, InputSensitivity, deltaTime);
+            return Value = BinaryControlStep(Value, positive, negative, inputSensitivity, deltaTime);
         }
     }
 
