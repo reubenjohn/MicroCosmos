@@ -26,7 +26,11 @@ namespace Brains
         {
             Logits.Flatten(sensorLogits, flattenedInput);
 
+            Logits.Clamp(flattenedInput);
+
             neuralNetwork.React(flattenedInput, flattenedOutput);
+
+            Logits.Clamp(flattenedOutput);
 
             Logits.Unflatten(flattenedOutput, actuatorLogits);
         }

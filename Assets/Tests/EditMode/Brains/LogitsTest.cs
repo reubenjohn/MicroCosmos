@@ -1,13 +1,19 @@
 ﻿using System;
-using System.Collections;
 using Brains;
 using NUnit.Framework;
-using UnityEngine.TestTools;
 
 namespace Tests.EditMode.Brains
 {
     public class LogitsTest
     {
+        [Test]
+        public void TestClamp()
+        {
+            var logits = new[] {12f, -6f, 1f, -1f, .1f, -.1f};
+            Logits.Clamp(logits);
+            Assert.AreEqual(new[] {1f, -1f, 1f, -1f, .1f, -.1f}.ToPrintable(), logits.ToPrintable());
+        }
+
         [Test]
         public void TestFlatten()
         {
@@ -39,15 +45,6 @@ namespace Tests.EditMode.Brains
                 flattenedOutput
             ));
             StringAssert.Contains("Destination array was too long", ex.Message);
-        }
-
-
-        [UnityTest]
-        public IEnumerator NewTestScriptWithEnumeratorPasses()
-        {
-            // Use the Assert class to test conditions.
-            // Use yield to skip a frame.
-            yield return null;
         }
     }
 }

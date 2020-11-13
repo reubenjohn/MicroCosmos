@@ -1,9 +1,16 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Brains
 {
     public static class Logits
     {
+        public static void Clamp(float[] flattenedOutput)
+        {
+            for (var i = 0; i < flattenedOutput.Length; i++)
+                flattenedOutput[i] = Mathf.Clamp(flattenedOutput[i], -1, 1);
+        }
+
         public static void Flatten(float[][] inputs, float[] flattenedOutput)
         {
             var inputFullyCompleted = 0;
