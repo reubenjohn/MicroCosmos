@@ -7,7 +7,7 @@ namespace Brains
         public float linearFlagellaSensitivity = 0.1f;
         public float angularFlagellaSensitivity = 0.1f;
 
-        public override void React(float[][] sensoryLogits)
+        protected override void React()
         {
             UpdateFlagellaLogits(actuatorLogits[0]);
             UpdateBirthCanalLogits(actuatorLogits[1]);

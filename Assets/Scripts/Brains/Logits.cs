@@ -1,4 +1,6 @@
-﻿namespace Brains
+﻿using System;
+
+namespace Brains
 {
     public static class Logits
     {
@@ -10,6 +12,9 @@
                 input.CopyTo(flattenedOutput, inputFullyCompleted);
                 inputFullyCompleted += input.Length;
             }
+
+            if (inputFullyCompleted < flattenedOutput.Length)
+                throw new ArgumentException("Destination array was too long");
         }
 
         public static void Unflatten(float[] flattenedLogits, float[][] unflattenedLogits)
@@ -18,10 +23,7 @@
             foreach (var output in unflattenedLogits)
             {
                 for (var i = 0; i < output.Length; i++)
-                {
                     output[i] = flattenedLogits[inputsFullyCompleted + i];
-                }
-
                 inputsFullyCompleted += output.Length;
             }
         }

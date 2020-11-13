@@ -7,9 +7,9 @@ namespace Brains
     public abstract class AbstractBrain : MonoBehaviour
     {
         private ISensor[] sensors;
-        public float[][] sensorLogits { get; private set; }
+        protected float[][] sensorLogits { get; private set; }
         private IActuator[] actuators { get; set; }
-        public float[][] actuatorLogits { get; private set; }
+        protected float[][] actuatorLogits { get; private set; }
 
         public void Start()
         {
@@ -36,10 +36,10 @@ namespace Brains
         public virtual void Update()
         {
             for (var i = 0; i < sensors.Length; i++) sensors[i].Sense(sensorLogits[i]);
-            React(sensorLogits);
+            React();
             for (var i = 0; i < actuators.Length; i++) actuators[i].Actuate(actuatorLogits[i]);
         }
 
-        public abstract void React(float[][] sensoryLogits);
+        protected abstract void React();
     }
 }

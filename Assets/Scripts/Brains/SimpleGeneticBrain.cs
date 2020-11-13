@@ -1,5 +1,4 @@
 ﻿using System.Linq;
-using DefaultNamespace;
 using Genetics;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -10,33 +9,27 @@ namespace Brains
     {
         private GeneticBrainGene gene;
 
-        private float[] flattenedInput;
-        private float[] flattenedOutput;
-        private FullyConnectedLayer dense1;
+        private NeuralInterface neuralInterface;
 
         private new void Start()
         {
             base.Start();
-            flattenedInput = new float[sensorLogits.Select(logits => logits.Length).Sum()];
-            flattenedOutput = new float[actuatorLogits.Select(logits => logits.Length).Sum()];
             if (gene == null)
             {
+                var inputLength = sensorLogits.Select(logits => logits.Length).Sum();
+                var outputLength = actuatorLogits.Select(logits => logits.Length).Sum();
                 gene = new GeneticBrainGene()
                 {
-                    biases = RandomUtils.RandomLogits(flattenedOutput.Length),
-                    weights = RandomUtils.RandomLogits(flattenedOutput.Length, flattenedInput.Length)
+                    biases = RandomUtils.RandomLogits(outputLength),
+                    weights = RandomUtils.RandomLogits(outputLength, inputLength)
                 };
             }
+
+            neuralInterface = new NeuralInterface(sensorLogits, actuatorLogits,
+                new SimpleNeuralNetwork1(gene));
         }
 
-        public override void React(float[][] sensoryLogits)
-        {
-            Logits.Flatten(sensoryLogits, flattenedInput);
-
-            dense1.Calculate(flattenedInput, flattenedOutput);
-
-            Logits.Unflatten(flattenedOutput, actuatorLogits);
-        }
+        protected override void React() => neuralInterface.React();
 
         public string GetNodeName() => gameObject.name;
 
@@ -50,13 +43,6 @@ namespace Brains
         public Transform OnInheritGene(GeneticBrainGene inheritedGene)
         {
             gene = inheritedGene;
-            var weights = inheritedGene?.weights ?? new float[flattenedOutput.Length, flattenedInput.Length]
-                .MutateClamped(1f, -1f, 1f);
-            var biases = inheritedGene?.biases ??
-                         new float[flattenedOutput.Length]
-                             .Select(b => b.MutateClamped(2f, -1f, 1f))
-                             .ToArray();
-            dense1 = new FullyConnectedLayer(weights, biases);
             return transform;
         }
 

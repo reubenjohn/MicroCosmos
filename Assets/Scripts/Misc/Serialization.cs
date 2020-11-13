@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using UnityEngine;
 
 public static class Serialization
@@ -9,4 +11,12 @@ public static class Serialization
         var xy = vs.Split(' ');
         return new Vector2(float.Parse(xy[0]), float.Parse(xy[1]));
     }
+
+    public static string ToPrintable(this float[] arr) => string.Join(" ", arr);
+
+    public static string ToPrintable(this float[] arr, int precision) =>
+        string.Join(" ", arr.Select(f => Math.Round(f, precision)));
+
+    public static string ToPrintable(this float[][] arr, int precision) =>
+        string.Join(", ", arr.Select(a => a.ToPrintable(precision)));
 }

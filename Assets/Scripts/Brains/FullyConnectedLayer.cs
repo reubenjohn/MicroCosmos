@@ -4,10 +4,10 @@ namespace Brains
 {
     public class FullyConnectedLayer
     {
-        private int nInputs;
-        private int nOutputs;
-        private float[,] weights;
-        private float[] biases;
+        private readonly int nInputs;
+        private readonly int nOutputs;
+        private readonly float[,] weights;
+        private readonly float[] biases;
 
         public FullyConnectedLayer(float[,] weights, float[] biases)
         {

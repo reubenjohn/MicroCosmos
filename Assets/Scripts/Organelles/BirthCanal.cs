@@ -27,7 +27,7 @@ namespace Organelles
 
         public void Actuate(float[] logits)
         {
-            var giveBirthSignal = birthSignal.FeedInput(logits[0] > 0.5, logits[0] < .5, Time.deltaTime);
+            var giveBirthSignal = birthSignal.FeedInput(logits[0] > -.5f, logits[0] < .5, Time.deltaTime);
             if (Mathf.Approximately(giveBirthSignal, 1))
                 GiveBirth();
             if (GetComponentInParent<Cell.Cell>().gameObject == Selection.activeGameObject)

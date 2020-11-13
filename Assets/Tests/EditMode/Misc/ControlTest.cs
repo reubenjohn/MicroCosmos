@@ -1,7 +1,7 @@
 ﻿using NUnit.Framework;
 using UnityEngine;
 
-namespace Tests.EditMode
+namespace Tests.EditMode.Misc
 {
     public class ControlTest
     {
