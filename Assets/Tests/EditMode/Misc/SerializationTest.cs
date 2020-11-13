@@ -15,10 +15,14 @@ namespace Tests.EditMode.Misc
 
         [Test]
         public static void TestFloat1DSerialization() =>
-            Assert.AreEqual("0.123 0.421", new[] {.123f, .421f}.ToPrintable());
+            Assert.AreEqual("[0.123,0.421]", new[] {.123f, .421f}.ToPrintable());
 
         [Test]
         public static void TestFloat1DSerializationWithRounding() =>
-            Assert.AreEqual("0.12 0.43", new[] {.123f, .429f}.ToPrintable(2));
+            Assert.AreEqual("[0.12,0.43]", new[] {.123f, .429f}.ToPrintable(2));
+
+        [Test]
+        public static void TestFloat1DOf1DSerializationWithRounding() =>
+            Assert.AreEqual("[[0.12,0.43],[0.31]]", new[] {new[] {.123f, .429f}, new[] {.31f}}.ToPrintable(2));
     }
 }
