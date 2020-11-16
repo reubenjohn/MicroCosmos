@@ -28,6 +28,16 @@ namespace Genealogy
             UpdateViewerNode(viewerHandle);
         }
 
+        public void OnAddConnections(List<Relation> relations)
+        {
+            foreach (var relation in relations)
+            {
+                var from = viewerNodes[relation.From.Guid].ViewerObj.GetComponent<RectTransform>();
+                var to = viewerNodes[relation.To.Guid].ViewerObj.GetComponent<RectTransform>();
+                ConnectionManager.CreateConnection(from, to);
+            }
+        }
+
         private static string NodeName(LayoutNode layout, GameObject rootViewerNode)
         {
             if (layout.Node.NodeType == NodeType.Cell)

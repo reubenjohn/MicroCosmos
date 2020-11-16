@@ -358,7 +358,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64d5217a38feb4c3d895d0f1edcd9978, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  connectionPrefab: {fileID: 11479312, guid: b8e9276d2ec4a497c8b03ea67a0c3c83, type: 3}
+  connectionPrefab: {fileID: 11479312, guid: e8cdd6c83060eb44db045eb5edff06f2, type: 3}
   connections: []
 --- !u!4 &535754622
 Transform:

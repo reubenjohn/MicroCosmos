@@ -25,11 +25,16 @@ namespace Genealogy.AsexualFamilyTree
             {
                 RegisterNode(new LayoutNode(listeners, node, null));
             }
-            else if (node != null)
+            else
             {
-                var parent = layoutInfo[relations[0].From.Guid];
-                RegisterNode(new LayoutNode(listeners, node, parent));
-            } // else only relationship being added
+                if (node != null)
+                {
+                    var parent = layoutInfo[relations[0].From.Guid]; // Assume single asexual parent
+                    RegisterNode(new LayoutNode(listeners, node, parent));
+
+                    foreach (var listener in listeners) listener.OnAddConnections(relations);
+                }
+            }
         }
 
         private LayoutNode RegisterNode(LayoutNode node) => layoutInfo[node.Node.Guid] = node;
@@ -37,6 +42,8 @@ namespace Genealogy.AsexualFamilyTree
         public LayoutNode GetNode(Guid guid) => layoutInfo[guid];
 
         public void AddListener(ILayoutChangeListener<LayoutNode> layoutListener) => listeners.Add(layoutListener);
-        public void RemoveListener(ILayoutChangeListener<LayoutNode> layoutListener) => listeners.Remove(layoutListener);
+
+        public void RemoveListener(ILayoutChangeListener<LayoutNode> layoutListener) =>
+            listeners.Remove(layoutListener);
     }
 }

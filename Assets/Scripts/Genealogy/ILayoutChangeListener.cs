@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using Genealogy.AsexualFamilyTree;
 
 namespace Genealogy
 {
@@ -7,5 +6,6 @@ namespace Genealogy
     {
         void OnUpdateNode(T layout);
         void OnAddNode(T layout);
+        void OnAddConnections(List<Relation> relations);
     }
 }

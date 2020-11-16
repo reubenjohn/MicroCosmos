@@ -2,7 +2,8 @@
     "name": "MicroCosmosScripts",
     "references": [
         "GUID:23ffc7b4c55025442958275b12c7eec1",
-        "GUID:926eb82c0f8776a4eb79fb89df99f3c4"
+        "GUID:926eb82c0f8776a4eb79fb89df99f3c4",
+        "GUID:014246a836975d343aaea72cea2585b3"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -13,5 +14,6 @@
     ],
     "autoReferenced": true,
     "defineConstraints": [],
-    "versionDefines": []
+    "versionDefines": [],
+    "noEngineReferences": false
 }
