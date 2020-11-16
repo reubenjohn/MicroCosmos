@@ -4,7 +4,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Genealogy
+namespace Genealogy.AsexualFamilyTree
 {
     public class LayoutNode
     {
@@ -13,9 +13,12 @@ namespace Genealogy
 
         private readonly List<LayoutNode> children;
         private Rect bounds;
+        private readonly List<ILayoutChangeListener<LayoutNode>> listeners;
 
-        public LayoutNode(Node node, [CanBeNull] LayoutNode parent)
+        public LayoutNode(List<ILayoutChangeListener<LayoutNode>> layoutChangeListeners,
+            Node node, [CanBeNull] LayoutNode parent)
         {
+            listeners = layoutChangeListeners;
             Node = node;
             Parent = parent;
             children = new List<LayoutNode>();
@@ -27,6 +30,7 @@ namespace Genealogy
             else
             {
                 bounds = new Rect(0, 0, 1, 1);
+                NotifyListenersOfCreate();
             }
         }
 
@@ -34,8 +38,9 @@ namespace Genealogy
 
         public void AddChild(LayoutNode child)
         {
-            XMax = Mathf.Max(bounds.xMax, child.bounds.xMax);
             children.Add(child);
+            child.NotifyListenersOfCreate();
+            XMax = Mathf.Max(bounds.xMax, child.bounds.xMax);
         }
 
         public float XMax
@@ -43,32 +48,22 @@ namespace Genealogy
             get => bounds.xMax;
             private set
             {
-                if (!Mathf.Approximately(bounds.xMax, value))
-                {
-                    bounds.xMax = value;
+                if (Mathf.Approximately(bounds.xMax, value)) return;
+                
+                bounds.xMax = value;
+                NotifyListenersOfUpdate();
 
-                    if (Parent == null) return;
+                if (Parent == null) return;
 
-                    var siblingIndex = SiblingIndex;
-                    if (siblingIndex + 1 < Parent.children.Count)
-                        Parent.children[siblingIndex + 1].X = XMax;
+                var siblingIndex = SiblingIndex;
+                if (siblingIndex + 1 < Parent.children.Count)
+                    Parent.children[siblingIndex + 1].X = XMax;
 
-                    Parent.XMax = Mathf.Max(Parent.XMax, Parent.children.Last().XMax);
-                }
+                Parent.XMax = Mathf.Max(Parent.XMax, Parent.children.Last().XMax);
             }
         }
 
         public int SiblingIndex => Parent?.children.IndexOf(this) ?? 0;
-
-        [CanBeNull]
-        private LayoutNode NearestRelationToRight()
-        {
-            if (Parent == null) return null;
-
-            var myIndex = SiblingIndex;
-            if (Parent.children.Count > myIndex + 1) return Parent.children[myIndex + 1];
-            else return Parent.NearestRelationToRight();
-        }
 
         public float X
         {
@@ -77,7 +72,10 @@ namespace Genealogy
             {
                 var diff = value - bounds.x;
                 if (Mathf.Approximately(diff, 0)) return;
+                
                 bounds.x = value;
+                NotifyListenersOfUpdate();
+
                 foreach (var child in children)
                     child.X += diff;
             }
@@ -146,6 +144,18 @@ namespace Genealogy
 
                 currGen++;
             }
+        }
+
+        private void NotifyListenersOfUpdate()
+        {
+            foreach (var listener in listeners)
+                listener.OnUpdateNode(this);
+        }
+
+        private void NotifyListenersOfCreate()
+        {
+            foreach (var listener in listeners)
+                listener.OnAddNode(this);
         }
     }
 }
