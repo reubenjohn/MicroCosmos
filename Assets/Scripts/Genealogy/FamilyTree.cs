@@ -4,12 +4,16 @@ using System.Linq;
 
 namespace Genealogy
 {
-    public class FamilyTree
+    public partial class FamilyTree
     {
         private readonly Dictionary<Guid, Node> nodes;
         private readonly Dictionary<Tuple<Guid, Guid>, Relation> relations;
         private readonly Dictionary<Guid, List<Relation>> relationsByFrom;
         private readonly Dictionary<Guid, List<Relation>> relationsByTo;
+
+        private readonly Transaction transaction;
+
+        private readonly List<IFamilyTreeListener> listeners;
 
         public FamilyTree(Dictionary<Guid, Node> nodes, Dictionary<Tuple<Guid, Guid>, Relation> relations)
         {
@@ -19,6 +23,9 @@ namespace Genealogy
                 .ToDictionary(group => group.Key, group => group.ToList());
             relationsByTo = relations.GroupBy(pair => pair.Key.Item2, pair => pair.Value)
                 .ToDictionary(group => group.Key, group => group.ToList());
+
+            transaction = new Transaction(this);
+            listeners = new List<IFamilyTreeListener>();
         }
 
         public FamilyTree() : this(
@@ -57,12 +64,14 @@ namespace Genealogy
                     $"Child '{child.Guid}' was already first registered at {existingChild.RegistrationTime}");
 
             var reproduction = new Reproduction(Guid.NewGuid(), dateTime);
-            nodes.Add(reproduction.Guid, reproduction);
+            transaction.StartNew(reproduction);
             foreach (var parent in parents)
-                RegisterRelation(parent, RelationType.Reproduction, reproduction, dateTime);
+                transaction.AddRelation(new Relation(parent, RelationType.Reproduction, reproduction, dateTime));
+            transaction.Complete();
 
-            nodes.Add(child.Guid, child);
-            RegisterRelation(reproduction, RelationType.Offspring, child, dateTime);
+            transaction.StartNew(child);
+            transaction.AddRelation(new Relation(reproduction, RelationType.Offspring, child, dateTime));
+            transaction.Complete();
 
             return reproduction;
         }
@@ -70,51 +79,64 @@ namespace Genealogy
         public Reproduction RegisterReproduction(Node[] parents, Node child) =>
             RegisterReproduction(parents, child, DateTime.Now);
 
-        public Relation RegisterRelation(Node from, RelationType relationType, Node to) =>
-            RegisterRelation(from, relationType, to, DateTime.Now);
-
-        public Relation RegisterRelation(Node from, RelationType relationType, Node to, DateTime dateTime)
+        public Relation RegisterRelation(Relation relation)
         {
-            if (!nodes.ContainsKey(from.Guid))
-                throw new InvalidOperationException(
-                    "Participating nodes must first themselves be registered " +
-                    "before a relationship between them can be registered. " +
-                    $"Please first register the 'from' side node: '{from.Guid}'");
-            if (!nodes.ContainsKey(to.Guid))
-                throw new InvalidOperationException(
-                    "Participating nodes must first themselves be registered " +
-                    "before a relationship between them can be registered. " +
-                    $"Please first register the 'to' side node: '{from.Guid}'");
-
-            var relation = new Relation(from, relationType, to, dateTime);
-            if (relations.TryGetValue(relation.Key, out var existingRelation))
-                throw new InvalidOperationException(
-                    "There can only exist a single relation between two nodes. " +
-                    $"Existing relation: '{existingRelation}'");
-
-            relations.Add(relation.Key, relation);
-
-            {
-                if (relationsByFrom.TryGetValue(relation.From.Guid, out var fromRelations))
-                    fromRelations.Add(relation);
-                else
-                    relationsByFrom.Add(relation.From.Guid, new List<Relation>() {relation});
-            }
-
-            {
-                if (relationsByTo.TryGetValue(relation.To.Guid, out var toRelations))
-                    toRelations.Add(relation);
-                else
-                    relationsByTo.Add(relation.To.Guid, new List<Relation>() {relation});
-            }
-
+            transaction.AddRelation(relation);
+            transaction.Complete();
             return relation;
         }
+
+        private Relation[] RegisterRelationsWithoutNotify(params Relation[] relationsToAdd)
+        {
+            foreach (var relation in relationsToAdd)
+            {
+                if (!nodes.ContainsKey(relation.From.Guid))
+                    throw new InvalidOperationException(
+                        "Participating nodes must first themselves be registered " +
+                        "before a relationship between them can be registered. " +
+                        $"Please first register the 'from' side node: '{relation.From.Guid}'");
+                if (!nodes.ContainsKey(relation.To.Guid))
+                    throw new InvalidOperationException(
+                        "Participating nodes must first themselves be registered " +
+                        "before a relationship between them can be registered. " +
+                        $"Please first register the 'to' side node: '{relation.To.Guid}'");
+
+                if (relations.TryGetValue(relation.Key, out var existingRelation))
+                    throw new InvalidOperationException(
+                        "There can only exist a single relation between two nodes. " +
+                        $"Existing relation: '{existingRelation}'");
+            }
+
+            foreach (var relation in relationsToAdd)
+            {
+                relations.Add(relation.Key, relation);
+
+                {
+                    if (relationsByFrom.TryGetValue(relation.From.Guid, out var fromRelations))
+                        fromRelations.Add(relation);
+                    else
+                        relationsByFrom.Add(relation.From.Guid, new List<Relation>() {relation});
+                }
+
+                {
+                    if (relationsByTo.TryGetValue(relation.To.Guid, out var toRelations))
+                        toRelations.Add(relation);
+                    else
+                        relationsByTo.Add(relation.To.Guid, new List<Relation>() {relation});
+                }
+            }
+
+            return relationsToAdd;
+        }
+
+        public void AddListener(IFamilyTreeListener listener) => listeners.Add(listener);
+        public void RemoveListener(IFamilyTreeListener listener) => listeners.Remove(listener);
 
         public void RegisterRootNode(Node root)
         {
             if (NodeCount > 0) throw new InvalidOperationException("The root node must be the first node registered");
-            nodes.Add(root.Guid, root);
+            transaction.StartNew(root);
+            transaction.Complete();
         }
     }
 }

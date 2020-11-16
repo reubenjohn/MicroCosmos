@@ -11,9 +11,9 @@ namespace Tests.EditMode.Genealogy
     {
         public static readonly Node Root = new Node(Guid.Parse("00000000-0000-0000-0000-000000000000"), NodeType.Cell);
 
-        private static readonly Guid Guid1 = Guid.Parse("0f8fad5b-d9cb-469f-a165-70867728950e");
-        private static readonly Guid Guid2 = Guid.Parse("7c9e6679-7425-40de-944b-e07fc1f90ae7");
-        private static readonly Guid Guid3 = Guid.Parse("e07fc1f9-d9cb-40de-a165-70867728950e");
+        private static readonly Guid Guid1 = Guid.Parse("11111111-1111-1111-1111-111111111111");
+        private static readonly Guid Guid2 = Guid.Parse("22222222-2222-2222-2222-222222222222");
+        private static readonly Guid Guid3 = Guid.Parse("33333333-3333-3333-3333-333333333333");
 
         [Test]
         public void GuidSanityCheck()
@@ -51,20 +51,27 @@ namespace Tests.EditMode.Genealogy
         public void TestRegisterRelation()
         {
             var nodes = new Dictionary<Guid, Node>();
-            var tree = new FamilyTree(nodes, new Dictionary<Tuple<Guid, Guid>, Relation>());
+            var relations = new Dictionary<Tuple<Guid, Guid>, Relation>();
+            var tree = new FamilyTree(nodes, relations);
 
             var node1 = new Node(Guid1, NodeType.Cell, new DateTime(2020, 1, 1, 13, 1, 1));
             var node2 = new Node(Guid2, NodeType.Reproduction, new DateTime(2020, 1, 1, 13, 1, 1));
 
             var invalidOp =
                 Assert.Throws<InvalidOperationException>(() =>
-                    tree.RegisterRelation(node1, RelationType.Reproduction, node2));
+                    tree.RegisterRelation(new Relation(node1, RelationType.Reproduction, node2)));
             StringAssert.Contains($"Please first register the 'from' side node: '{node1.Guid}'", invalidOp.Message);
+            Assert.AreEqual(0, nodes.Count);
+            Assert.AreEqual(0, relations.Count);
+            tree.AbortTransaction();
 
             nodes.Add(node1.Guid, node1);
             invalidOp = Assert.Throws<InvalidOperationException>(() =>
-                tree.RegisterRelation(node1, RelationType.Reproduction, node2));
-            StringAssert.Contains($"Please first register the 'to' side node: '{node1.Guid}'", invalidOp.Message);
+                tree.RegisterRelation(new Relation(node1, RelationType.Reproduction, node2)));
+            StringAssert.Contains($"Please first register the 'to' side node: '{node2.Guid}'", invalidOp.Message);
+            tree.AbortTransaction();
+            Assert.AreEqual(1, nodes.Count);
+            Assert.AreEqual(0, relations.Count);
 
             Assert.IsNull(tree.GetRelation(node1.Guid, node2.Guid));
             Assert.IsNull(tree.GetRelation(Tuple.Create(node1.Guid, node2.Guid)));
@@ -73,7 +80,7 @@ namespace Tests.EditMode.Genealogy
 
             var now = DateTime.Now;
             nodes.Add(node2.Guid, node2);
-            var relation = tree.RegisterRelation(node1, RelationType.Reproduction, node2, now);
+            var relation = tree.RegisterRelation(new Relation(node1, RelationType.Reproduction, node2, now));
             Assert.AreEqual(new Relation(node1, RelationType.Reproduction, node2, now).ToString(), relation.ToString());
 
             Assert.AreEqual(relation.ToString(), tree.GetRelation(node1.Guid, node2.Guid).ToString());
@@ -84,7 +91,7 @@ namespace Tests.EditMode.Genealogy
             Assert.AreEqual(relation.ToString(), tree.GetRelationsTo(node2.Guid)[0].ToString());
 
             invalidOp = Assert.Throws<InvalidOperationException>(() =>
-                tree.RegisterRelation(node1, RelationType.Reproduction, node2));
+                tree.RegisterRelation(new Relation(node1, RelationType.Reproduction, node2)));
             StringAssert.Contains($"Existing relation: '{relation}'", invalidOp.Message);
         }
 
