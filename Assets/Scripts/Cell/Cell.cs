@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using Genealogy;
+using Genealogy.AsexualFamilyTree;
 using Genetics;
 using Newtonsoft.Json.Linq;
 using Organelles;
@@ -10,10 +13,17 @@ namespace Cell
     {
         private Rigidbody2D rb;
 
+        public CellNode genealogyNode;
+
         private void Start()
         {
             rb = GetComponent<Rigidbody2D>();
             gene = gene ?? new CellGene();
+            if (genealogyNode == null)
+            {
+                GetComponentInParent<FamilyTreeManager>()?.RegisterAsexualCellBirth(
+                    new Node[]{}, this);
+            }
         }
 
         public override Transform OnInheritGene(CellGene inheritedGene) => transform.DestroyChildren();

@@ -6,6 +6,7 @@ namespace Genealogy
 {
     public partial class FamilyTree
     {
+        public Node rootNode;
         private readonly Dictionary<Guid, Node> nodes;
         private readonly Dictionary<Tuple<Guid, Guid>, Relation> relations;
         private readonly Dictionary<Guid, List<Relation>> relationsByFrom;
@@ -137,6 +138,7 @@ namespace Genealogy
             if (NodeCount > 0) throw new InvalidOperationException("The root node must be the first node registered");
             transaction.StartNew(root);
             transaction.Complete();
+            rootNode = root;
         }
     }
 }

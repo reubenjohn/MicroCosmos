@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Linq;
 using Genealogy;
 using Genealogy.AsexualFamilyTree;
 using NUnit.Framework;

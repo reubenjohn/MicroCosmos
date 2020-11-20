@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Genealogy.AsexualFamilyTree;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Genealogy
 {
@@ -20,10 +21,12 @@ namespace Genealogy
 
         public void OnAddNode(LayoutNode layout)
         {
-            var rootViewerNode = Instantiate(cellViewerNodeTemplate, transform);
-            rootViewerNode.name = NodeName(layout, rootViewerNode);
+            var viewerNode = Instantiate(cellViewerNodeTemplate, transform);
+            var nodeName = viewerNode.name = layout.Node.ToString();
+            viewerNode.name = nodeName;
+            viewerNode.GetComponentInChildren<Text>().text = nodeName;
 
-            var viewerHandle = new ViewerHandle(layout, rootViewerNode);
+            var viewerHandle = new ViewerHandle(layout, viewerNode);
             RegisterViewerNode(viewerHandle);
             UpdateViewerNode(viewerHandle);
         }
@@ -36,17 +39,6 @@ namespace Genealogy
                 var to = viewerNodes[relation.To.Guid].ViewerObj.GetComponent<RectTransform>();
                 ConnectionManager.CreateConnection(from, to);
             }
-        }
-
-        private static string NodeName(LayoutNode layout, GameObject rootViewerNode)
-        {
-            if (layout.Node.NodeType == NodeType.Cell)
-            {
-                var cellObj = ((CellNode) layout.Node).CellObj;
-                return cellObj != null ? cellObj.name : layout.Node.ToString();
-            }
-
-            return layout.Node.ToString();
         }
 
         public void OnUpdateNode(LayoutNode layout) => UpdateViewerNode(viewerNodes[layout.Node.Guid]);

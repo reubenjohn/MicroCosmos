@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using Genealogy;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using UnityEngine.UIElements;
 
 namespace Tests.EditMode.Genealogy
 {
     public class FamilyTreeTest
     {
-        public static readonly Node Root = new Node(Guid.Parse("00000000-0000-0000-0000-000000000000"), NodeType.Cell);
+        private static readonly Node Root = new Node(Guid.Parse("00000000-0000-0000-0000-000000000000"), NodeType.Cell);
 
         private static readonly Guid Guid1 = Guid.Parse("11111111-1111-1111-1111-111111111111");
         private static readonly Guid Guid2 = Guid.Parse("22222222-2222-2222-2222-222222222222");
@@ -28,14 +26,14 @@ namespace Tests.EditMode.Genealogy
         public void NodeToString2()
         {
             var node = new Node(Guid1, NodeType.Cell, new DateTime(2020, 1, 1, 13, 1, 1));
-            Assert.AreEqual($"Cell~{Guid1}@1/1/2020 1:01:01 PM", node.ToString());
+            Assert.AreEqual($"Cell@1/1/2020 1:01:01 PM~{Guid1}", node.ToString());
         }
 
         [Test]
         public void CellNodeToString2()
         {
             var node = new Node(Guid1, NodeType.Cell, new DateTime(2020, 1, 1, 13, 1, 1));
-            Assert.AreEqual($"Cell~{Guid1}@1/1/2020 1:01:01 PM", node.ToString());
+            Assert.AreEqual($"Cell@1/1/2020 1:01:01 PM~{Guid1}", node.ToString());
         }
 
         [Test]
