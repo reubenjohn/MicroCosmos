@@ -11,7 +11,7 @@ namespace Genealogy
         public readonly string displayName;
 
         public CellNode()
-            : this(Guid.NewGuid(), DateTime.Now, null, null, "")
+            : this(Guid.NewGuid(), DateTime.Now, null, null, null)
         {
         }
 
@@ -29,6 +29,6 @@ namespace Genealogy
             this.displayName = displayName;
         }
 
-        public override string ToString() => displayName;
+        public override string ToString() => displayName ?? base.ToString();
     }
 }
