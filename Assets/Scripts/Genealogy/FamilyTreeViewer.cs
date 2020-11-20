@@ -9,6 +9,7 @@ namespace Genealogy
     public class FamilyTreeViewer : MonoBehaviour, ILayoutChangeListener<LayoutNode>
     {
         private GameObject cellViewerNodeTemplate;
+        private GameObject reproductionViewerNodeTemplate;
 
         private readonly Dictionary<Guid, ViewerHandle> viewerNodes = new Dictionary<Guid, ViewerHandle>();
 
@@ -17,18 +18,38 @@ namespace Genealogy
         private void Start()
         {
             cellViewerNodeTemplate = Resources.Load<GameObject>("UI/CellViewerNode");
+            reproductionViewerNodeTemplate = Resources.Load<GameObject>("UI/ReproductionViewerNode");
         }
 
         public void OnAddNode(LayoutNode layout)
         {
-            var viewerNode = Instantiate(cellViewerNodeTemplate, transform);
-            var nodeName = viewerNode.name = layout.Node.ToString();
-            viewerNode.name = nodeName;
-            viewerNode.GetComponentInChildren<Text>().text = nodeName;
+            GameObject viewerNode;
+            switch (layout.Node.NodeType)
+            {
+                case NodeType.Cell:
+                    viewerNode = NewCellViewerNode((CellNode) layout.Node);
+                    break;
+                default:
+                    viewerNode = NewReproductionViewerNode();
+                    break;
+            }
 
             var viewerHandle = new ViewerHandle(layout, viewerNode);
             RegisterViewerNode(viewerHandle);
             UpdateViewerNode(viewerHandle);
+        }
+
+        private GameObject NewCellViewerNode(CellNode cellNode)
+        {
+            var viewerNode = Instantiate(cellViewerNodeTemplate, transform);
+            viewerNode.GetComponentInChildren<Text>().text = cellNode.ToString();
+            return viewerNode;
+        }
+
+        private GameObject NewReproductionViewerNode()
+        {
+            var viewerNode = Instantiate(reproductionViewerNodeTemplate, transform);
+            return viewerNode;
         }
 
         public void OnAddConnections(List<Relation> relations)
@@ -48,6 +69,7 @@ namespace Genealogy
         {
             var rectTransform = viewerHandle.ViewerObj.GetComponent<RectTransform>();
             rectTransform.localPosition = viewerHandle.Layout.Center * DisplayScale;
+            viewerHandle.ViewerObj.name = viewerHandle.Layout.Node.ToString();
         }
 
         private void RegisterViewerNode(ViewerHandle viewerHandle) =>
