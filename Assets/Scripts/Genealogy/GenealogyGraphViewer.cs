@@ -89,22 +89,42 @@ namespace Genealogy
 
         public void OnClick(ViewerNode viewerNode, PointerEventData eventData)
         {
-            if (viewerNode == currentSelectedNode) DeselectNode(viewerNode, eventData);
-            else SelectNode(viewerNode, eventData);
+            // Select
+            if (currentSelectedNode == null)
+            {
+                currentSelectedNode = viewerNode;
+                SelectNode(viewerNode, eventData);
+            }
+            // Deselect
+            else if (currentSelectedNode == viewerNode)
+            {
+                currentSelectedNode = null;
+                DeselectNode(viewerNode, eventData);
+            }
+            // Switch
+            else
+            {
+                var previousSelectedNode = currentSelectedNode;
+                currentSelectedNode = viewerNode;
+                DeselectNode(previousSelectedNode, eventData);
+                SelectNode(viewerNode, eventData);
+            }
         }
 
         private void DeselectNode(ViewerNode viewerNode, PointerEventData eventData)
         {
+            if (viewerNode.GenealogyNode.NodeType == NodeType.Cell)
+                ((CellViewerNode) viewerNode).SetSelectedState(false);
             foreach (var listener in listeners)
                 listener.OnDeselectNode(viewerNode, eventData);
-            currentSelectedNode = null;
         }
 
         private void SelectNode(ViewerNode viewerNode, PointerEventData eventData)
         {
+            if (viewerNode.GenealogyNode.NodeType == NodeType.Cell)
+                ((CellViewerNode) viewerNode).SetSelectedState(true);
             foreach (var listener in listeners)
                 listener.OnSelectNode(viewerNode, eventData);
-            currentSelectedNode = viewerNode;
         }
 
         public void AddListener(IGraphViewerListener graphViewerListener) => listeners.Add(graphViewerListener);

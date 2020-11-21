@@ -54,7 +54,7 @@ namespace Cell
                 if (targetCell != null)
                 {
                     Choreographer.SetFocus(targetCell.gameObject);
-                    divinePossession?.SetPossessionTarget(targetCell);
+                    divinePossession.SetPossessionTarget(targetCell);
                 }
             }
         }
@@ -64,7 +64,7 @@ namespace Cell
             if (viewerNode.GenealogyNode.NodeType == NodeType.Cell)
             {
                 Choreographer.SetFocus(null);
-                divinePossession?.SetPossessionTarget(null);
+                divinePossession.SetPossessionTarget(null);
             }
         }
     }

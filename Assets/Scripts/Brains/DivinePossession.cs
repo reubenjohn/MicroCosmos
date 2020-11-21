@@ -10,17 +10,22 @@ namespace Brains
         {
             if (currentTarget != null)
             {
-                var cellObj = currentTarget.gameObject;
+                SetPossession(currentTarget.gameObject, false);
                 Destroy(currentTarget);
                 currentTarget = null;
-                cellObj.GetComponentInChildren<AbstractBrain>().enabled = true;
             }
 
             if (targetCell != null)
             {
-                targetCell.GetComponentInChildren<AbstractBrain>().enabled = false;
+                SetPossession(targetCell.gameObject, true);
                 currentTarget = targetCell.gameObject.AddComponent<KeyboardBrain>();
             }
+        }
+
+        private void SetPossession(GameObject target, bool possess)
+        {
+            foreach (var abstractBrain in target.GetComponentsInChildren<AbstractBrain>())
+                abstractBrain.enabled = abstractBrain is KeyboardBrain ? possess : !possess;
         }
     }
 }
