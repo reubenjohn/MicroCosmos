@@ -290,7 +290,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 463367374}
-  - component: {fileID: 463367375}
   m_Layer: 5
   m_Name: Family Tree Content
   m_TagString: Untagged
@@ -317,18 +316,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &463367375
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 463367373}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d4e0b7faf915904a88bcd05b2b56a03, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &535754620
 GameObject:
   m_ObjectHideFlags: 0
@@ -452,8 +439,9 @@ GameObject:
   - component: {fileID: 1039578181}
   - component: {fileID: 1039578180}
   - component: {fileID: 1039578179}
+  - component: {fileID: 1039578183}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: Family Tree Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -539,6 +527,19 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1039578183
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1039578178}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d4e0b7faf915904a88bcd05b2b56a03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  familyTreeContentTransform: {fileID: 463367374}
 --- !u!1 &1245193642
 GameObject:
   m_ObjectHideFlags: 0
@@ -637,7 +638,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 141109436}
   m_Direction: 0
   m_Value: 1
-  m_Size: 0.99999994
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

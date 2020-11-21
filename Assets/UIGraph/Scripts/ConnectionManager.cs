@@ -95,17 +95,14 @@ public class ConnectionManager : MonoBehaviour {
 		}
 	}
 
-	public static void CreateConnection(RectTransform t1, RectTransform t2 = null) {
-		if (!instance) return;
-		
-		Connection conn;
+	public static Connection CreateConnection(RectTransform t1, RectTransform t2 = null) {
+		if (!instance) return null;
 
-		if (instance.connectionPrefab) {
-			conn = Instantiate<Connection>(instance.connectionPrefab);
-		} else {
-			conn = new GameObject("new connection").AddComponent<Connection>();
-		}
+		var conn = instance.connectionPrefab ? 
+			Instantiate(instance.connectionPrefab) : 
+			new GameObject("new connection").AddComponent<Connection>();
 
 		conn.SetTargets(t1, t2);
+		return conn;
 	}
 }

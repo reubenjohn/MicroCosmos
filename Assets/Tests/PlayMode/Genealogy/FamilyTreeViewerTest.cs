@@ -22,7 +22,7 @@ namespace Tests.PlayMode.Genealogy
             var tree = new FamilyTree();
             var layoutManager = new LayoutManager();
             tree.AddListener(layoutManager);
-            var viewer = GameObject.Find("Family Tree Content").GetComponent<FamilyTreeViewer>();
+            var viewer = GameObject.Find("Family Tree Canvas").GetComponent<FamilyTreeViewer>();
             layoutManager.AddListener(viewer);
 
             var rootNode = new CellNode();
@@ -32,15 +32,15 @@ namespace Tests.PlayMode.Genealogy
             var cell1Node = new CellNode(); // {CellObj = GameObject.Find("Cell1[1]")};
             tree.RegisterReproduction(new Node[] {rootNode}, cell1Node);
 
-            Assert.AreEqual(new Vector3(60, 20, 0), LocalPositionOf(rootNode));
+            Assert.AreEqual(new Vector3(60, 10, 0), LocalPositionOf(rootNode));
             
             var rep0 = AsexualReproductionNodeOf(tree, cell0Node);
-            Assert.AreEqual(new Vector3(30, -20, 0), LocalPositionOf(rep0));
-            Assert.AreEqual(new Vector3(30, -60, 0), LocalPositionOf(cell0Node));
+            Assert.AreEqual(new Vector3(30, -10, 0), LocalPositionOf(rep0));
+            Assert.AreEqual(new Vector3(30, -30, 0), LocalPositionOf(cell0Node));
 
             var rep1 = AsexualReproductionNodeOf(tree, cell1Node);
-            Assert.AreEqual(new Vector3(90, -20, 0), LocalPositionOf(rep1));
-            Assert.AreEqual(new Vector3(90, -60, 0), LocalPositionOf(cell1Node));
+            Assert.AreEqual(new Vector3(90, -10, 0), LocalPositionOf(rep1));
+            Assert.AreEqual(new Vector3(90, -30, 0), LocalPositionOf(cell1Node));
 
             yield return null;
         }

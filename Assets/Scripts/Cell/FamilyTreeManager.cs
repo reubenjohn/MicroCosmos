@@ -14,8 +14,12 @@ namespace Cell
             if (viewer)
             {
                 var layoutManager = new LayoutManager();
-                familyTree.AddListener(layoutManager);
                 layoutManager.AddListener(viewer);
+                familyTree.AddListener(layoutManager);
+            }
+            else
+            {
+                Debug.LogWarning("No family tree viewer is listening in on the family tree");
             }
 
             familyTree.RegisterRootNode(new CellNode(null, "Cell"));

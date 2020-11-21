@@ -1,8 +1,6 @@
-﻿using System.Linq;
-using Cell;
+﻿using Cell;
 using DefaultNamespace;
 using Genealogy;
-using Genealogy.AsexualFamilyTree;
 using Genetics;
 using Persistence;
 using UnityEditor;
@@ -40,8 +38,9 @@ namespace Organelles
             var cellColony = GetComponentInParent<CellColony>();
             var child = GeneNode.Load(geneTree, cellColony.transform, t.Find("SpawnPoint").position, t.rotation);
 
-            GetComponentInParent<FamilyTreeManager>()
-                ?.RegisterAsexualCellBirth(new Node[] {parent.genealogyNode}, child.GetComponent<Cell.Cell>());
+            var childCell = child.GetComponent<Cell.Cell>();
+            if (childCell.FamilyTreeManager)
+                childCell.FamilyTreeManager.RegisterAsexualCellBirth(new Node[] {parent.genealogyNode}, childCell);
         }
 
         public override GeneTranscriber<BirthCanalGene> GetGeneTranscriber() => BirthCanalGeneTranscriber.Singleton;
