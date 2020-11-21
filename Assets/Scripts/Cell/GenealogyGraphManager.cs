@@ -55,6 +55,7 @@ namespace Cell
                 {
                     Choreographer.SetFocus(targetCell.gameObject);
                     divinePossession.SetPossessionTarget(targetCell);
+                    targetCell.IsInFocus = true;
                 }
             }
         }
@@ -65,6 +66,9 @@ namespace Cell
             {
                 Choreographer.SetFocus(null);
                 divinePossession.SetPossessionTarget(null);
+                var targetCell = CellColony.FindCell(viewerNode.GenealogyNode.Guid);
+                if (targetCell != null)
+                    targetCell.IsInFocus = false;
             }
         }
     }

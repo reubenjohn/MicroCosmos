@@ -3,7 +3,6 @@ using DefaultNamespace;
 using Genealogy;
 using Genetics;
 using Persistence;
-using UnityEditor;
 using UnityEngine;
 
 namespace Organelles
@@ -20,7 +19,7 @@ namespace Organelles
             var giveBirthSignal = birthSignal.FeedInput(logits[0] > -.5f, logits[0] < .5, Time.deltaTime);
             if (Mathf.Approximately(giveBirthSignal, 1))
                 GiveBirth();
-            if (GetComponentInParent<Cell.Cell>().gameObject == Selection.activeGameObject)
+            if (GetComponentInParent<Cell.Cell>().IsInFocus)
             {
                 Grapher.Log(logits[0], "GiveBirth?", Color.magenta);
                 Grapher.Log(giveBirthSignal, "GiveBirth!", Color.red);

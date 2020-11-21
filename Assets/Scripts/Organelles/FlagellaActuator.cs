@@ -1,5 +1,4 @@
 ﻿using Genetics;
-using UnityEditor;
 using UnityEngine;
 
 namespace Organelles
@@ -19,7 +18,7 @@ namespace Organelles
 
         public void Actuate(float[] logits)
         {
-            if (GetComponentInParent<Cell.Cell>().gameObject == Selection.activeGameObject)
+            if (GetComponentInParent<Cell.Cell>().IsInFocus)
             {
                 Grapher.Log(logits[0], "Flagella[0]", Color.blue);
                 Grapher.Log(logits[1], "Flagella[1]", Color.cyan);

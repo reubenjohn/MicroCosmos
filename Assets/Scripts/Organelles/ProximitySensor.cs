@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 using Genetics;
-using Newtonsoft.Json.Linq;
-using UnityEditor;
 using UnityEngine;
 
 namespace Organelles
@@ -43,7 +41,8 @@ namespace Organelles
                 var distance = (closestPoint - pos).magnitude;
                 spriteRenderer.color = Color.Lerp(Color.HSVToRGB(0, 1f, 1f), spriteRenderer.color, distance);
                 logits[0] = 1 - 2 * distance;
-                if (gameObject == Selection.activeGameObject)
+                if (GetComponentInParent<Cell.Cell>().IsInFocus)
+                    // TODO Handle multiple proximity sensors
                     Grapher.Log(logits[0], "Proximity.Closeness", Color.green);
             }
         }

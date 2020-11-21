@@ -13,6 +13,7 @@ namespace Cell
         public GenealogyGraphManager genealogyGraphManager { get; private set; }
 
         public CellNode genealogyNode;
+        public bool IsInFocus { get; set; }
 
         private void Start()
         {
