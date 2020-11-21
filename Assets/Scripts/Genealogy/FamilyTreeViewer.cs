@@ -13,7 +13,7 @@ namespace Genealogy
 
         private readonly Dictionary<Guid, ViewerHandle> viewerNodes = new Dictionary<Guid, ViewerHandle>();
 
-        private static readonly Vector2 DisplayScale = new Vector2(60, 40);
+        private static readonly Vector2 DisplayScale = new Vector2(60, 20);
 
         private void Start()
         {
