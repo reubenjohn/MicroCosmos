@@ -1,4 +1,5 @@
-﻿using Cinematics;
+﻿using Brains;
+using Cinematics;
 using Genealogy;
 using Genealogy.Asexual;
 using UnityEngine;
@@ -9,14 +10,16 @@ namespace Cell
     [RequireComponent(typeof(CellColony))]
     public class GenealogyGraphManager : MonoBehaviour, IGraphViewerListener
     {
-        public CellColony CellColony { get; private set; }
-        public readonly GenealogyGraph genealogyGraph = new GenealogyGraph();
+        private readonly GenealogyGraph genealogyGraph = new GenealogyGraph();
+        private CellColony CellColony { get; set; }
+        private DivinePossession divinePossession;
         [SerializeField] private Choreographer Choreographer;
         [SerializeField] private GenealogyGraphViewer viewer;
 
         private void Start()
         {
             CellColony = GetComponent<CellColony>();
+            divinePossession = GetComponent<DivinePossession>();
             if (viewer)
             {
                 Choreographer.AddListener(viewer);
@@ -47,7 +50,12 @@ namespace Cell
         {
             if (viewerNode.GenealogyNode.NodeType == NodeType.Cell)
             {
-                Choreographer.SetFocus(CellColony.FindCell(viewerNode.GenealogyNode.Guid)?.gameObject);
+                var targetCell = CellColony.FindCell(viewerNode.GenealogyNode.Guid);
+                if (targetCell != null)
+                {
+                    Choreographer.SetFocus(targetCell.gameObject);
+                    divinePossession?.SetPossessionTarget(targetCell);
+                }
             }
         }
 
@@ -56,6 +64,7 @@ namespace Cell
             if (viewerNode.GenealogyNode.NodeType == NodeType.Cell)
             {
                 Choreographer.SetFocus(null);
+                divinePossession?.SetPossessionTarget(null);
             }
         }
     }

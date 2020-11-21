@@ -4,8 +4,8 @@ namespace Brains
 {
     public class KeyboardBrain : AbstractBrain
     {
-        public float linearFlagellaSensitivity = 0.1f;
-        public float angularFlagellaSensitivity = 0.1f;
+        public float linearFlagellaSensitivity = 10f;
+        public float angularFlagellaSensitivity = 10f;
 
         protected override void React()
         {
