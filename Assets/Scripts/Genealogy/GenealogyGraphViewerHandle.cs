@@ -1,17 +1,18 @@
 ﻿using Genealogy.Asexual;
-using UnityEngine;
 
 namespace Genealogy
 {
     public class GenealogyGraphViewerHandle
     {
         public readonly LayoutNode layout;
-        public readonly GameObject viewerObj;
+        public readonly ViewerNode viewerNode;
 
-        public GenealogyGraphViewerHandle(LayoutNode layout, GameObject viewerObj)
+        public GenealogyGraphViewerHandle(LayoutNode layout, ViewerNode viewerNode)
         {
             this.layout = layout;
-            this.viewerObj = viewerObj;
+            this.viewerNode = viewerNode;
         }
+
+        public void OnUpdate() => viewerNode.OnUpdate(layout);
     }
 }

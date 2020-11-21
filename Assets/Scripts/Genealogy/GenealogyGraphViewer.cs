@@ -3,30 +3,29 @@ using System.Collections;
 using System.Collections.Generic;
 using Genealogy.Asexual;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 namespace Genealogy
 {
     [RequireComponent(typeof(Canvas))]
-    public class GenealogyGraphViewer : MonoBehaviour, ILayoutChangeListener<LayoutNode>
+    public class GenealogyGraphViewer : MonoBehaviour, ILayoutChangeListener<LayoutNode>, IChoreographerListener
     {
+        public static readonly Vector2 DisplayScale = new Vector2(60, 20);
+
         private Canvas canvas;
-        private GameObject cellViewerNodeTemplate;
-        private GameObject reproductionViewerNodeTemplate;
         private Transform genealogyGraphContentTransform;
+
+        private ViewerNode currentSelectedNode = null;
 
         private readonly Dictionary<Guid, GenealogyGraphViewerHandle> viewerNodes =
             new Dictionary<Guid, GenealogyGraphViewerHandle>();
 
-        private static readonly Vector2 DisplayScale = new Vector2(60, 20);
+        private readonly List<IGraphViewerListener> listeners = new List<IGraphViewerListener>();
 
         private void Start()
         {
             canvas = GetComponent<Canvas>();
             genealogyGraphContentTransform = GameObject.Find("_Family Tree Content").transform;
-            cellViewerNodeTemplate = Resources.Load<GameObject>("UI/CellViewerNode");
-            reproductionViewerNodeTemplate = Resources.Load<GameObject>("UI/ReproductionViewerNode");
         }
 
         private void Update()
@@ -53,54 +52,63 @@ namespace Genealogy
 
         public void OnAddNode(LayoutNode layout)
         {
-            GameObject viewerNode;
-            switch (layout.Node.NodeType)
+            var viewerNode = InstantiateNode(layout.Node);
+            RegisterViewerNode(new GenealogyGraphViewerHandle(layout, viewerNode));
+        }
+
+        private ViewerNode InstantiateNode(Node node)
+        {
+            switch (node.NodeType)
             {
                 case NodeType.Cell:
-                    viewerNode = NewCellViewerNode((CellNode) layout.Node);
-                    break;
+                    return CellViewerNode.InstantiateNode(genealogyGraphContentTransform, (CellNode) node);
                 default:
-                    viewerNode = NewReproductionViewerNode();
-                    break;
+                    return ReproductionViewerNode.InstantiateNode(genealogyGraphContentTransform, (Reproduction) node);
             }
-
-            var viewerHandle = new GenealogyGraphViewerHandle(layout, viewerNode);
-            RegisterViewerNode(viewerHandle);
-            UpdateViewerNode(viewerHandle);
         }
-
-        private GameObject NewCellViewerNode(CellNode cellNode)
-        {
-            var viewerNode = Instantiate(cellViewerNodeTemplate, genealogyGraphContentTransform);
-            viewerNode.GetComponentInChildren<Text>().text = cellNode.ToString();
-            return viewerNode;
-        }
-
-        private GameObject NewReproductionViewerNode() =>
-            Instantiate(reproductionViewerNodeTemplate, genealogyGraphContentTransform);
 
         public void OnAddConnections(List<Relation> relations)
         {
             foreach (var relation in relations)
             {
-                var from = viewerNodes[relation.From.Guid].viewerObj.GetComponent<RectTransform>();
-                var to = viewerNodes[relation.To.Guid].viewerObj.GetComponent<RectTransform>();
+                var from = viewerNodes[relation.From.Guid].viewerNode.GetComponent<RectTransform>();
+                var to = viewerNodes[relation.To.Guid].viewerNode.GetComponent<RectTransform>();
                 var connection = ConnectionManager.CreateConnection(from, to);
                 SetVisibility(connection, canvas.enabled);
             }
         }
 
-        public void OnUpdateNode(LayoutNode layout) => UpdateViewerNode(viewerNodes[layout.Node.Guid]);
+        public void OnUpdateNode(LayoutNode layout) => viewerNodes[layout.Node.Guid].OnUpdate();
 
 
-        private void UpdateViewerNode(GenealogyGraphViewerHandle viewerHandle)
+        private void RegisterViewerNode(GenealogyGraphViewerHandle viewerHandle)
         {
-            var rectTransform = viewerHandle.viewerObj.GetComponent<RectTransform>();
-            rectTransform.localPosition = viewerHandle.layout.Center * DisplayScale;
-            viewerHandle.viewerObj.name = viewerHandle.layout.Node.ToString();
+            viewerNodes[viewerHandle.layout.Node.Guid] = viewerHandle;
+            viewerHandle.OnUpdate();
         }
 
-        private void RegisterViewerNode(GenealogyGraphViewerHandle viewerHandle) =>
-            viewerNodes[viewerHandle.layout.Node.Guid] = viewerHandle;
+        public void OnClick(ViewerNode viewerNode, PointerEventData eventData)
+        {
+            if (viewerNode == currentSelectedNode) DeselectNode(viewerNode, eventData);
+            else SelectNode(viewerNode, eventData);
+        }
+
+        private void DeselectNode(ViewerNode viewerNode, PointerEventData eventData)
+        {
+            foreach (var listener in listeners)
+                listener.OnDeselectNode(viewerNode, eventData);
+            currentSelectedNode = null;
+        }
+
+        private void SelectNode(ViewerNode viewerNode, PointerEventData eventData)
+        {
+            foreach (var listener in listeners)
+                listener.OnSelectNode(viewerNode, eventData);
+            currentSelectedNode = viewerNode;
+        }
+
+        public void AddListener(IGraphViewerListener graphViewerListener) => listeners.Add(graphViewerListener);
+
+        public void OnSwitchCamera(Camera cam) => canvas.worldCamera = cam;
     }
 }

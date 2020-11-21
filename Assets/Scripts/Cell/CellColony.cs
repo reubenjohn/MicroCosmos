@@ -54,7 +54,7 @@ namespace Cell
         }
 
         private CellColonyData SaveCellData() =>
-            new CellColonyData {cells = GetCells().Select(CellData.Save).ToArray()};
+            new CellColonyData {cells = LivingCells.Select(CellData.Save).ToArray()};
 
         private void Load(JsonReader reader, JsonSerializer serializer)
         {
@@ -84,7 +84,13 @@ namespace Cell
                 yield return serializer.Deserialize<CellData>(reader);
         }
 
-        private Cell[] GetCells() => transform.GetComponentsInChildren<Cell>();
+        private Cell[] LivingCells => transform.GetComponentsInChildren<Cell>();
+
+        public Cell FindCell(Guid genealogyNodeGuid)
+        {
+            return LivingCells
+                .FirstOrDefault(c => genealogyNodeGuid == c.genealogyNode.Guid);
+        }
     }
 
     public class CellColonyData

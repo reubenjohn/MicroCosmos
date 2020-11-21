@@ -210,8 +210,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1575559138}
   m_HandleRect: {fileID: 1575559137}
   m_Direction: 0
-  m_Value: 1
-  m_Size: 1
+  m_Value: 0
+  m_Size: 0.99037373
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -824,6 +824,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f07c6c6a717145bbb8beed38f2a8ab28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Choreographer: {fileID: 265444220}
   viewer: {fileID: 957381886}
 --- !u!1 &957381881
 GameObject:
@@ -2478,7 +2479,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1940393819}
   m_Direction: 2
   m_Value: 1
-  m_Size: 0.9885794
+  m_Size: 0.9803695
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2706,7 +2707,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000030517578, y: 0}
+  m_AnchoredPosition: {x: -17743.916, y: 12335.422}
   m_SizeDelta: {x: -5.2972717, y: -9.890289}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1574356413
@@ -2891,6 +2892,7 @@ GameObject:
   - component: {fileID: 1662340000}
   - component: {fileID: 1662339999}
   - component: {fileID: 1662339998}
+  - component: {fileID: 1662340001}
   m_Layer: 0
   m_Name: Focus Camera
   m_TagString: Untagged
@@ -2963,6 +2965,19 @@ Transform:
   m_Father: {fileID: 265444221}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1662340001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1662339997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dde5b08515027934d9a493f9ddfd21d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offset: {x: 0, y: 0, z: -4}
 --- !u!1 &1722525254
 GameObject:
   m_ObjectHideFlags: 0
