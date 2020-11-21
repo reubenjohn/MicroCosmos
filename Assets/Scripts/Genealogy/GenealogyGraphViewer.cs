@@ -14,7 +14,7 @@ namespace Genealogy
         private Canvas canvas;
         private GameObject cellViewerNodeTemplate;
         private GameObject reproductionViewerNodeTemplate;
-        [SerializeField] private Transform genealogyGraphContentTransform;
+        private Transform genealogyGraphContentTransform;
 
         private readonly Dictionary<Guid, GenealogyGraphViewerHandle> viewerNodes =
             new Dictionary<Guid, GenealogyGraphViewerHandle>();
@@ -24,6 +24,7 @@ namespace Genealogy
         private void Start()
         {
             canvas = GetComponent<Canvas>();
+            genealogyGraphContentTransform = GameObject.Find("_Family Tree Content").transform;
             cellViewerNodeTemplate = Resources.Load<GameObject>("UI/CellViewerNode");
             reproductionViewerNodeTemplate = Resources.Load<GameObject>("UI/ReproductionViewerNode");
         }
