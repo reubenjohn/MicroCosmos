@@ -4,18 +4,18 @@ using JetBrains.Annotations;
 
 namespace Genealogy
 {
-    public partial class FamilyTree
+    public partial class GenealogyGraph
     {
         private class Transaction
         {
-            private readonly FamilyTree familyTree;
+            private readonly GenealogyGraph genealogyGraph;
 
             private Node node;
             private List<Relation> relations { get; }
 
-            public Transaction(FamilyTree familyTree)
+            public Transaction(GenealogyGraph genealogyGraph)
             {
-                this.familyTree = familyTree;
+                this.genealogyGraph = genealogyGraph;
                 relations = new List<Relation>();
             }
 
@@ -51,22 +51,22 @@ namespace Genealogy
 
             public void Complete()
             {
-                if (relations.Count == 0 && familyTree.NodeCount != 0)
+                if (relations.Count == 0 && genealogyGraph.NodeCount != 0)
                     throw new InvalidOperationException(
                         "A transaction can only be completed without a relation if it is that of the root node");
 
                 if (node != null)
                 {
-                    if (familyTree.nodes.ContainsKey(node.Guid))
+                    if (genealogyGraph.nodes.ContainsKey(node.Guid))
                         throw new InvalidOperationException("Cannot complete transaction. " +
                                                             $"Node {node} already exists in the tree");
-                    familyTree.nodes.Add(node.Guid, node);
+                    genealogyGraph.nodes.Add(node.Guid, node);
                 }
 
-                familyTree.RegisterRelationsWithoutNotify(relations.ToArray());
+                genealogyGraph.RegisterRelationsWithoutNotify(relations.ToArray());
 
-                foreach (var listener in familyTree.listeners)
-                    listener.OnTransactionComplete(familyTree, node, relations);
+                foreach (var listener in genealogyGraph.listeners)
+                    listener.OnTransactionComplete(genealogyGraph, node, relations);
 
                 node = null;
                 relations.Clear();

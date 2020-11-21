@@ -1,14 +1,14 @@
-﻿using Genealogy.AsexualFamilyTree;
+﻿using Genealogy.Asexual;
 using UnityEngine;
 
 namespace Genealogy
 {
-    public class FamilyTreeViewerHandle
+    public class GenealogyGraphViewerHandle
     {
         public readonly LayoutNode layout;
         public readonly GameObject viewerObj;
 
-        public FamilyTreeViewerHandle(LayoutNode layout, GameObject viewerObj)
+        public GenealogyGraphViewerHandle(LayoutNode layout, GameObject viewerObj)
         {
             this.layout = layout;
             this.viewerObj = viewerObj;

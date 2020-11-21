@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using Genealogy.AsexualFamilyTree;
+using Genealogy.Asexual;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace Genealogy
 {
     [RequireComponent(typeof(Canvas))]
-    public class FamilyTreeViewer : MonoBehaviour, ILayoutChangeListener<LayoutNode>
+    public class GenealogyGraphViewer : MonoBehaviour, ILayoutChangeListener<LayoutNode>
     {
         private Canvas canvas;
         private GameObject cellViewerNodeTemplate;
         private GameObject reproductionViewerNodeTemplate;
-        [SerializeField] private Transform familyTreeContentTransform;
+        [SerializeField] private Transform genealogyGraphContentTransform;
 
-        private readonly Dictionary<Guid, FamilyTreeViewerHandle> viewerNodes =
-            new Dictionary<Guid, FamilyTreeViewerHandle>();
+        private readonly Dictionary<Guid, GenealogyGraphViewerHandle> viewerNodes =
+            new Dictionary<Guid, GenealogyGraphViewerHandle>();
 
         private static readonly Vector2 DisplayScale = new Vector2(60, 20);
 
@@ -62,20 +63,20 @@ namespace Genealogy
                     break;
             }
 
-            var viewerHandle = new FamilyTreeViewerHandle(layout, viewerNode);
+            var viewerHandle = new GenealogyGraphViewerHandle(layout, viewerNode);
             RegisterViewerNode(viewerHandle);
             UpdateViewerNode(viewerHandle);
         }
 
         private GameObject NewCellViewerNode(CellNode cellNode)
         {
-            var viewerNode = Instantiate(cellViewerNodeTemplate, familyTreeContentTransform);
+            var viewerNode = Instantiate(cellViewerNodeTemplate, genealogyGraphContentTransform);
             viewerNode.GetComponentInChildren<Text>().text = cellNode.ToString();
             return viewerNode;
         }
 
         private GameObject NewReproductionViewerNode() =>
-            Instantiate(reproductionViewerNodeTemplate, familyTreeContentTransform);
+            Instantiate(reproductionViewerNodeTemplate, genealogyGraphContentTransform);
 
         public void OnAddConnections(List<Relation> relations)
         {
@@ -91,14 +92,14 @@ namespace Genealogy
         public void OnUpdateNode(LayoutNode layout) => UpdateViewerNode(viewerNodes[layout.Node.Guid]);
 
 
-        private void UpdateViewerNode(FamilyTreeViewerHandle viewerHandle)
+        private void UpdateViewerNode(GenealogyGraphViewerHandle viewerHandle)
         {
             var rectTransform = viewerHandle.viewerObj.GetComponent<RectTransform>();
             rectTransform.localPosition = viewerHandle.layout.Center * DisplayScale;
             viewerHandle.viewerObj.name = viewerHandle.layout.Node.ToString();
         }
 
-        private void RegisterViewerNode(FamilyTreeViewerHandle viewerHandle) =>
+        private void RegisterViewerNode(GenealogyGraphViewerHandle viewerHandle) =>
             viewerNodes[viewerHandle.layout.Node.Guid] = viewerHandle;
     }
 }

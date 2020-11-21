@@ -1,17 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using Genealogy;
-using Genealogy.AsexualFamilyTree;
+using Genealogy.Asexual;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
 // ReSharper disable UnusedVariable
 
-namespace Tests.EditMode.Genealogy.AsexualFamilyTree
+namespace Tests.EditMode.Genealogy.Asexual
 {
     public class LayoutNodeTest
     {
-        public static readonly Node Root = new Node(Guid.Parse("00000000-0000-0000-0000-000000000000"), NodeType.Cell,
+        private static readonly Node Root = new Node(Guid.Parse("00000000-0000-0000-0000-000000000000"), NodeType.Cell,
             new DateTime(2020, 1, 1));
 
         private static readonly Guid Guid1 = Guid.Parse("0f8fad5b-d9cb-469f-a165-70867728950e");

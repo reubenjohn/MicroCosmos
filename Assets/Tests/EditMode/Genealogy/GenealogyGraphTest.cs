@@ -5,7 +5,7 @@ using NUnit.Framework;
 
 namespace Tests.EditMode.Genealogy
 {
-    public class FamilyTreeTest
+    public class GenealogyGraphTest
     {
         private static readonly Node Root = new Node(Guid.Parse("00000000-0000-0000-0000-000000000000"), NodeType.Cell);
 
@@ -50,7 +50,7 @@ namespace Tests.EditMode.Genealogy
         {
             var nodes = new Dictionary<Guid, Node>();
             var relations = new Dictionary<Tuple<Guid, Guid>, Relation>();
-            var tree = new FamilyTree(nodes, relations);
+            var tree = new GenealogyGraph(nodes, relations);
 
             var node1 = new Node(Guid1, NodeType.Cell, new DateTime(2020, 1, 1, 13, 1, 1));
             var node2 = new Node(Guid2, NodeType.Reproduction, new DateTime(2020, 1, 1, 13, 1, 1));
@@ -96,7 +96,7 @@ namespace Tests.EditMode.Genealogy
         [Test]
         public void TestRootNodeRegistration()
         {
-            var tree = new FamilyTree();
+            var tree = new GenealogyGraph();
 
             tree.RegisterRootNode(Root);
 
@@ -110,7 +110,7 @@ namespace Tests.EditMode.Genealogy
         [Test]
         public void TestRegisterReproduction()
         {
-            var tree = new FamilyTree();
+            var tree = new GenealogyGraph();
             tree.RegisterRootNode(Root);
 
             var node1 = new Node(Guid1, NodeType.Cell);

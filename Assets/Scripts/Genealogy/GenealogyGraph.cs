@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Genealogy
 {
-    public partial class FamilyTree
+    public partial class GenealogyGraph
     {
         public Node rootNode;
         private readonly Dictionary<Guid, Node> nodes;
@@ -14,9 +14,9 @@ namespace Genealogy
 
         private readonly Transaction transaction;
 
-        private readonly List<IFamilyTreeListener> listeners;
+        private readonly List<IGenealogyGraphListener> listeners;
 
-        public FamilyTree(Dictionary<Guid, Node> nodes, Dictionary<Tuple<Guid, Guid>, Relation> relations)
+        public GenealogyGraph(Dictionary<Guid, Node> nodes, Dictionary<Tuple<Guid, Guid>, Relation> relations)
         {
             this.nodes = nodes;
             this.relations = relations;
@@ -26,10 +26,10 @@ namespace Genealogy
                 .ToDictionary(group => group.Key, group => group.ToList());
 
             transaction = new Transaction(this);
-            listeners = new List<IFamilyTreeListener>();
+            listeners = new List<IGenealogyGraphListener>();
         }
 
-        public FamilyTree() : this(
+        public GenealogyGraph() : this(
             new Dictionary<Guid, Node>(),
             new Dictionary<Tuple<Guid, Guid>, Relation>())
         {
@@ -130,8 +130,8 @@ namespace Genealogy
             return relationsToAdd;
         }
 
-        public void AddListener(IFamilyTreeListener listener) => listeners.Add(listener);
-        public void RemoveListener(IFamilyTreeListener listener) => listeners.Remove(listener);
+        public void AddListener(IGenealogyGraphListener listener) => listeners.Add(listener);
+        public void RemoveListener(IGenealogyGraphListener listener) => listeners.Remove(listener);
 
         public void RegisterRootNode(Node root)
         {

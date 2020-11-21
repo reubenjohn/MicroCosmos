@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Genealogy.AsexualFamilyTree
+namespace Genealogy.Asexual
 {
-    public class LayoutManager : IFamilyTreeListener
+    public class LayoutManager : IGenealogyGraphListener
     {
         private readonly Dictionary<Guid, LayoutNode> layoutInfo;
 
@@ -19,7 +19,7 @@ namespace Genealogy.AsexualFamilyTree
             this.layoutInfo = layoutInfo;
         }
 
-        public void OnTransactionComplete(FamilyTree familyTree, Node node, List<Relation> relations)
+        public void OnTransactionComplete(GenealogyGraph genealogyGraph, Node node, List<Relation> relations)
         {
             if (relations.Count == 0) // Root node registration
             {

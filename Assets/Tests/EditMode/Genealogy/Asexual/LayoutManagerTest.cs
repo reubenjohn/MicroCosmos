@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Genealogy;
-using Genealogy.AsexualFamilyTree;
-using Newtonsoft.Json;
+using Genealogy.Asexual;
 using NUnit.Framework;
-using Vector2 = UnityEngine.Vector2;
 
-namespace Tests.EditMode.Genealogy.AsexualFamilyTree
+namespace Tests.EditMode.Genealogy.Asexual
 {
     public class LayoutManagerTest
     {
@@ -21,7 +18,7 @@ namespace Tests.EditMode.Genealogy.AsexualFamilyTree
         [Test]
         public void TestRootNode()
         {
-            var tree = new FamilyTree();
+            var tree = new GenealogyGraph();
             var layoutNodes = new Dictionary<Guid, LayoutNode>();
             var layout = new LayoutManager(layoutNodes);
             tree.AddListener(layout);
@@ -35,7 +32,7 @@ namespace Tests.EditMode.Genealogy.AsexualFamilyTree
         [Test]
         public void TestLinear2GenerationLayout()
         {
-            var tree = new FamilyTree();
+            var tree = new GenealogyGraph();
             var layoutNodes = new Dictionary<Guid, LayoutNode>();
             var layout = new LayoutManager(layoutNodes);
             tree.AddListener(layout);
@@ -62,7 +59,7 @@ namespace Tests.EditMode.Genealogy.AsexualFamilyTree
         [Test]
         public void TestTwoChildGenealogyLayout()
         {
-            var tree = new FamilyTree();
+            var tree = new GenealogyGraph();
             var layoutNodes = new Dictionary<Guid, LayoutNode>();
             var layout = new LayoutManager(layoutNodes);
             tree.AddListener(layout);
@@ -89,7 +86,7 @@ namespace Tests.EditMode.Genealogy.AsexualFamilyTree
         [Test]
         public void ListenerAdditionTest()
         {
-            var tree = new FamilyTree();
+            var tree = new GenealogyGraph();
             var layoutNodes = new Dictionary<Guid, LayoutNode>();
             var layout = new LayoutManager(layoutNodes);
             tree.AddListener(layout);

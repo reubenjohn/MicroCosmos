@@ -4,7 +4,7 @@ using System.Linq;
 using JetBrains.Annotations;
 using UnityEngine;
 
-namespace Genealogy.AsexualFamilyTree
+namespace Genealogy.Asexual
 {
     public class LayoutNode
     {

@@ -10,19 +10,19 @@ namespace Cell
     public class Cell : AbstractLivingComponent<CellGene>
     {
         private Rigidbody2D rb;
-        public FamilyTreeManager FamilyTreeManager { get; private set; }
+        public GenealogyGraphManager genealogyGraphManager { get; private set; }
 
         public CellNode genealogyNode;
 
         private void Start()
         {
             rb = GetComponent<Rigidbody2D>();
-            FamilyTreeManager = GetComponentInParent<FamilyTreeManager>();
+            genealogyGraphManager = GetComponentInParent<GenealogyGraphManager>();
 
             gene = gene ?? new CellGene();
 
-            if (genealogyNode == null && FamilyTreeManager != null)
-                FamilyTreeManager.RegisterAsexualCellBirth(new Node[] { }, this);
+            if (genealogyNode == null && genealogyGraphManager != null)
+                genealogyGraphManager.RegisterAsexualCellBirth(new Node[] { }, this);
         }
 
         public override Transform OnInheritGene(CellGene inheritedGene) => transform.DestroyChildren();

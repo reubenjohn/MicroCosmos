@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using Genealogy;
-using Genealogy.AsexualFamilyTree;
+using Genealogy.Asexual;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,21 +8,21 @@ using UnityEngine.TestTools;
 
 namespace Tests.PlayMode.Genealogy
 {
-    public class FamilyTreeViewerTest
+    public class GenealogyGraphViewerTest
     {
         [OneTimeSetUp]
         public void Setup()
         {
-            SceneManager.LoadScene("Tests/PlayMode/Genealogy/FamilyTreeViewerTestScene");
+            SceneManager.LoadScene("Tests/PlayMode/Genealogy/GenealogyGraphViewerTestScene");
         }
 
         [UnityTest]
-        public IEnumerator FamilyTreeViewerTestSimplePasses()
+        public IEnumerator NodesRenderInCorrectPositions()
         {
-            var tree = new FamilyTree();
+            var tree = new GenealogyGraph();
             var layoutManager = new LayoutManager();
             tree.AddListener(layoutManager);
-            var viewer = GameObject.Find("Family Tree Canvas").GetComponent<FamilyTreeViewer>();
+            var viewer = GameObject.Find("_Genealogy Graph Canvas").GetComponent<GenealogyGraphViewer>();
             layoutManager.AddListener(viewer);
 
             var rootNode = new CellNode();
@@ -48,7 +48,7 @@ namespace Tests.PlayMode.Genealogy
         private static Vector3 LocalPositionOf(Node node) =>
             GameObject.Find(node.ToString()).GetComponent<RectTransform>().localPosition;
         
-        private static Node AsexualReproductionNodeOf(FamilyTree tree, CellNode node) =>
+        private static Node AsexualReproductionNodeOf(GenealogyGraph tree, CellNode node) =>
             tree.GetRelationsTo(node.Guid)[0].From;
     }
 }

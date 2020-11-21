@@ -39,8 +39,8 @@ namespace Organelles
             var child = GeneNode.Load(geneTree, cellColony.transform, t.Find("SpawnPoint").position, t.rotation);
 
             var childCell = child.GetComponent<Cell.Cell>();
-            if (childCell.FamilyTreeManager)
-                childCell.FamilyTreeManager.RegisterAsexualCellBirth(new Node[] {parent.genealogyNode}, childCell);
+            if (childCell.genealogyGraphManager)
+                childCell.genealogyGraphManager.RegisterAsexualCellBirth(new Node[] {parent.genealogyNode}, childCell);
         }
 
         public override GeneTranscriber<BirthCanalGene> GetGeneTranscriber() => BirthCanalGeneTranscriber.Singleton;

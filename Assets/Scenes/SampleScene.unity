@@ -211,7 +211,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1575559137}
   m_Direction: 0
   m_Value: 0
-  m_Size: 1
+  m_Size: 0.98880297
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -839,7 +839,7 @@ GameObject:
   - component: {fileID: 957381882}
   - component: {fileID: 957381886}
   m_Layer: 5
-  m_Name: Family Tree Canvas
+  m_Name: _Genealogy Graph Canvas
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -937,7 +937,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4d4e0b7faf915904a88bcd05b2b56a03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  familyTreeContentTransform: {fileID: 1342548513}
+  genealogyGraphContentTransform: {fileID: 0}
 --- !u!1 &957575672 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8293641328668795403, guid: dc694646f8283d046ad34997bb98c68d,
@@ -2478,8 +2478,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1940393820}
   m_HandleRect: {fileID: 1940393819}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 1
+  m_Value: 1
+  m_Size: 0.9860854
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -2646,7 +2646,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -3884.3997, y: 1883.6719}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!850595691 &1405267883

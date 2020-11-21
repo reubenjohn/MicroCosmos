@@ -15,6 +15,6 @@ EditorBuildSettings:
     path: Assets/Tests/PlayMode/Cell/CellColonyTestScene.unity
     guid: 43e6cf6d525745743b464c08c4a94ae1
   - enabled: 1
-    path: Assets/Tests/PlayMode/Genealogy/FamilyTreeViewerTestScene.unity
+    path: Assets/Tests/PlayMode/Genealogy/GenealogyGraphViewerTestScene.unity
     guid: 060b17396880bab49ad4c5f55c19c6f5
   m_configObjects: {}
