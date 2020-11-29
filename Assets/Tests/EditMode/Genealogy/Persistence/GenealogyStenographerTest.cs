@@ -31,7 +31,7 @@ namespace Tests.EditMode.Genealogy.Persistence
       ""displayName"": ""Cell"",
       ""NodeType"": 0,
       ""Guid"": ""00000000-0000-0000-0000-000000000000"",
-      ""RegistrationTime"": ""2020-01-01T01:00:00""
+      ""CreatedAt"": ""2020-01-01T01:00:00""
     }
   },""entries"":[]}";
 
@@ -41,7 +41,7 @@ namespace Tests.EditMode.Genealogy.Persistence
       ""displayName"": ""Cell"",
       ""NodeType"": 0,
       ""Guid"": ""00000000-0000-0000-0000-000000000000"",
-      ""RegistrationTime"": ""2020-01-01T01:00:00""
+      ""CreatedAt"": ""2020-01-01T01:00:00""
     }
   },""entries"":[
     {
@@ -49,7 +49,7 @@ namespace Tests.EditMode.Genealogy.Persistence
         ""$type"": ""Genealogy.Reproduction, MicroCosmosScripts"",
         ""NodeType"": 1,
         ""Guid"": ""00000000-1111-1111-1111-111111111111"",
-        ""RegistrationTime"": ""2020-01-01T01:00:01""
+        ""CreatedAt"": ""2020-01-01T01:00:01""
       },
       ""Relations"": [
         {
@@ -87,7 +87,7 @@ namespace Tests.EditMode.Genealogy.Persistence
             var serialized = DoStenography(graph, () =>
             {
                 graph.RegisterRootNode(Root);
-                graph.RegisterReproduction(new[] {Root}, new Reproduction(RGuid1, Root.RegistrationTime + OneSec));
+                graph.RegisterReproduction(new[] {Root}, new Reproduction(RGuid1, Root.CreatedAt + OneSec));
             });
             Assert.AreEqual(RelationJson, serialized);
         }
@@ -121,7 +121,7 @@ namespace Tests.EditMode.Genealogy.Persistence
             var serialized = DoStenography(g1, () =>
             {
                 g1.RegisterRootNode(Root);
-                var cell1 = new CellNode(Guid1, Root.RegistrationTime + OneSec, "Cell1");
+                var cell1 = new CellNode(Guid1, Root.CreatedAt + OneSec, "Cell1");
                 g1.RegisterReproductionAndOffspring(new[] {Root}, (Node) cell1);
             });
 
@@ -150,18 +150,18 @@ namespace Tests.EditMode.Genealogy.Persistence
             var serialized = DoStenography(g1, () =>
             {
                 g1.RegisterRootNode(Root);
-                var cell1 = new CellNode(Guid1, Root.RegistrationTime + OneSec, "Cell1");
+                var cell1 = new CellNode(Guid1, Root.CreatedAt + OneSec, "Cell1");
                 g1.RegisterReproductionAndOffspring(new[] {Root}, (Node) cell1);
 
-                var cell1RootRep = new Reproduction(RGuid1, cell1.RegistrationTime + OneSec);
+                var cell1RootRep = new Reproduction(RGuid1, cell1.CreatedAt + OneSec);
                 g1.RegisterReproduction(new[] {cell1, Root}, cell1RootRep);
-                var cell2 = new CellNode(Guid2, cell1RootRep.RegistrationTime + OneTick, "cell2");
+                var cell2 = new CellNode(Guid2, cell1RootRep.CreatedAt + OneTick, "cell2");
                 g1.RegisterOffspring(cell1RootRep, cell2);
-                var cell3 = new CellNode(Guid3, cell2.RegistrationTime + OneTick, "cell3");
+                var cell3 = new CellNode(Guid3, cell2.CreatedAt + OneTick, "cell3");
                 g1.RegisterOffspring(cell1RootRep, cell3);
-                var cell2Cell3Rep = new Reproduction(RGuid2, cell3.RegistrationTime + OneSec);
+                var cell2Cell3Rep = new Reproduction(RGuid2, cell3.CreatedAt + OneSec);
                 g1.RegisterReproduction(new Node[] {cell2, cell3}, cell2Cell3Rep);
-                var cell4 = new CellNode(Guid4, cell2Cell3Rep.RegistrationTime + OneTick, "cell4");
+                var cell4 = new CellNode(Guid4, cell2Cell3Rep.CreatedAt + OneTick, "cell4");
                 g1.RegisterOffspring(cell1RootRep, cell4);
             });
 

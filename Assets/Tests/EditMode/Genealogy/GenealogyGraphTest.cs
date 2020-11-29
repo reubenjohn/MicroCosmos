@@ -127,7 +127,7 @@ namespace Tests.EditMode.Genealogy
             var dateTime = new DateTime(2020, 1, 1, 13, 1, 1);
             var reproduction = tree.RegisterReproductionAndOffspring(new[] {Root}, node1);
 
-            Assert.AreEqual(new DateTime(node1.RegistrationTime.Ticks - 1), reproduction.RegistrationTime);
+            Assert.AreEqual(new DateTime(node1.CreatedAt.Ticks - 1), reproduction.CreatedAt);
 
             Assert.AreEqual(3, tree.NodeCount);
             Assert.AreEqual(reproduction.Guid, tree.GetNode(reproduction.Guid)?.Guid);

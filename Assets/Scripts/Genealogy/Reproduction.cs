@@ -10,7 +10,7 @@ namespace Genealogy
         }
 
         [JsonConstructor]
-        public Reproduction(Guid guid, DateTime registrationTime) : base(guid, NodeType.Reproduction, registrationTime)
+        public Reproduction(Guid guid, DateTime createdAt) : base(guid, NodeType.Reproduction, createdAt)
         {
         }
     }

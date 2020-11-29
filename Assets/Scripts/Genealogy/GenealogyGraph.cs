@@ -80,9 +80,9 @@ namespace Genealogy
             if (nodes.TryGetValue(child.Guid, out var existingChild))
                 throw new InvalidOperationException(
                     "A reproduction for a given child can only be registered once. " +
-                    $"Child '{child.Guid}' was already first registered at {existingChild.RegistrationTime}");
+                    $"Child '{child.Guid}' was already first registered at {existingChild.CreatedAt}");
 
-            var reproductionTime = new DateTime(child.RegistrationTime.Ticks - 1);
+            var reproductionTime = new DateTime(child.CreatedAt.Ticks - 1);
             var reproduction = new Reproduction(Guid.NewGuid(), reproductionTime);
 
             transaction.StartNew(reproduction);
@@ -92,7 +92,7 @@ namespace Genealogy
             transaction.Complete();
 
             transaction.StartNew(child);
-            transaction.AddRelation(new Relation(reproduction, RelationType.Offspring, child, child.RegistrationTime));
+            transaction.AddRelation(new Relation(reproduction, RelationType.Offspring, child, child.CreatedAt));
             transaction.Complete();
 
             return reproduction;
@@ -108,12 +108,12 @@ namespace Genealogy
             if (nodes.TryGetValue(reproduction.Guid, out var existingReproduction))
                 throw new InvalidOperationException(
                     "A reproduction can only be registered once. " +
-                    $"Reproduction '{reproduction.Guid}' was already first registered at {existingReproduction.RegistrationTime}");
+                    $"Reproduction '{reproduction.Guid}' was already first registered at {existingReproduction.CreatedAt}");
 
             transaction.StartNew(reproduction);
             foreach (var parent in parents)
                 transaction.AddRelation(new Relation(parent, RelationType.Reproduction, reproduction,
-                    reproduction.RegistrationTime));
+                    reproduction.CreatedAt));
             transaction.Complete();
 
             return reproduction;
@@ -128,10 +128,10 @@ namespace Genealogy
             if (nodes.TryGetValue(child.Guid, out var existingChild))
                 throw new InvalidOperationException(
                     "A reproduction can only be registered once. " +
-                    $"Reproduction '{reproduction.Guid}' was already first registered at {existingChild.RegistrationTime}");
+                    $"Reproduction '{reproduction.Guid}' was already first registered at {existingChild.CreatedAt}");
 
             transaction.StartNew(child);
-            transaction.AddRelation(new Relation(reproduction, RelationType.Offspring, child, child.RegistrationTime));
+            transaction.AddRelation(new Relation(reproduction, RelationType.Offspring, child, child.CreatedAt));
             transaction.Complete();
 
             return reproduction;

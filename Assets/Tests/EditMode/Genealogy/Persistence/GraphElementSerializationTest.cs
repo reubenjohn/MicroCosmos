@@ -18,7 +18,7 @@ namespace Tests.EditMode.Genealogy.Persistence
             var expected = @"{
   ""NodeType"": 1,
   ""Guid"": ""11111111-1111-1111-1111-111111111111"",
-  ""RegistrationTime"": ""2020-01-01T01:00:00""
+  ""CreatedAt"": ""2020-01-01T01:00:00""
 }";
             var deserialized = JsonConvert.DeserializeObject<Node>(expected);
             Assert.AreEqual(expected, JsonConvert.SerializeObject(deserialized, Formatting.Indented));
@@ -31,7 +31,7 @@ namespace Tests.EditMode.Genealogy.Persistence
             var expected = @"{
   ""NodeType"": 1,
   ""Guid"": ""11111111-1111-1111-1111-111111111111"",
-  ""RegistrationTime"": ""2020-01-01T01:00:00""
+  ""CreatedAt"": ""2020-01-01T01:00:00""
 }";
             var deserialized = JsonConvert.DeserializeObject<Reproduction>(expected);
             Assert.AreEqual(expected, JsonConvert.SerializeObject(deserialized, Formatting.Indented));
@@ -45,7 +45,7 @@ namespace Tests.EditMode.Genealogy.Persistence
   ""displayName"": ""cN1"",
   ""NodeType"": 0,
   ""Guid"": ""11111111-1111-1111-1111-111111111111"",
-  ""RegistrationTime"": ""2020-01-01T01:00:00""
+  ""CreatedAt"": ""2020-01-01T01:00:00""
 }";
             var deserialized = JsonConvert.DeserializeObject<CellNode>(expected);
             Assert.AreEqual(expected, JsonConvert.SerializeObject(deserialized, Formatting.Indented));
@@ -97,20 +97,20 @@ namespace Tests.EditMode.Genealogy.Persistence
   {
     ""NodeType"": 0,
     ""Guid"": ""11111111-1111-1111-1111-111111111111"",
-    ""RegistrationTime"": ""2020-01-01T01:00:00""
+    ""CreatedAt"": ""2020-01-01T01:00:00""
   },
   {
     ""$type"": ""Genealogy.Reproduction, MicroCosmosScripts"",
     ""NodeType"": 1,
     ""Guid"": ""11111111-1111-1111-1111-111111111111"",
-    ""RegistrationTime"": ""2020-01-01T01:00:00""
+    ""CreatedAt"": ""2020-01-01T01:00:00""
   },
   {
     ""$type"": ""Genealogy.CellNode, MicroCosmosScripts"",
     ""displayName"": ""cell_1"",
     ""NodeType"": 0,
     ""Guid"": ""11111111-1111-1111-1111-111111111111"",
-    ""RegistrationTime"": ""2020-01-01T01:00:00""
+    ""CreatedAt"": ""2020-01-01T01:00:00""
   }
 ]";
             var deserialized = JsonConvert.DeserializeObject<Node[]>(expected, new JsonSerializerSettings()

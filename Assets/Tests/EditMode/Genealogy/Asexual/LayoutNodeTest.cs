@@ -44,7 +44,7 @@ Assertion message:
             var l0 = NewLayoutNode(Root, null);
 
             Assert.AreEqual(
-                @"{""Node"":{""NodeType"":0,""Guid"":""00000000-0000-0000-0000-000000000000"",""RegistrationTime"":""2020-01-01T00:00:00""},""Parent"":null,""Generation"":0,""XMax"":1.0,""SiblingIndex"":0,""X"":0.0,""Center"":{""x"":0.5,""y"":0.5}}",
+                @"{""Node"":{""NodeType"":0,""Guid"":""00000000-0000-0000-0000-000000000000"",""CreatedAt"":""2020-01-01T00:00:00""},""Parent"":null,""Generation"":0,""XMax"":1.0,""SiblingIndex"":0,""X"":0.0,""Center"":{""x"":0.5,""y"":0.5}}",
                 JsonConvert.SerializeObject(l0));
             Assert.AreSame(Root, l0.Node);
 

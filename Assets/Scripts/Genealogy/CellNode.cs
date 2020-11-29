@@ -18,8 +18,8 @@ namespace Genealogy
         }
 
         [JsonConstructor]
-        public CellNode(Guid guid, DateTime registrationTime, string displayName) :
-            base(guid, NodeType.Cell, registrationTime)
+        public CellNode(Guid guid, DateTime createdAt, string displayName) :
+            base(guid, NodeType.Cell, createdAt)
         {
             this.displayName = displayName;
         }

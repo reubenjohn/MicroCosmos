@@ -10,21 +10,20 @@ namespace Genealogy
         
         [JsonConverter(typeof(GuidConverter))] public Guid Guid { get; }
 
-        //TODO Rename to CreatedAt
-        public DateTime RegistrationTime { get; }
+        public DateTime CreatedAt { get; }
 
         public Node(Guid guid, NodeType nodeType) : this(guid, nodeType, DateTime.Now)
         {
         }
 
         [JsonConstructor]
-        public Node(Guid guid, NodeType nodeType, DateTime registrationTime)
+        public Node(Guid guid, NodeType nodeType, DateTime createdAt)
         {
             Guid = guid;
             NodeType = nodeType;
-            RegistrationTime = registrationTime;
+            CreatedAt = createdAt;
         }
 
-        public override string ToString() => $"{NodeType}@{RegistrationTime}~{Guid}";
+        public override string ToString() => $"{NodeType}@{CreatedAt}~{Guid}";
     }
 }

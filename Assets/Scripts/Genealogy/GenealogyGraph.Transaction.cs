@@ -23,10 +23,10 @@ namespace Genealogy
 
             public void StartNew([NotNull] Node transactionNode)
             {
-                if (DateTime.Compare(transactionNode.RegistrationTime, lastTransactionTime) <= 0)
+                if (DateTime.Compare(transactionNode.CreatedAt, lastTransactionTime) <= 0)
                     throw new InvalidOperationException(
-                        $"Cannot start a transaction with a node who's " +
-                        $"RegistrationTime ({transactionNode.RegistrationTime}) <= " +
+                        $"Cannot start a transaction with a node who's CreatedAt " +
+                        $"({transactionNode.CreatedAt}) <= " +
                         $"lastTransactionTime ({lastTransactionTime})");
                 if (node != null)
                     throw new InvalidOperationException("Cannot start new transaction until " +
@@ -46,11 +46,11 @@ namespace Genealogy
                     if (relation.To.Guid != node.Guid)
                         throw new InvalidOperationException($"Cannot add relations to node '{relation.To}' " +
                                                             $"while in a transaction for node '{node}'");
-                    if (!DateTime.Equals(relation.DateTime, node.RegistrationTime))
+                    if (!DateTime.Equals(relation.DateTime, node.CreatedAt))
                         throw new InvalidOperationException(
                             "Cannot add relation to transaction. " +
                             $"Relation's creation time '{relation.DateTime}' " +
-                            $"must equal transaction node's creation time {node.RegistrationTime}");
+                            $"must equal transaction node's creation time {node.CreatedAt}");
                 }
                 else if (relations.Count > 0)
                     throw new InvalidOperationException(
