@@ -49,17 +49,18 @@ namespace Genealogy.Asexual
             private set
             {
                 if (Mathf.Approximately(bounds.xMax, value)) return;
-                
+
+                if (Parent != null)
+                {
+                    var siblingIndex = SiblingIndex;
+                    if (siblingIndex + 1 == Parent.children.Count)
+                        Parent.XMax = Mathf.Max(Parent.XMax, value);
+                    else
+                        Parent.children[siblingIndex + 1].X = value;
+                }
+
                 bounds.xMax = value;
                 NotifyListenersOfUpdate();
-
-                if (Parent == null) return;
-
-                var siblingIndex = SiblingIndex;
-                if (siblingIndex + 1 < Parent.children.Count)
-                    Parent.children[siblingIndex + 1].X = XMax;
-
-                Parent.XMax = Mathf.Max(Parent.XMax, Parent.children.Last().XMax);
             }
         }
 
@@ -70,15 +71,36 @@ namespace Genealogy.Asexual
             get => bounds.x;
             private set
             {
-                var diff = value - bounds.x;
+                var diff = value - X;
                 if (Mathf.Approximately(diff, 0)) return;
-                
-                bounds.x = value;
+
+                XMax = value + bounds.width;
                 NotifyListenersOfUpdate();
 
+                var minX = value;
                 foreach (var child in children)
-                    child.X += diff;
+                {
+                    child.NaivelyUpdateTreeX(minX);
+                    minX = child.XMax;
+                }
+
+                bounds.xMin = value;
+                NotifyListenersOfUpdate();
             }
+        }
+
+        private void NaivelyUpdateTreeX(float x)
+        {
+            bounds.xMax = x + bounds.width;
+            NotifyListenersOfUpdate();
+            var minX = x;
+            foreach (var child in children)
+            {
+                child.NaivelyUpdateTreeX(minX);
+                minX = child.XMax;
+            }
+
+            bounds.xMin = x;
         }
 
         public Vector2 Center => bounds.center;
@@ -87,7 +109,7 @@ namespace Genealogy.Asexual
         {
             var lastChild = children.LastOrDefault();
             if (lastChild != null)
-                return new Rect(lastChild.bounds.xMin + 1, lastChild.bounds.yMin, 1, 1);
+                return new Rect(lastChild.bounds.xMax, lastChild.bounds.yMin, 1, 1);
             else
                 return new Rect(bounds.xMin, bounds.yMin - 1, 1, 1);
         }

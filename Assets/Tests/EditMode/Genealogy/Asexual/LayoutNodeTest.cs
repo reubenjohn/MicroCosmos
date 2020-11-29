@@ -17,13 +17,15 @@ namespace Tests.EditMode.Genealogy.Asexual
         private static readonly Guid Guid1 = Guid.Parse("0f8fad5b-d9cb-469f-a165-70867728950e");
         private static readonly Guid Guid2 = Guid.Parse("7c9e6679-7425-40de-944b-e07fc1f90ae7");
         private static readonly Guid Guid3 = Guid.Parse("e07fc1f9-d9cb-40de-a165-70867728950e");
-        private static readonly List<ILayoutChangeListener<LayoutNode>> Listeners = new List<ILayoutChangeListener<LayoutNode>>();
 
-        private LayoutNode NewLayoutNode(Node root, LayoutNode parent) => new LayoutNode(Listeners, root, parent);
+        private static readonly List<ILayoutChangeListener<LayoutNode>> Listeners =
+            new List<ILayoutChangeListener<LayoutNode>>();
+
+        private LayoutNode NewLayoutNode(Node node, LayoutNode parent) => new LayoutNode(Listeners, node, parent);
 
         internal static void AssertDisplayHierarchy(string expected, LayoutNode node)
         {
-            var actual = node.GetHierarchyDisplayString(nodeWidth:2);
+            var actual = node.GetHierarchyDisplayString(nodeWidth: 2);
             try
             {
                 Assert.AreEqual(expected, actual);
@@ -102,7 +104,7 @@ Assertion message:
             var l00 = NewLayoutNode(null, l0);
             var l01 = NewLayoutNode(null, l0);
             var l001 = NewLayoutNode(null, l00);
-            
+
             // Not impacted yet
             AssertDisplayHierarchy(@"
   00
@@ -117,7 +119,7 @@ Assertion message:
 00  01",
                 l0);
         }
-        
+
         [Test]
         public void TestImpactedRightTree()
         {
@@ -126,7 +128,7 @@ Assertion message:
             var l01 = NewLayoutNode(null, l0);
             var l010 = NewLayoutNode(null, l01);
             var l011 = NewLayoutNode(null, l01);
-            
+
             AssertDisplayHierarchy(@"
     00
 00    01
@@ -141,14 +143,14 @@ Assertion message:
                 l0);
 
             var l001 = NewLayoutNode(null, l00);
-            
+
             AssertDisplayHierarchy(@"
       00
   00      01
 00  01  00  01",
                 l0);
         }
-        
+
         [Test]
         public void TestCascadedTreeUpdate()
         {
@@ -160,14 +162,14 @@ Assertion message:
             var l000 = NewLayoutNode(null, l00);
             var l001 = NewLayoutNode(null, l00);
             var l0010 = NewLayoutNode(null, l001);
-            
+
             AssertDisplayHierarchy(@"
       00
   00      01
 00  01  00  01
     00",
                 l0);
-            
+
             var l0011 = NewLayoutNode(null, l001);
             AssertDisplayHierarchy(@"
         00
@@ -175,7 +177,7 @@ Assertion message:
 00    01    00  01
     00  01",
                 l0);
-            
+
             var l00100 = NewLayoutNode(null, l0010);
             var l00101 = NewLayoutNode(null, l0010);
             AssertDisplayHierarchy(@"
@@ -184,6 +186,33 @@ Assertion message:
 00      01      00  01
       00    01
     00  01",
+                l0);
+        }
+
+        [Test]
+        public void TestCascadedTreeUpdate2()
+        {
+            var l0 = NewLayoutNode(Root, null);
+            var l00 = NewLayoutNode(null, l0);
+            var l01 = NewLayoutNode(null, l0);
+            var l02 = NewLayoutNode(null, l0);
+            var l020 = NewLayoutNode(null, l02);
+            var l021 = NewLayoutNode(null, l02);
+            var l010 = NewLayoutNode(null, l01);
+            var l011 = NewLayoutNode(null, l01);
+
+            AssertDisplayHierarchy(@"
+        00
+00    01      02
+    00  01  00  01",
+                l0);
+
+            var l000 = NewLayoutNode(null, l00);
+            var l001 = NewLayoutNode(null, l00);
+            AssertDisplayHierarchy(@"
+          00
+  00      01      02
+00  01  00  01  00  01",
                 l0);
         }
     }
