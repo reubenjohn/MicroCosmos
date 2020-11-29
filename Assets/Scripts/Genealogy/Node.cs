@@ -1,17 +1,23 @@
 ﻿using System;
+using Genealogy.Persistence;
+using Newtonsoft.Json;
 
 namespace Genealogy
 {
     public class Node
     {
-        public Guid Guid { get; }
         public NodeType NodeType { get; }
+        
+        [JsonConverter(typeof(GuidConverter))] public Guid Guid { get; }
+
+        //TODO Rename to CreatedAt
         public DateTime RegistrationTime { get; }
 
         public Node(Guid guid, NodeType nodeType) : this(guid, nodeType, DateTime.Now)
         {
         }
 
+        [JsonConstructor]
         public Node(Guid guid, NodeType nodeType, DateTime registrationTime)
         {
             Guid = guid;

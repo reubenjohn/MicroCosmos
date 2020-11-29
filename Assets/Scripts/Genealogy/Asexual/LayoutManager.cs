@@ -37,6 +37,12 @@ namespace Genealogy.Asexual
             }
         }
 
+        public void OnClear()
+        {
+            foreach (var listener in listeners) listener.OnClear();
+            layoutInfo.Clear();
+        }
+
         private LayoutNode RegisterNode(LayoutNode node) => layoutInfo[node.Node.Guid] = node;
 
         public LayoutNode GetNode(Guid guid) => layoutInfo[guid];

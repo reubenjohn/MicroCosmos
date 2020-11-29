@@ -22,6 +22,8 @@ namespace Organelles
             .Where(e => e != null)
             .ToArray();
 
+        public override MembraneGene GetGene() => gene ?? new MembraneGene();
+
         public override Transform OnInheritGene(MembraneGene inheritedGene)
         {
             base.OnInheritGene(inheritedGene);

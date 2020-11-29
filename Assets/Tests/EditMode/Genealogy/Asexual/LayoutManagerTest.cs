@@ -39,7 +39,7 @@ namespace Tests.EditMode.Genealogy.Asexual
 
             tree.RegisterRootNode(Root);
             var node00 = new Node(Guid1, NodeType.Cell);
-            var r00 = tree.RegisterReproduction(new[] {Root}, node00);
+            var r00 = tree.RegisterReproductionAndOffspring(new[] {Root}, node00);
 
             LayoutNodeTest.AssertDisplayHierarchy(@"
 00
@@ -67,15 +67,9 @@ namespace Tests.EditMode.Genealogy.Asexual
             tree.RegisterRootNode(Root);
             var node11 = new Node(Guid1, NodeType.Cell);
             var node12 = new Node(Guid2, NodeType.Cell);
-            tree.RegisterReproduction(new[] {Root}, node11);
-            tree.RegisterReproduction(new[] {Root}, node12);
-            /*      *
-                  /    \
-                .        .
-                |        |
-                *        */
-            
-            
+            tree.RegisterReproductionAndOffspring(new[] {Root}, node11);
+            tree.RegisterReproductionAndOffspring(new[] {Root}, node12);
+
             LayoutNodeTest.AssertDisplayHierarchy(@"
   00
 00  01
@@ -95,7 +89,7 @@ namespace Tests.EditMode.Genealogy.Asexual
             Assert.AreEqual(1, layoutNodes.Count);
 
             tree.RemoveListener(layout);
-            tree.RegisterReproduction(new[] {Root}, new Node(Guid1, NodeType.Reproduction));
+            tree.RegisterReproductionAndOffspring(new[] {Root}, new Node(Guid1, NodeType.Reproduction));
             Assert.AreEqual(1, layoutNodes.Count);
         }
     }

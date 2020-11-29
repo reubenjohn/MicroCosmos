@@ -21,13 +21,13 @@ namespace Tests.PlayMode.Cell
         public IEnumerator SaveLoadTest()
         {
             var cellColony = GameObject.Find("CellColony").GetComponent<CellColony>();
-            cellColony.saveDirectory = $"{Application.temporaryCachePath}/testing/CellColonyTest";
+            cellColony.SaveDirectory = $"{Application.temporaryCachePath}/testing/CellColonyTest";
             cellColony.saveFile = "testSave";
             Assert.AreEqual($"{Application.temporaryCachePath}/testing/CellColonyTest/testSave.json",
                 cellColony.SavePath);
             try
             {
-                Directory.Delete(cellColony.saveDirectory, true);
+                Directory.Delete(cellColony.SaveDirectory, true);
             }
             catch (DirectoryNotFoundException)
             {

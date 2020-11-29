@@ -15,7 +15,7 @@ namespace Genealogy
         private Canvas canvas;
         private Transform genealogyGraphContentTransform;
 
-        private ViewerNode currentSelectedNode = null;
+        private ViewerNode currentSelectedNode;
 
         private readonly Dictionary<Guid, GenealogyGraphViewerHandle> viewerNodes =
             new Dictionary<Guid, GenealogyGraphViewerHandle>();
@@ -76,6 +76,17 @@ namespace Genealogy
                 var connection = ConnectionManager.CreateConnection(from, to);
                 SetVisibility(connection, canvas.enabled);
             }
+        }
+
+        public void OnClear()
+        {
+            if (currentSelectedNode)
+                foreach (var listener in listeners)
+                    listener.OnDeselectNode(currentSelectedNode, null);
+            currentSelectedNode = default;
+            foreach (var viewerHandle in viewerNodes.Values) viewerHandle.OnDestroy();
+            ConnectionManager.CleanConnections();
+            viewerNodes.Clear();
         }
 
         public void OnUpdateNode(LayoutNode layout) => viewerNodes[layout.Node.Guid].OnUpdate();

@@ -10,15 +10,18 @@ namespace Cell
 {
     public class CellColony : MonoBehaviour
     {
-        public string saveDirectory;
-        public string saveFile = "save2";
+        private string saveDirectory;
 
-        public string SavePath => $"{saveDirectory}/{saveFile}.json";
-
-        private void Start()
+        public string SaveDirectory
         {
-            saveDirectory = saveDirectory == "" ? DefaultDirectory : saveDirectory;
+            get => saveDirectory = string.IsNullOrEmpty(saveDirectory) ? DefaultDirectory : saveDirectory;
+            set => saveDirectory = value;
         }
+
+        public string saveFile = "save2";
+        private readonly List<ICellColonyListener> listeners = new List<ICellColonyListener>();
+
+        public string SavePath => $"{SaveDirectory}/{saveFile}.json";
 
         private string DefaultDirectory => $"{Application.persistentDataPath}/saves";
 
@@ -30,7 +33,10 @@ namespace Cell
 
         public void OnSave()
         {
-            Directory.CreateDirectory(saveDirectory);
+            Directory.CreateDirectory(SaveDirectory);
+
+            foreach (var listener in listeners) listener.OnSave(SaveDirectory);
+
             var serializer = new JsonSerializer {Formatting = Formatting.Indented};
             using (var sw = new StreamWriter(SavePath))
             using (JsonWriter writer = new JsonTextWriter(sw))
@@ -43,6 +49,8 @@ namespace Cell
 
         public void OnLoad()
         {
+            foreach (var listener in listeners) listener.OnLoad(SaveDirectory);
+
             var serializer = new JsonSerializer {Formatting = Formatting.Indented};
             using (var sr = new StreamReader(SavePath))
             using (JsonReader reader = new JsonTextReader(sr))
@@ -89,8 +97,10 @@ namespace Cell
         public Cell FindCell(Guid genealogyNodeGuid)
         {
             return LivingCells
-                .FirstOrDefault(c => genealogyNodeGuid == c.genealogyNode.Guid);
+                .FirstOrDefault(c => genealogyNodeGuid == c.GenealogyNode.Guid);
         }
+
+        public void AddListener(ICellColonyListener listener) => listeners.Add(listener);
     }
 
     public class CellColonyData

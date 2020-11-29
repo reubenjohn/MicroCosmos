@@ -1,25 +1,38 @@
-﻿using Brains;
+﻿using System;
+using System.IO;
+using Brains;
 using Cinematics;
 using Genealogy;
 using Genealogy.Asexual;
+using Genealogy.Persistence;
+using Newtonsoft.Json;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
 namespace Cell
 {
     [RequireComponent(typeof(CellColony))]
-    public class GenealogyGraphManager : MonoBehaviour, IGraphViewerListener
+    public class GenealogyGraphManager : MonoBehaviour, IGraphViewerListener, ICellColonyListener
     {
-        private readonly GenealogyGraph genealogyGraph = new GenealogyGraph();
+        public readonly GenealogyGraph genealogyGraph = new GenealogyGraph();
         private CellColony CellColony { get; set; }
         private DivinePossession divinePossession;
+        private ScrollStenographer stenographer;
         [SerializeField] private Choreographer Choreographer;
         [SerializeField] private GenealogyGraphViewer viewer;
+        private string stenographerPath;
+
+        public Node RootNode => genealogyGraph.rootNode;
 
         private void Start()
         {
             CellColony = GetComponent<CellColony>();
             divinePossession = GetComponent<DivinePossession>();
+
+            stenographerPath = $"{CellColony.SaveDirectory}/{Guid.NewGuid()}.json";
+            stenographer = new ScrollStenographer(() => new JsonTextWriter(new StreamWriter(stenographerPath)));
+            genealogyGraph.AddListener(stenographer);
+
             if (viewer)
             {
                 Choreographer.AddListener(viewer);
@@ -34,16 +47,20 @@ namespace Cell
                 Debug.LogWarning("No genealogy graph viewer is listening in on the genealogy graph");
             }
 
-            genealogyGraph.RegisterRootNode(new CellNode("Cell"));
+            CellColony.AddListener(this);
+
+            genealogyGraph.RegisterRootNode(
+                new CellNode(Guid.Parse("00000000-0000-0000-0000-000000000000"), new DateTime(1), "Cell"));
         }
 
-        public void RegisterAsexualCellBirth(Node[] parentGenealogyNodes, Cell child)
+        private void OnDestroy() => stenographer.CloseScroll();
+
+        public CellNode RegisterAsexualCellBirth(Node[] parentGenealogyNodes, Cell child)
         {
-            parentGenealogyNodes =
-                parentGenealogyNodes.Length > 0 ? parentGenealogyNodes : new[] {genealogyGraph.rootNode};
             child.name = NamingSystem.GetChildName(genealogyGraph, (CellNode) parentGenealogyNodes[0]);
-            child.genealogyNode = new CellNode(child.name);
-            genealogyGraph.RegisterReproduction(parentGenealogyNodes, child.genealogyNode);
+            var childGenealogyNode = new CellNode(child.name);
+            genealogyGraph.RegisterReproductionAndOffspring(parentGenealogyNodes, childGenealogyNode);
+            return childGenealogyNode;
         }
 
         public void OnSelectNode(ViewerNode viewerNode, PointerEventData eventData)
@@ -70,6 +87,23 @@ namespace Cell
                 if (targetCell != null)
                     targetCell.IsInFocus = false;
             }
+        }
+
+        public void OnSave(string saveDirectory)
+        {
+            stenographer.CloseScroll();
+            var destFileName = PersistenceFilePath(saveDirectory);
+            File.Delete(destFileName);
+            File.Move(stenographerPath, destFileName);
+        }
+
+        private static string PersistenceFilePath(string saveDirectory) => $"{saveDirectory}/genealogy1.json";
+
+        public void OnLoad(string persistenceFilePath)
+        {
+            genealogyGraph.Clear();
+            ScrollReader.Load(new JsonTextReader(new StreamReader(PersistenceFilePath(persistenceFilePath))),
+                genealogyGraph);
         }
     }
 }

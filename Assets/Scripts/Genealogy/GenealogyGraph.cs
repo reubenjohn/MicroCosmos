@@ -4,6 +4,8 @@ using System.Linq;
 
 namespace Genealogy
 {
+    public delegate Node NodeResolver(Guid guid);
+
     public partial class GenealogyGraph
     {
         public Node rootNode;
@@ -35,7 +37,20 @@ namespace Genealogy
         {
         }
 
+        public void Clear()
+        {
+            foreach (var listener in listeners) listener.OnClear();
+
+            transaction.Reset();
+            rootNode = null;
+            nodes.Clear();
+            relations.Clear();
+            relationsByFrom.Clear();
+            relationsByTo.Clear();
+        }
+
         public Node GetNode(Guid guid) => nodes[guid];
+        public Node GetNodeOrDefault(Guid guid) => nodes.TryGetValue(guid, out var node) ? node : default;
 
         public int NodeCount => nodes.Count;
 
@@ -52,7 +67,10 @@ namespace Genealogy
 
         public int RelationCount => relations.Count;
 
-        public Reproduction RegisterReproduction(Node[] parents, Node child, DateTime dateTime)
+        public IEnumerable<Node> Nodes => nodes.Values;
+        public IEnumerable<Relation> Relations => relations.Values;
+
+        public Reproduction RegisterReproductionAndOffspring(Node[] parents, Node child)
         {
             foreach (var name in parents.Select(node => node.Guid))
                 if (!nodes.ContainsKey(name))
@@ -64,21 +82,63 @@ namespace Genealogy
                     "A reproduction for a given child can only be registered once. " +
                     $"Child '{child.Guid}' was already first registered at {existingChild.RegistrationTime}");
 
-            var reproduction = new Reproduction(Guid.NewGuid(), dateTime);
+            var reproductionTime = new DateTime(child.RegistrationTime.Ticks - 1);
+            var reproduction = new Reproduction(Guid.NewGuid(), reproductionTime);
+
             transaction.StartNew(reproduction);
             foreach (var parent in parents)
-                transaction.AddRelation(new Relation(parent, RelationType.Reproduction, reproduction, dateTime));
+                transaction.AddRelation(new Relation(parent, RelationType.Reproduction, reproduction,
+                    reproductionTime));
             transaction.Complete();
 
             transaction.StartNew(child);
-            transaction.AddRelation(new Relation(reproduction, RelationType.Offspring, child, dateTime));
+            transaction.AddRelation(new Relation(reproduction, RelationType.Offspring, child, child.RegistrationTime));
             transaction.Complete();
 
             return reproduction;
         }
 
-        public Reproduction RegisterReproduction(Node[] parents, Node child) =>
-            RegisterReproduction(parents, child, DateTime.Now);
+        public Reproduction RegisterReproduction(Node[] parents, Reproduction reproduction)
+        {
+            foreach (var name in parents.Select(node => node.Guid))
+                if (!nodes.ContainsKey(name))
+                    throw new InvalidOperationException(
+                        $"Cannot register reproduction unless parents are themselves registered. " +
+                        $"Please first register parent: '{name}'.");
+            if (nodes.TryGetValue(reproduction.Guid, out var existingReproduction))
+                throw new InvalidOperationException(
+                    "A reproduction can only be registered once. " +
+                    $"Reproduction '{reproduction.Guid}' was already first registered at {existingReproduction.RegistrationTime}");
+
+            transaction.StartNew(reproduction);
+            foreach (var parent in parents)
+                transaction.AddRelation(new Relation(parent, RelationType.Reproduction, reproduction,
+                    reproduction.RegistrationTime));
+            transaction.Complete();
+
+            return reproduction;
+        }
+
+        public Reproduction RegisterOffspring(Reproduction reproduction, CellNode child)
+        {
+            if (!nodes.ContainsKey(reproduction.Guid))
+                throw new InvalidOperationException(
+                    $"Cannot register offspring until its reproduction is itself registered. " +
+                    $"Please first register reproduction: '{reproduction}'.");
+            if (nodes.TryGetValue(child.Guid, out var existingChild))
+                throw new InvalidOperationException(
+                    "A reproduction can only be registered once. " +
+                    $"Reproduction '{reproduction.Guid}' was already first registered at {existingChild.RegistrationTime}");
+
+            transaction.StartNew(child);
+            transaction.AddRelation(new Relation(reproduction, RelationType.Offspring, child, child.RegistrationTime));
+            transaction.Complete();
+
+            return reproduction;
+        }
+
+        public Reproduction RegisterReproductionAndOffspring(Node[] parents, CellNode child) =>
+            RegisterReproductionAndOffspring(parents, (Node) child);
 
         public Relation RegisterRelation(Relation relation)
         {

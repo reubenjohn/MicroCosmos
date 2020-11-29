@@ -6,7 +6,7 @@ namespace Organelles
 {
     public abstract class AbstractLivingComponent<T> : MonoBehaviour, ILivingComponent<T>
     {
-        public T gene;
+        protected T gene;
 
         public string GetNodeName() => gameObject.name;
 
@@ -14,7 +14,7 @@ namespace Organelles
 
         public abstract GeneTranscriber<T> GetGeneTranscriber();
 
-        public T GetGene() => gene;
+        public virtual T GetGene() => gene;
 
         public virtual Transform OnInheritGene(T inheritedGene)
         {

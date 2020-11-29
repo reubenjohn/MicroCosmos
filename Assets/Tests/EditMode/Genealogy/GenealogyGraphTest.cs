@@ -7,7 +7,10 @@ namespace Tests.EditMode.Genealogy
 {
     public class GenealogyGraphTest
     {
-        private static readonly Node Root = new Node(Guid.Parse("00000000-0000-0000-0000-000000000000"), NodeType.Cell);
+        private static readonly DateTime Jan1 = new DateTime(2020, 1, 1, 13, 1, 1);
+
+        private static readonly Node Root = new Node(Guid.Parse("00000000-0000-0000-0000-000000000000"), NodeType.Cell,
+            Jan1);
 
         private static readonly Guid Guid1 = Guid.Parse("11111111-1111-1111-1111-111111111111");
         private static readonly Guid Guid2 = Guid.Parse("22222222-2222-2222-2222-222222222222");
@@ -120,12 +123,11 @@ namespace Tests.EditMode.Genealogy
             Assert.AreEqual(1, tree.NodeCount);
             Assert.AreEqual(0, tree.RelationCount);
 
-            Assert.Throws<InvalidOperationException>(() => tree.RegisterReproduction(new[] {node1}, node2));
+            Assert.Throws<InvalidOperationException>(() => tree.RegisterReproductionAndOffspring(new[] {node1}, node2));
             var dateTime = new DateTime(2020, 1, 1, 13, 1, 1);
-            var reproduction = tree.RegisterReproduction(new[] {Root}, node1,
-                dateTime);
+            var reproduction = tree.RegisterReproductionAndOffspring(new[] {Root}, node1);
 
-            Assert.AreEqual(dateTime, reproduction.RegistrationTime);
+            Assert.AreEqual(new DateTime(node1.RegistrationTime.Ticks - 1), reproduction.RegistrationTime);
 
             Assert.AreEqual(3, tree.NodeCount);
             Assert.AreEqual(reproduction.Guid, tree.GetNode(reproduction.Guid)?.Guid);
@@ -136,8 +138,8 @@ namespace Tests.EditMode.Genealogy
             Assert.NotNull(tree.GetRelation(reproduction.Guid, Guid1));
 
 
-            tree.RegisterReproduction(new[] {Root}, node2);
-            tree.RegisterReproduction(new[] {node1, node2}, node3);
+            tree.RegisterReproductionAndOffspring(new[] {Root}, node2);
+            tree.RegisterReproductionAndOffspring(new[] {node1, node2}, node3);
 
             Assert.AreEqual(7, tree.NodeCount);
             Assert.AreEqual(7, tree.RelationCount);

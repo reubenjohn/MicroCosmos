@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Genealogy
 {
@@ -16,6 +17,7 @@ namespace Genealogy
         {
         }
 
+        [JsonConstructor]
         public CellNode(Guid guid, DateTime registrationTime, string displayName) :
             base(guid, NodeType.Cell, registrationTime)
         {

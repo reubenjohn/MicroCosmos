@@ -7,5 +7,6 @@ namespace Genealogy
         void OnUpdateNode(T layout);
         void OnAddNode(T layout);
         void OnAddConnections(List<Relation> relations);
+        void OnClear();
     }
 }

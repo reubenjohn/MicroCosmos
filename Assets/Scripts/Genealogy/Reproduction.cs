@@ -1,4 +1,5 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Genealogy
 {
@@ -8,7 +9,8 @@ namespace Genealogy
         {
         }
 
-        public Reproduction(Guid guid, DateTime dateTime) : base(guid, NodeType.Reproduction, dateTime)
+        [JsonConstructor]
+        public Reproduction(Guid guid, DateTime registrationTime) : base(guid, NodeType.Reproduction, registrationTime)
         {
         }
     }

@@ -3,6 +3,7 @@ using UnityEngine;
 
 namespace Genetics
 {
+    [RequireComponent(typeof(ILivingComponent))]
     public class GeneInjector : MonoBehaviour
     {
         public string gene;

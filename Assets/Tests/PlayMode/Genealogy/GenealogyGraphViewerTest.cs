@@ -28,9 +28,9 @@ namespace Tests.PlayMode.Genealogy
             var rootNode = new CellNode();
             tree.RegisterRootNode(rootNode);
             var cell0Node = new CellNode(); // {CellObj = GameObject.Find("Cell1[0]")};
-            tree.RegisterReproduction(new Node[] {rootNode}, cell0Node);
+            tree.RegisterReproductionAndOffspring(new Node[] {rootNode}, cell0Node);
             var cell1Node = new CellNode(); // {CellObj = GameObject.Find("Cell1[1]")};
-            tree.RegisterReproduction(new Node[] {rootNode}, cell1Node);
+            tree.RegisterReproductionAndOffspring(new Node[] {rootNode}, cell1Node);
 
             Assert.AreEqual(new Vector3(60, 10, 0), LocalPositionOf(rootNode));
             

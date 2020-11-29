@@ -1,4 +1,5 @@
 ﻿using Genealogy.Asexual;
+using UnityEngine;
 
 namespace Genealogy
 {
@@ -14,5 +15,7 @@ namespace Genealogy
         }
 
         public void OnUpdate() => viewerNode.OnUpdate(layout);
+
+        public void OnDestroy() => Object.DestroyImmediate(viewerNode.gameObject);
     }
 }

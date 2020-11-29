@@ -1,16 +1,19 @@
 ﻿using System;
+using Newtonsoft.Json;
 
 namespace Genealogy
 {
     public class Relation
     {
-        public Node From { get; private set; }
-        public RelationType RelationType { get; private set; }
-        public Node To { get; private set; }
+        [NodeAsGuid] public Node From { get; }
+
+        public RelationType RelationType { get; }
+        [NodeAsGuid] public Node To { get; }
         public DateTime DateTime { get; }
 
-        public Tuple<Guid, Guid> Key => Tuple.Create(From.Guid, To.Guid);
+        [JsonIgnore] public Tuple<Guid, Guid> Key => Tuple.Create(From.Guid, To.Guid);
 
+        [JsonConstructor]
         public Relation(Node from, RelationType relationType, Node to, DateTime dateTime)
         {
             From = from;

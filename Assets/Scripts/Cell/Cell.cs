@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Genealogy;
 using Genetics;
 using Newtonsoft.Json.Linq;
@@ -10,21 +11,30 @@ namespace Cell
     public class Cell : AbstractLivingComponent<CellGene>
     {
         private Rigidbody2D rb;
-        public GenealogyGraphManager genealogyGraphManager { get; private set; }
+        public GenealogyGraphManager GenealogyGraphManager { get; private set; }
 
-        public CellNode genealogyNode;
+        private CellNode genealogyNode;
+
+        public CellNode GenealogyNode
+        {
+            get => genealogyNode;
+            set
+            {
+                if (genealogyNode != null)
+                    throw new InvalidOperationException($"Cell.GenealogyNode is already set to {GenealogyNode}");
+                genealogyNode = value;
+            }
+        }
+
         public bool IsInFocus { get; set; }
 
-        private void Start()
+        private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
-            genealogyGraphManager = GetComponentInParent<GenealogyGraphManager>();
-
-            gene = gene ?? new CellGene();
-
-            if (genealogyNode == null && genealogyGraphManager != null)
-                genealogyGraphManager.RegisterAsexualCellBirth(new Node[] { }, this);
+            GenealogyGraphManager = GetComponentInParent<GenealogyGraphManager>();
         }
+
+        public override CellGene GetGene() => new CellGene();
 
         public override Transform OnInheritGene(CellGene inheritedGene) => transform.DestroyChildren();
 
@@ -32,12 +42,17 @@ namespace Cell
 
         public override string GetResourcePath() => "Cells/Cell1";
 
-        public override JObject GetState() =>
-            new JObject
+        public override JObject GetState()
+        {
+            var jObject = new JObject
             {
                 ["position"] = Serialization.ToSerializable(transform.position),
                 ["rotation"] = transform.rotation.eulerAngles.z
             };
+            if (GenealogyNode != null)
+                jObject["guid"] = GenealogyNode.Guid.ToString();
+            return jObject;
+        }
 
         public override void SetState(JObject state)
         {
@@ -45,6 +60,14 @@ namespace Cell
             {
                 rb.velocity = Vector2.zero;
                 rb.angularVelocity = 0;
+            }
+
+            var guid = (string) state["guid"];
+            if (guid != null && GenealogyGraphManager != null)
+            {
+                GenealogyNode = (CellNode) GenealogyGraphManager.genealogyGraph.GetNodeOrDefault(Guid.Parse(guid)) ??
+                                GenealogyGraphManager.RegisterAsexualCellBirth(
+                                    new[] {GenealogyGraphManager.RootNode}, this);
             }
 
             var position = state["position"];
