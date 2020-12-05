@@ -722,48 +722,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ae27294c2d84c70aa925f34d008ee54, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cellData: '{     "geneTree": {         "resource": "Cells/Cell1",         "name":
-    "Cell.2",         "gene": {},         "children": [             {                
-    "resource": "Organelles/GeneticBrain1",                 "name": "GeneticBrain1-0",                
-    "gene": {                     "weights": [                         [                            
-    -0.1584462,                             -0.416545272,                            
-    -0.759854555,                             0.674226761,                            
-    -0.100924134,                             0.5443728,                            
-    -0.4262756,                             0.171671987,                            
-    -0.9428661,                             0.574052334                         ],                        
-    [                             0.19129169,                             -0.702857733,                            
-    0.144539237,                             0.435520142,                            
-    -0.8025718,                             0.469013661,                            
-    -0.006655574,                             -0.108322978,                            
-    0.2732937,                             -0.320036769                         ],                        
-    [                             -0.499549747,                             -0.400635123,                            
-    -0.529204369,                             0.0713883638,                            
-    0.829859,                             -0.46321,                             0.396019667,                            
-    0.8913765,                             -0.4956466,                            
-    -0.7528539                         ]                     ],                    
-    "biases": [                         0.482496,                         -0.0132089853,                        
-    -0.7190378                     ]                 },                 "children":
-    []             },             {                 "resource": "Organelles/Flagella1",                
-    "name": "Flagella1-0",                 "gene": {                     "linearPower":
-    500.0,                     "angularPower": 1.5                 },                
-    "children": []             },             {                 "resource": "Organelles/Membrane1",                
-    "name": "Membrane1-0",                 "gene": {                     "radius":
-    0.125                 },                 "children": [                     {                        
-    "resource": "Organelles/BirthCanal1",                         "name": "BirthCanal1-0",                        
-    "gene": {                             "circularMembranePreferredAttachmentAngle":
-    180.0,                             "circularMembraneAngularDisplacement": 30.0                        
-    },                         "children": []                     }                
-    ]             },             {                 "resource": "Organelles/ProximitySensor",                
-    "name": "ProximitySensor",                 "gene": {},                 "children":
-    []             }         ]     },     "stateTree": {         "state": {            
-    "guid": "7f146de4-9367-4bf8-bef0-82b08b5c10c6",             "position": "1.112765
-    1.865312",             "rotation": 60.497437         },         "children": [            
-    {                 "state": {},                 "children": []             },            
-    {                 "state": {},                 "children": []             },            
-    {                 "state": {},                 "children": [                    
-    {                         "state": {},                         "children": []                    
-    }                 ]             },             {                 "state": {},                
-    "children": []             }         ]     } }'
+  cellData: '{   "geneTree": {     "resource": "Cells/Cell1",     "name": "Cell.2",    
+    "gene": {},     "children": [       {         "resource": "Organelles/GeneticBrain1",        
+    "name": "GeneticBrain1-0",         "gene": {           "weights": [            
+    [               -0.1584462,               -0.416545272,               -0.759854555,              
+    0.674226761,               -0.100924134,               0.5443728,              
+    -0.4262756,               0.171671987,               -0.9428661,              
+    0.574052334             ],             [               0.19129169,              
+    -0.702857733,               0.144539237,               0.435520142,              
+    -0.8025718,               0.469013661,               -0.006655574,              
+    -0.108322978,               0.2732937,               -0.320036769            
+    ],             [               -0.499549747,               -0.400635123,              
+    -0.529204369,               0.0713883638,               0.829859,              
+    -0.46321,               0.396019667,               0.8913765,               -0.4956466,              
+    -0.7528539             ]           ],           "biases": [             0.482496,            
+    -0.0132089853,             -0.7190378           ]         },         "children":
+    []       },       {         "resource": "Organelles/Flagella1",         "name":
+    "Flagella1-0",         "gene": {           "linearPower": 500.0,           "angularPower":
+    20         },         "children": []       },       {         "resource": "Organelles/Membrane1",        
+    "name": "Membrane1-0",         "gene": {           "radius": 0.25         },        
+    "children": [           {             "resource": "Organelles/BirthCanal1",            
+    "name": "BirthCanal1-0",             "gene": {               "circularMembranePreferredAttachmentAngle":
+    180.0,               "circularMembraneAngularDisplacement": 30.0            
+    },             "children": []           }         ]       },       {        
+    "resource": "Organelles/ProximitySensor",         "name": "ProximitySensor",        
+    "gene": {},         "children": []       }     ]   },   "stateTree": {     "state":
+    {       "guid": "7f146de4-9367-4bf8-bef0-82b08b5c10c6",       "position": "1.112765
+    1.865312",       "rotation": 60.497437     },     "children": [       {        
+    "state": {},         "children": []       },       {         "state": {},        
+    "children": []       },       {         "state": {},         "children": [          
+    {             "state": {},             "children": []           }         ]      
+    },       {         "state": {},         "children": []       }     ]   } }'
 --- !u!114 &832437384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2481,7 +2470,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -1591704.5, y: 1551218.8}
+  m_AnchoredPosition: {x: -1630369.8, y: 1581109}
   m_SizeDelta: {x: -5.2972717, y: -9.890289}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1574356413

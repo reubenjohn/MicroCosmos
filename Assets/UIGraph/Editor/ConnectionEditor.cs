@@ -28,7 +28,7 @@ public class ConnectionEditor : Editor {
 
 			arrowStyle.alignment = TextAnchor.MiddleCenter;
 		}
-		catch (Exception ignored)
+		catch (Exception)
 		{
 			// ignored
 		}

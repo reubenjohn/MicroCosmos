@@ -28,7 +28,7 @@ namespace Organelles
         {
             base.OnInheritGene(inheritedGene);
             CircleCollider = GetComponent<CircleCollider2D>();
-            CircleCollider.radius = inheritedGene.radius;
+            transform.localScale = Vector3.one * inheritedGene.radius;
             return transform.Find("Attachments");
         }
 
