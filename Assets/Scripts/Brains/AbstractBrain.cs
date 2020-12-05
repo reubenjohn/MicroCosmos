@@ -19,7 +19,7 @@ namespace Brains
             actuatorLogits = actuators.Select(actuator =>
             {
                 var logits = actuator.Connect();
-                Debug.Log($"Found actuator {actuator.GetType().Name} with {logits.Length} logits");
+                // Debug.Log($"Found actuator {actuator.GetType().Name} with {logits.Length} logits");
                 return logits;
             }).ToArray();
 
@@ -28,7 +28,7 @@ namespace Brains
             sensorLogits = sensors.Select(sensor =>
             {
                 var logits = sensor.Connect();
-                Debug.Log($"Found sensor {sensor.GetType().Name} with {logits.Length} logits");
+                // Debug.Log($"Found sensor {sensor.GetType().Name} with {logits.Length} logits");
                 return logits;
             }).ToArray();
         }

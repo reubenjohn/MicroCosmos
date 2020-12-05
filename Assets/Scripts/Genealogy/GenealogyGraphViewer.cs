@@ -12,15 +12,15 @@ namespace Genealogy
     {
         public static readonly Vector2 DisplayScale = new Vector2(60, 20);
 
-        private Canvas canvas;
-        private Transform genealogyGraphContentTransform;
+        private readonly List<IGraphViewerListener> listeners = new List<IGraphViewerListener>();
 
-        private ViewerNode currentSelectedNode;
-
-        private readonly Dictionary<Guid, GenealogyGraphViewerHandle> viewerNodes =
+        private readonly Dictionary<Guid, GenealogyGraphViewerHandle> viewerHandles =
             new Dictionary<Guid, GenealogyGraphViewerHandle>();
 
-        private readonly List<IGraphViewerListener> listeners = new List<IGraphViewerListener>();
+        private Canvas canvas;
+
+        private ViewerNode currentSelectedNode;
+        private Transform genealogyGraphContentTransform;
 
         private void Start()
         {
@@ -32,6 +32,46 @@ namespace Genealogy
         {
             if (Input.GetKeyDown(KeyCode.T))
                 StartCoroutine(SetVisibility(!canvas.enabled));
+        }
+
+        public void OnSwitchCamera(Camera cam)
+        {
+            canvas.worldCamera = cam;
+        }
+
+        public void OnAddNode(LayoutNode layout)
+        {
+            var viewerNode = InstantiateNode(layout.Node);
+            RegisterViewerNode(new GenealogyGraphViewerHandle(layout, viewerNode));
+        }
+
+        public void OnAddConnections(List<Relation> relations)
+        {
+            foreach (var relation in relations)
+            {
+                var from = viewerHandles[relation.From.Guid].viewerNode.GetComponent<RectTransform>();
+                var to = viewerHandles[relation.To.Guid].viewerNode.GetComponent<RectTransform>();
+                var connection = ConnectionManager.CreateConnection(from, to);
+                SetVisibility(connection, canvas.enabled);
+                if (relation.RelationType == RelationType.Death)
+                    DeselectNode(viewerHandles[relation.From.Guid].viewerNode, null);
+            }
+        }
+
+        public void OnClear()
+        {
+            if (currentSelectedNode)
+                foreach (var listener in listeners)
+                    listener.OnDeselectNode(currentSelectedNode, null);
+            currentSelectedNode = default;
+            foreach (var viewerHandle in viewerHandles.Values) viewerHandle.OnDestroy();
+            ConnectionManager.CleanConnections();
+            viewerHandles.Clear();
+        }
+
+        public void OnUpdateNode(LayoutNode layout)
+        {
+            viewerHandles[layout.Node.Guid].OnUpdate();
         }
 
         private IEnumerator SetVisibility(bool visibility)
@@ -50,51 +90,23 @@ namespace Genealogy
             connection.line.enabled = visibility;
         }
 
-        public void OnAddNode(LayoutNode layout)
-        {
-            var viewerNode = InstantiateNode(layout.Node);
-            RegisterViewerNode(new GenealogyGraphViewerHandle(layout, viewerNode));
-        }
-
         private ViewerNode InstantiateNode(Node node)
         {
             switch (node.NodeType)
             {
                 case NodeType.Cell:
                     return CellViewerNode.InstantiateNode(genealogyGraphContentTransform, (CellNode) node);
+                case NodeType.Death:
+                    return CellDeathViewerNode.InstantiateNode(genealogyGraphContentTransform, (CellDeath) node);
                 default:
                     return ReproductionViewerNode.InstantiateNode(genealogyGraphContentTransform, (Reproduction) node);
             }
         }
 
-        public void OnAddConnections(List<Relation> relations)
-        {
-            foreach (var relation in relations)
-            {
-                var from = viewerNodes[relation.From.Guid].viewerNode.GetComponent<RectTransform>();
-                var to = viewerNodes[relation.To.Guid].viewerNode.GetComponent<RectTransform>();
-                var connection = ConnectionManager.CreateConnection(from, to);
-                SetVisibility(connection, canvas.enabled);
-            }
-        }
-
-        public void OnClear()
-        {
-            if (currentSelectedNode)
-                foreach (var listener in listeners)
-                    listener.OnDeselectNode(currentSelectedNode, null);
-            currentSelectedNode = default;
-            foreach (var viewerHandle in viewerNodes.Values) viewerHandle.OnDestroy();
-            ConnectionManager.CleanConnections();
-            viewerNodes.Clear();
-        }
-
-        public void OnUpdateNode(LayoutNode layout) => viewerNodes[layout.Node.Guid].OnUpdate();
-
 
         private void RegisterViewerNode(GenealogyGraphViewerHandle viewerHandle)
         {
-            viewerNodes[viewerHandle.layout.Node.Guid] = viewerHandle;
+            viewerHandles[viewerHandle.layout.Node.Guid] = viewerHandle;
             viewerHandle.OnUpdate();
         }
 
@@ -138,8 +150,9 @@ namespace Genealogy
                 listener.OnSelectNode(viewerNode, eventData);
         }
 
-        public void AddListener(IGraphViewerListener graphViewerListener) => listeners.Add(graphViewerListener);
-
-        public void OnSwitchCamera(Camera cam) => canvas.worldCamera = cam;
+        public void AddListener(IGraphViewerListener graphViewerListener)
+        {
+            listeners.Add(graphViewerListener);
+        }
     }
 }

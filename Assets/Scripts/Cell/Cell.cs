@@ -100,5 +100,13 @@ namespace Cell
                 .Where(e => e != null)
                 .ToArray();
         }
+
+        public void Die()
+        {
+            Debug.Log($"{name} died!");
+            cauldron.Burst();
+            GenealogyGraphManager.RegisterDeath(genealogyNode);
+            Destroy(gameObject);
+        }
     }
 }

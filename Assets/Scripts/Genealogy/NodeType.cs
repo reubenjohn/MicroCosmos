@@ -3,6 +3,7 @@
     public enum NodeType
     {
         Cell,
-        Reproduction
+        Reproduction,
+        Death
     }
 }

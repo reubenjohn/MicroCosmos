@@ -8,15 +8,14 @@ namespace Genealogy
 
     public partial class GenealogyGraph
     {
-        public Node rootNode;
+        private readonly List<IGenealogyGraphListener> listeners;
         private readonly Dictionary<Guid, Node> nodes;
         private readonly Dictionary<Tuple<Guid, Guid>, Relation> relations;
         private readonly Dictionary<Guid, List<Relation>> relationsByFrom;
         private readonly Dictionary<Guid, List<Relation>> relationsByTo;
 
         private readonly Transaction transaction;
-
-        private readonly List<IGenealogyGraphListener> listeners;
+        public Node rootNode;
 
         public GenealogyGraph(Dictionary<Guid, Node> nodes, Dictionary<Tuple<Guid, Guid>, Relation> relations)
         {
@@ -37,6 +36,13 @@ namespace Genealogy
         {
         }
 
+        public int NodeCount => nodes.Count;
+
+        public int RelationCount => relations.Count;
+
+        public IEnumerable<Node> Nodes => nodes.Values;
+        public IEnumerable<Relation> Relations => relations.Values;
+
         public void Clear()
         {
             foreach (var listener in listeners) listener.OnClear();
@@ -52,8 +58,6 @@ namespace Genealogy
         public Node GetNode(Guid guid) => nodes[guid];
         public Node GetNodeOrDefault(Guid guid) => nodes.TryGetValue(guid, out var node) ? node : default;
 
-        public int NodeCount => nodes.Count;
-
         public List<Relation> GetRelationsFrom(Guid guid) =>
             relationsByFrom.TryGetValue(guid, out var relation) ? relation : null;
 
@@ -65,17 +69,12 @@ namespace Genealogy
         public Relation GetRelation(Tuple<Guid, Guid> fromTo) =>
             relations.TryGetValue(fromTo, out var relation) ? relation : null;
 
-        public int RelationCount => relations.Count;
-
-        public IEnumerable<Node> Nodes => nodes.Values;
-        public IEnumerable<Relation> Relations => relations.Values;
-
         public Reproduction RegisterReproductionAndOffspring(Node[] parents, Node child)
         {
             foreach (var name in parents.Select(node => node.Guid))
                 if (!nodes.ContainsKey(name))
                     throw new InvalidOperationException(
-                        $"Cannot register reproduction unless parents are themselves registered. " +
+                        "Cannot register reproduction unless parents are themselves registered. " +
                         $"Please first register parent: '{name}'.");
             if (nodes.TryGetValue(child.Guid, out var existingChild))
                 throw new InvalidOperationException(
@@ -103,7 +102,7 @@ namespace Genealogy
             foreach (var name in parents.Select(node => node.Guid))
                 if (!nodes.ContainsKey(name))
                     throw new InvalidOperationException(
-                        $"Cannot register reproduction unless parents are themselves registered. " +
+                        "Cannot register reproduction unless parents are themselves registered. " +
                         $"Please first register parent: '{name}'.");
             if (nodes.TryGetValue(reproduction.Guid, out var existingReproduction))
                 throw new InvalidOperationException(
@@ -123,7 +122,7 @@ namespace Genealogy
         {
             if (!nodes.ContainsKey(reproduction.Guid))
                 throw new InvalidOperationException(
-                    $"Cannot register offspring until its reproduction is itself registered. " +
+                    "Cannot register offspring until its reproduction is itself registered. " +
                     $"Please first register reproduction: '{reproduction}'.");
             if (nodes.TryGetValue(child.Guid, out var existingChild))
                 throw new InvalidOperationException(
@@ -139,6 +138,24 @@ namespace Genealogy
 
         public Reproduction RegisterReproductionAndOffspring(Node[] parents, CellNode child) =>
             RegisterReproductionAndOffspring(parents, (Node) child);
+
+        public CellDeath RegisterDeath(CellNode cellNode, CellDeath cellDeath)
+        {
+            if (!nodes.ContainsKey(cellNode.Guid))
+                throw new InvalidOperationException(
+                    "Cannot register death unless node is itself registered. " +
+                    $"Please first register parent: '{cellNode.Guid}'.");
+            if (nodes.TryGetValue(cellDeath.Guid, out var existingDeath))
+                throw new InvalidOperationException(
+                    "A death can only be registered once. " +
+                    $"CellDeath '{cellDeath.Guid}' was already first registered at {existingDeath.CreatedAt}");
+
+            transaction.StartNew(cellDeath);
+            transaction.AddRelation(new Relation(cellNode, RelationType.Death, cellDeath, cellDeath.CreatedAt));
+            transaction.Complete();
+
+            return cellDeath;
+        }
 
         public Relation RegisterRelation(Relation relation)
         {
@@ -176,14 +193,14 @@ namespace Genealogy
                     if (relationsByFrom.TryGetValue(relation.From.Guid, out var fromRelations))
                         fromRelations.Add(relation);
                     else
-                        relationsByFrom.Add(relation.From.Guid, new List<Relation>() {relation});
+                        relationsByFrom.Add(relation.From.Guid, new List<Relation> {relation});
                 }
 
                 {
                     if (relationsByTo.TryGetValue(relation.To.Guid, out var toRelations))
                         toRelations.Add(relation);
                     else
-                        relationsByTo.Add(relation.To.Guid, new List<Relation>() {relation});
+                        relationsByTo.Add(relation.To.Guid, new List<Relation> {relation});
                 }
             }
 
@@ -191,6 +208,7 @@ namespace Genealogy
         }
 
         public void AddListener(IGenealogyGraphListener listener) => listeners.Add(listener);
+
         public void RemoveListener(IGenealogyGraphListener listener) => listeners.Remove(listener);
 
         public void RegisterRootNode(Node root)

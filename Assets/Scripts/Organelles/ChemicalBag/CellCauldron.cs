@@ -12,7 +12,7 @@ namespace Organelles.ChemicalBag
         public Dictionary<string, float> initialCauldron = new Dictionary<string, float>();
     }
 
-    [RequireComponent(typeof(Cell.Cell))]
+    [RequireComponent(typeof(Cell.Cell), typeof(Rigidbody2D))]
     public class CellCauldron : MonoBehaviour, IActuator
     {
         private static readonly Recipe[] InvoluntaryRecipes = {Recipe.AgeSkin};
@@ -22,18 +22,23 @@ namespace Organelles.ChemicalBag
         private Flask<Substance> flask;
 
         private ChemicalBagGene gene;
+        private Rigidbody2D rb;
         private ChemicalSink sink;
         public float TotalMass => flask.TotalMass;
+
+        public float this[Substance substance] => flask[substance];
 
         private void Start()
         {
             cell = GetComponent<Cell.Cell>();
+            rb = GetComponent<Rigidbody2D>();
             sink = GetComponentInParent<ChemicalSink>();
         }
 
         private void Update()
         {
             GrapherUtil.LogFlask(flask, "Cauldron", 15, cell.IsInFocus);
+            rb.mass = TotalMass;
         }
 
         public float[] Connect()
@@ -89,6 +94,11 @@ namespace Organelles.ChemicalBag
             {
                 ["chemicals"] = JToken.FromObject(EnumUtils.ToNamedDictionary(flask.ToMixtureDictionary()))
             };
+        }
+
+        public void Burst()
+        {
+            sink.Dump(transform.position, flask, flask);
         }
     }
 }

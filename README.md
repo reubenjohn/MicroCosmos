@@ -4,6 +4,6 @@ Fun little Unity evolution simulator
 
 TODO
 ---
- - Cells burst when their membrane is too thin.
+ - Cell dumps to manifest as blobs at dump site.
  - Plot colony statistics in grapher.
- - Spontaneous life from carcases to meet minimum biomass ratio
+ - Spontaneous life from carcases to meet minimum biomass ratio.

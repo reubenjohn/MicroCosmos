@@ -724,8 +724,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cellData: '{   "geneTree": {     "resource": "Cells/Cell1",     "name": "Cell.2",    
-    "gene": {       "cauldron": {         "initialCauldron": {           "Fat": 0.5,          
-    "SkinGrowthFactor": 0.01,           "Skin": 0.5         }       }     },    
+    "gene": {       "cauldron": {         "initialCauldron": {           "Fat": 0.01,          
+    "SkinGrowthFactor": 0.001,           "Skin": 0.01         }       }     },    
     "children": [       {         "resource": "Organelles/GeneticBrain1",        
     "name": "GeneticBrain1-0",         "gene": {           "weights": [            
     [               0.8886598,               -0.656314552,               0.05193461,              
@@ -801,8 +801,8 @@ MonoBehaviour:
     0.5501965,             0.38981688,             -0.452984154,             -0.292823523,            
     -0.5641332,             -0.931748867,             0.6889453,             -0.774167955          
     ]         },         "children": []       },       {         "resource": "Organelles/Flagella1",        
-    "name": "Flagella1-0",         "gene": {           "linearPower": 500.0,          
-    "angularPower": 20         },         "children": []       },       {        
+    "name": "Flagella1-0",         "gene": {           "linearPower": 5,          
+    "angularPower": 0.2         },         "children": []       },       {        
     "resource": "Organelles/Membrane1",         "name": "Membrane1-0",         "gene":
     {           "radius": 0.25         },         "children": [           {            
     "resource": "Organelles/BirthCanal1",             "name": "BirthCanal1-0",            
@@ -2546,7 +2546,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2209814, y: 2142001}
+  m_AnchoredPosition: {x: -2275808.5, y: 2183020.5}
   m_SizeDelta: {x: -5.2972717, y: -9.890289}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1574356413

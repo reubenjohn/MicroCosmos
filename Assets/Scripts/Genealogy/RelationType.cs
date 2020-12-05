@@ -3,6 +3,7 @@
     public enum RelationType
     {
         Reproduction,
-        Offspring
+        Offspring,
+        Death
     }
 }

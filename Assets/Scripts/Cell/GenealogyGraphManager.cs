@@ -111,5 +111,10 @@ namespace Cell
         {
             return $"{saveDirectory}/genealogy1.json";
         }
+
+        public void RegisterDeath(CellNode cellNode)
+        {
+            genealogyGraph.RegisterDeath(cellNode, new CellDeath(Guid.NewGuid(), DateTime.Now));
+        }
     }
 }
