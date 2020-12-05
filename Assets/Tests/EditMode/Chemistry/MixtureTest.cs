@@ -20,9 +20,9 @@ namespace Tests.EditMode.Chemistry
         {
             Assert.AreEqual("{  }", new Mixture<TestSubstance>().ToString());
             Assert.AreEqual("{ Cow: 1.2, Grass: 0.5 }",
-                new MixtureDictionary<TestSubstance>() {{Grass, .5f}, {Cow, 1.2f}}.ToMixture().ToString());
+                new MixtureDictionary<TestSubstance> {{Grass, .5f}, {Cow, 1.2f}}.ToMixture().ToString());
             Assert.AreEqual("{ Grass: 0.3333333 }",
-                new MixtureDictionary<TestSubstance>() {{Grass, 1f / 3}, {Cow, 0f}}.ToMixture().ToString());
+                new MixtureDictionary<TestSubstance> {{Grass, 1f / 3}, {Cow, 0f}}.ToMixture().ToString());
         }
 
         [Test]
@@ -30,10 +30,10 @@ namespace Tests.EditMode.Chemistry
         {
             var f1 = new Mixture<TestSubstance>();
             var d1 = new MixtureDictionary<TestSubstance>().ToMixture();
-            var f2 = new Mixture<TestSubstance>(new Dictionary<TestSubstance, float>() {{Grass, 1.2f}});
-            var d2 = new MixtureDictionary<TestSubstance>() {{Grass, 1.2f}}.ToMixture();
-            var f3 = new Mixture<TestSubstance>(new Dictionary<TestSubstance, float>() {{Grass, 1.2f}, {Cow, 0}});
-            var d3 = new MixtureDictionary<TestSubstance>() {{Grass, 1.2f}, {Cow, 0}}.ToMixture();
+            var f2 = new Mixture<TestSubstance>(new Dictionary<TestSubstance, float> {{Grass, 1.2f}});
+            var d2 = new MixtureDictionary<TestSubstance> {{Grass, 1.2f}}.ToMixture();
+            var f3 = new Mixture<TestSubstance>(new Dictionary<TestSubstance, float> {{Grass, 1.2f}, {Cow, 0}});
+            var d3 = new MixtureDictionary<TestSubstance> {{Grass, 1.2f}, {Cow, 0}}.ToMixture();
 
             Assert.AreEqual(f1, d1);
             Assert.AreEqual(f2, d2);
@@ -47,9 +47,9 @@ namespace Tests.EditMode.Chemistry
         {
             Assert.AreEqual(new Mixture<TestSubstance>(), new Mixture<TestSubstance>());
 
-            var m1 = new MixtureDictionary<TestSubstance>() {{Grass, .5f}, {Cow, 1.2f}}.ToMixture();
-            var m2 = new MixtureDictionary<TestSubstance>() {{Cow, 1.2f}, {Grass, .5f}}.ToMixture();
-            var m3 = new MixtureDictionary<TestSubstance>() {{Grass, .5f}, {Cow, 1.2f}, {Dung, 0f}}.ToMixture();
+            var m1 = new MixtureDictionary<TestSubstance> {{Grass, .5f}, {Cow, 1.2f}}.ToMixture();
+            var m2 = new MixtureDictionary<TestSubstance> {{Cow, 1.2f}, {Grass, .5f}}.ToMixture();
+            var m3 = new MixtureDictionary<TestSubstance> {{Grass, .5f}, {Cow, 1.2f}, {Dung, 0f}}.ToMixture();
 
             Assert.AreEqual(new Mixture<TestSubstance>(), new Mixture<TestSubstance>());
             // ReSharper disable once EqualExpressionComparison
@@ -79,12 +79,25 @@ namespace Tests.EditMode.Chemistry
         }
 
         [Test]
+        public void TestToMixtureDictionary()
+        {
+            Assert.AreEqual(new MixtureDictionary<TestSubstance>(),
+                new Mixture<TestSubstance>().ToMixtureDictionary());
+            Assert.AreEqual(new MixtureDictionary<TestSubstance> {{Grass, 1.2f}},
+                new Mixture<TestSubstance>(new Dictionary<TestSubstance, float> {{Grass, 1.2f}})
+                    .ToMixtureDictionary());
+            Assert.AreEqual(new MixtureDictionary<TestSubstance> {{Grass, 1.2f}},
+                new Mixture<TestSubstance>(new Dictionary<TestSubstance, float> {{Grass, 1.2f}, {Cow, 0}})
+                    .ToMixtureDictionary());
+        }
+
+        [Test]
         public void TestCopy()
         {
             var d0 = new Mixture<TestSubstance>();
-            var d1 = new MixtureDictionary<TestSubstance>() {{Grass, 1.2f}}.ToMixture();
-            var d2 = new MixtureDictionary<TestSubstance>() {{Grass, 1.2f}, {Cow, .5f}}.ToMixture();
-            var d3 = new MixtureDictionary<TestSubstance>() {{Grass, 1.2f}, {Cow, 0}}.ToMixture();
+            var d1 = new MixtureDictionary<TestSubstance> {{Grass, 1.2f}}.ToMixture();
+            var d2 = new MixtureDictionary<TestSubstance> {{Grass, 1.2f}, {Cow, .5f}}.ToMixture();
+            var d3 = new MixtureDictionary<TestSubstance> {{Grass, 1.2f}, {Cow, 0}}.ToMixture();
 
             var d0Copy = d0.Copy();
             Assert.AreEqual(d0, d0Copy);
@@ -125,9 +138,9 @@ namespace Tests.EditMode.Chemistry
             Assert.AreEqual(m1, m1 + z0);
             Assert.AreEqual(m1, z0 + m1);
 
-            Assert.AreEqual(new MixtureDictionary<TestSubstance>() {{Grass, 1.3f}}.ToMixture(), m1 + m2);
-            Assert.AreEqual(new MixtureDictionary<TestSubstance>() {{Grass, 1.2f}, {Cow, .5f}}.ToMixture(), m1 + m3);
-            Assert.AreEqual(new MixtureDictionary<TestSubstance>() {{Grass, 1.2f}, {Cow, .5f}}.ToMixture(),
+            Assert.AreEqual(new MixtureDictionary<TestSubstance> {{Grass, 1.3f}}.ToMixture(), m1 + m2);
+            Assert.AreEqual(new MixtureDictionary<TestSubstance> {{Grass, 1.2f}, {Cow, .5f}}.ToMixture(), m1 + m3);
+            Assert.AreEqual(new MixtureDictionary<TestSubstance> {{Grass, 1.2f}, {Cow, .5f}}.ToMixture(),
                 m1 + m3 + z0);
         }
 
@@ -142,9 +155,9 @@ namespace Tests.EditMode.Chemistry
             Assert.AreEqual(m1, m1 - z0);
             Assert.AreEqual(new MixtureDictionary<TestSubstance> {{Grass, -1.2f}}.ToMixture(), z0 - m1);
 
-            Assert.AreEqual(new MixtureDictionary<TestSubstance>() {{Grass, 1.3f}}.ToMixture(), m1 + m2);
-            Assert.AreEqual(new MixtureDictionary<TestSubstance>() {{Grass, 1.2f}, {Cow, .5f}}.ToMixture(), m1 + m3);
-            Assert.AreEqual(new MixtureDictionary<TestSubstance>() {{Grass, 1.2f}, {Cow, .5f}}.ToMixture(),
+            Assert.AreEqual(new MixtureDictionary<TestSubstance> {{Grass, 1.3f}}.ToMixture(), m1 + m2);
+            Assert.AreEqual(new MixtureDictionary<TestSubstance> {{Grass, 1.2f}, {Cow, .5f}}.ToMixture(), m1 + m3);
+            Assert.AreEqual(new MixtureDictionary<TestSubstance> {{Grass, 1.2f}, {Cow, .5f}}.ToMixture(),
                 m1 + m3 + z0);
         }
 
@@ -158,8 +171,8 @@ namespace Tests.EditMode.Chemistry
             Assert.AreEqual(z0, m1 * 0);
             Assert.AreEqual(new MixtureDictionary<TestSubstance> {{Grass, -1.2f}}.ToMixture(), m1 * -1);
 
-            Assert.AreEqual(new MixtureDictionary<TestSubstance>() {{Grass, .2f}, {Cow, 1f}}.ToMixture(), m2 * 2);
-            Assert.AreEqual(m2, (m2 * 3) * .3333333f);
+            Assert.AreEqual(new MixtureDictionary<TestSubstance> {{Grass, .2f}, {Cow, 1f}}.ToMixture(), m2 * 2);
+            Assert.AreEqual(m2, m2 * 3 * .3333333f);
         }
     }
 }

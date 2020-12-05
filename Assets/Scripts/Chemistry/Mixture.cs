@@ -8,13 +8,10 @@ namespace Chemistry
     public class Mixture<T> where T : Enum
     {
         public readonly float[] contents;
-        // private readonly Lazy<float> totalMass;
-
-        private int EnumCount() => Enum.GetValues(typeof(T)).Length;
 
         public Mixture()
         {
-            contents = new float[EnumCount()];
+            contents = new float[EnumCount(typeof(T))];
             // totalMass = new Lazy<float>(Mass);
         }
 
@@ -34,15 +31,33 @@ namespace Chemistry
         {
         }
 
+        public int Length => contents.Length;
+
         // [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public float TotalMass => Mass();
 
-        public float Mass() => contents.Sum();
+        public float this[T substance] => contents[Convert.ToInt32(substance)];
+        // private readonly Lazy<float> totalMass;
 
-        public Mixture<T> Copy() => new Mixture<T>(contents);
+        private static int EnumCount(Type t)
+        {
+            return Enum.GetValues(t).Length;
+        }
 
-        public override string ToString() =>
-            $"{{ {string.Join(", ", Entries().Select(entry => $"{entry.Key}: {entry.Value}"))} }}";
+        public float Mass()
+        {
+            return contents.Sum();
+        }
+
+        public Mixture<T> Copy()
+        {
+            return new Mixture<T>(contents);
+        }
+
+        public override string ToString()
+        {
+            return $"{{ {string.Join(", ", Entries().Select(entry => $"{entry.Key}: {entry.Value}"))} }}";
+        }
 
         private IEnumerable<KeyValuePair<T, float>> Entries()
         {
@@ -67,21 +82,40 @@ namespace Chemistry
             return Equals((Mixture<T>) obj);
         }
 
-        public override int GetHashCode() => throw new NotImplementedException();
+        public override int GetHashCode()
+        {
+            throw new NotImplementedException();
+        }
 
-        public static Mixture<T> operator +(Mixture<T> a, Mixture<T> b) =>
-            new Mixture<T>(a.contents.Zip(b.contents, (af, bf) => af + bf).ToArray());
+        public static Mixture<T> operator +(Mixture<T> a, Mixture<T> b)
+        {
+            return new Mixture<T>(a.contents.Zip(b.contents, (af, bf) => af + bf).ToArray());
+        }
 
-        public static Mixture<T> operator -(Mixture<T> a, Mixture<T> b) =>
-            new Mixture<T>(a.contents.Zip(b.contents, (af, bf) => af - bf).ToArray());
+        public static Mixture<T> operator -(Mixture<T> a, Mixture<T> b)
+        {
+            return new Mixture<T>(a.contents.Zip(b.contents, (af, bf) => af - bf).ToArray());
+        }
 
-        public static Mixture<T> operator *(Mixture<T> a, float scale) =>
-            new Mixture<T>(a.contents.Select(x => x * scale).ToArray());
+        public static Mixture<T> operator *(Mixture<T> a, float scale)
+        {
+            return new Mixture<T>(a.contents.Select(x => x * scale).ToArray());
+        }
+
+        public MixtureDictionary<T> ToMixtureDictionary()
+        {
+            var mixDict = new MixtureDictionary<T>();
+            foreach (var entry in Entries())
+                mixDict[entry.Key] = entry.Value;
+            return mixDict;
+        }
     }
 
     public static class MixtureUtils
     {
-        public static Mixture<T> ToMixture<T>(this MixtureDictionary<T> mixDict) where T : Enum =>
-            new Mixture<T>(mixDict);
+        public static Mixture<T> ToMixture<T>(this MixtureDictionary<T> mixDict) where T : Enum
+        {
+            return new Mixture<T>(mixDict);
+        }
     }
 }

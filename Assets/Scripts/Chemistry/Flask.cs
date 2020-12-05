@@ -33,21 +33,26 @@ namespace Chemistry
                 contents[i] += b.contents[i];
         }
 
-        private bool MassesGreaterThanEqualTo(Mixture<T> other) =>
-            contents.Zip(other.contents, (x, y) => x >= y).All(b => b);
+        private bool MassesGreaterThanEqualTo(Mixture<T> other)
+        {
+            return contents.Zip(other.contents, (x, y) => x >= y).All(b => b);
+        }
 
 
-        private static float MaxYield(Mixture<T> available, Mixture<T> required) =>
-            available.contents
+        private static float MaxYield(Mixture<T> available, Mixture<T> required)
+        {
+            return available.contents
                 .Zip(required.contents, (av, req) => req != 0 ? av / req : float.MaxValue)
                 .Min();
+        }
 
         public float Convert(Reaction<T> reaction, float conversionFactor = 1f)
         {
             if (conversionFactor < 0 || conversionFactor > 1f)
-                throw new InvalidOperationException("Reactions conversion factor must lie in range [0, 1]");
+                throw new InvalidOperationException(
+                    $"Reactions conversion factor '{conversionFactor}' must lie in range [0, 1]");
             var yield = MaxYield(this, reaction.ingredients) * conversionFactor;
-            
+
             if (yield > 0)
             {
                 Take(reaction.ingredients * yield);
@@ -75,7 +80,14 @@ namespace Chemistry
 
     public static class FlaskUtils
     {
-        public static Flask<T> ToFlask<T>(this MixtureDictionary<T> mixDict) where T : Enum => new Flask<T>(mixDict);
-        public static Flask<T> ToFlask<T>(this Mixture<T> mix) where T : Enum => new Flask<T>(mix);
+        public static Flask<T> ToFlask<T>(this MixtureDictionary<T> mixDict) where T : Enum
+        {
+            return new Flask<T>(mixDict);
+        }
+
+        public static Flask<T> ToFlask<T>(this Mixture<T> mix) where T : Enum
+        {
+            return new Flask<T>(mix);
+        }
     }
 }

@@ -9,8 +9,8 @@ namespace Brains
 
         protected override void React()
         {
-            UpdateFlagellaLogits(actuatorLogits[0]);
-            UpdateBirthCanalLogits(actuatorLogits[1]);
+            UpdateFlagellaLogits(actuatorLogits[1]);
+            UpdateBirthCanalLogits(actuatorLogits[2]);
         }
 
         private void UpdateFlagellaLogits(float[] logits)

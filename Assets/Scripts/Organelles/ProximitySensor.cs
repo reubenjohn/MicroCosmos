@@ -7,17 +7,17 @@ namespace Organelles
     public class ProximitySensor : AbstractLivingComponent<ProximitySensorGene>, ISensor
     {
         public ContactFilter2D contactFilter2D;
+        private readonly List<Collider2D> cellCollidersInRange = new List<Collider2D>();
+        private Cell.Cell cell;
 
         private SpriteRenderer spriteRenderer;
-        private readonly List<Collider2D> cellCollidersInRange = new List<Collider2D>();
 
         private void Start()
         {
+            cell = GetComponentInParent<Cell.Cell>();
             spriteRenderer = transform.Find("Overlay").GetComponent<SpriteRenderer>();
             gene = gene ?? new ProximitySensorGene();
         }
-
-        public float[] Connect() => new float[10]; // TODO Match number of substances
 
         public void OnTriggerEnter2D(Collider2D other)
         {
@@ -26,7 +26,15 @@ namespace Organelles
                 cellCollidersInRange.Add(other);
         }
 
-        public void OnTriggerExit2D(Collider2D other) => cellCollidersInRange.Remove(other);
+        public void OnTriggerExit2D(Collider2D other)
+        {
+            cellCollidersInRange.Remove(other);
+        }
+
+        public float[] Connect()
+        {
+            return new float[10]; // TODO Match number of substances
+        }
 
         public void Sense(float[] logits)
         {
@@ -41,15 +49,20 @@ namespace Organelles
                 var distance = (closestPoint - pos).magnitude;
                 spriteRenderer.color = Color.Lerp(Color.HSVToRGB(0, 1f, 1f), spriteRenderer.color, distance);
                 logits[0] = 1 - 2 * distance;
-                if (GetComponentInParent<Cell.Cell>().IsInFocus)
+                if (cell.IsInFocus)
                     // TODO Handle multiple proximity sensors
                     Grapher.Log(logits[0], "Proximity.Closeness", Color.green);
             }
         }
 
-        public override GeneTranscriber<ProximitySensorGene> GetGeneTranscriber() =>
-            ProximitySensorGeneTranscriber.Singleton;
+        public override GeneTranscriber<ProximitySensorGene> GetGeneTranscriber()
+        {
+            return ProximitySensorGeneTranscriber.Singleton;
+        }
 
-        public override string GetResourcePath() => "Organelles/ProximitySensor";
+        public override string GetResourcePath()
+        {
+            return "Organelles/ProximitySensor";
+        }
     }
 }

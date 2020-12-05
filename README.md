@@ -4,6 +4,6 @@ Fun little Unity evolution simulator
 
 TODO
 ---
- - Plot colony statistics in grapher
- - Import 'Chemical' system from AEvo
+ - Cells burst when their membrane is too thin.
+ - Plot colony statistics in grapher.
  - Spontaneous life from carcases to meet minimum biomass ratio

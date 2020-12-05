@@ -11,15 +11,24 @@ namespace Organelles
     {
         public Control.BinaryControlVariable birthSignal = new Control.BinaryControlVariable(1);
         private CircularAttachment attachment;
+        private Cell.Cell cell;
 
-        public float[] Connect() => new float[1];
+        private void Start()
+        {
+            cell = GetComponentInParent<Cell.Cell>();
+        }
+
+        public float[] Connect()
+        {
+            return new float[1];
+        }
 
         public void Actuate(float[] logits)
         {
             var giveBirthSignal = birthSignal.FeedInput(logits[0] > -.5f, logits[0] < .5, Time.deltaTime);
             if (Mathf.Approximately(giveBirthSignal, 1))
                 GiveBirth();
-            if (GetComponentInParent<Cell.Cell>().IsInFocus)
+            if (cell.IsInFocus)
             {
                 Grapher.Log(logits[0], "GiveBirth?", Color.magenta);
                 Grapher.Log(giveBirthSignal, "GiveBirth!", Color.red);
@@ -30,7 +39,7 @@ namespace Organelles
         {
             birthSignal.Value = 0;
 
-            var parent = GetComponentInParent<Cell.Cell>();
+            var parent = cell;
             var geneTree = GeneNode.GetMutated(parent);
 
             var t = transform;
@@ -43,9 +52,15 @@ namespace Organelles
                     new Node[] {parent.GenealogyNode}, childCell);
         }
 
-        public override GeneTranscriber<BirthCanalGene> GetGeneTranscriber() => BirthCanalGeneTranscriber.Singleton;
+        public override GeneTranscriber<BirthCanalGene> GetGeneTranscriber()
+        {
+            return BirthCanalGeneTranscriber.Singleton;
+        }
 
-        public override BirthCanalGene GetGene() => gene ?? new BirthCanalGene();
+        public override BirthCanalGene GetGene()
+        {
+            return gene ?? new BirthCanalGene();
+        }
 
         public override Transform OnInheritGene(BirthCanalGene inheritedGene)
         {
@@ -59,6 +74,9 @@ namespace Organelles
             return base.OnInheritGene(inheritedGene);
         }
 
-        public override string GetResourcePath() => "Organelles/BirthCanal1";
+        public override string GetResourcePath()
+        {
+            return "Organelles/BirthCanal1";
+        }
     }
 }

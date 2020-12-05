@@ -1,0 +1,15 @@
+{
+  "name": "ChemistryMicro",
+  "references": [
+    "GUID:5078c423b610444449795e740c8bcabd"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

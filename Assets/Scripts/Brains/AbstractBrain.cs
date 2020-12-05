@@ -14,7 +14,8 @@ namespace Brains
         public void Start()
         {
             actuators = GetComponentInParent<Cell.Cell>().GetComponentsInChildren<IActuator>();
-            Debug.Log($"Found {actuators.Length} actuators");
+            Debug.Log(
+                $"Found {actuators.Length} actuators: {string.Join(", ", actuators.Select(actuator => $"{actuator.GetType()}"))}");
             actuatorLogits = actuators.Select(actuator =>
             {
                 var logits = actuator.Connect();

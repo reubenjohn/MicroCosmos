@@ -2,7 +2,15 @@
   "geneTree": {
     "resource": "Cells/Cell1",
     "name": "Cell1[0]",
-    "gene": {},
+    "gene": {
+      "cauldron": {
+        "initialCauldron": {
+          "Fat": 0.5,
+          "SkinGrowthFactor": 0.01,
+          "Skin": 0.5
+        }
+      }
+    },
     "children": [
       {
         "resource": "Organelles/Flagella1",
@@ -24,7 +32,14 @@
   "stateTree": {
     "state": {
       "position": "0.2252748 0.3537433",
-      "rotation": 254.19635
+      "rotation": 254.19635,
+      "cauldron": {
+        "chemicals": {
+          "Fat": 0.5,
+          "SkinGrowthFactor": 0.01,
+          "Skin": 0.5
+        }
+      }
     },
     "children": [
       {

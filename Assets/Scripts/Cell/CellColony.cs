@@ -10,6 +10,8 @@ namespace Cell
 {
     public class CellColony : MonoBehaviour
     {
+        public string saveFile = "save2";
+        private readonly List<ICellColonyListener> listeners = new List<ICellColonyListener>();
         private string saveDirectory;
 
         public string SaveDirectory
@@ -18,12 +20,11 @@ namespace Cell
             set => saveDirectory = value;
         }
 
-        public string saveFile = "save2";
-        private readonly List<ICellColonyListener> listeners = new List<ICellColonyListener>();
-
         public string SavePath => $"{SaveDirectory}/{saveFile}.json";
 
         private string DefaultDirectory => $"{Application.persistentDataPath}/saves";
+
+        private Cell[] LivingCells => transform.GetComponentsInChildren<Cell>();
 
         private void Update()
         {
@@ -35,7 +36,15 @@ namespace Cell
         {
             Directory.CreateDirectory(SaveDirectory);
 
-            foreach (var listener in listeners) listener.OnSave(SaveDirectory);
+            foreach (var listener in listeners)
+                try
+                {
+                    listener.OnSave(SaveDirectory);
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError($"Could not save for listener: {e.Message}\n{e.StackTrace}");
+                }
 
             var serializer = new JsonSerializer {Formatting = Formatting.Indented};
             using (var sw = new StreamWriter(SavePath))
@@ -61,8 +70,10 @@ namespace Cell
             Debug.Log($"Loaded cell colony from {SavePath}");
         }
 
-        private CellColonyData SaveCellData() =>
-            new CellColonyData {cells = LivingCells.Select(CellData.Save).ToArray()};
+        private CellColonyData SaveCellData()
+        {
+            return new CellColonyData {cells = LivingCells.Select(CellData.Save).ToArray()};
+        }
 
         private void Load(JsonReader reader, JsonSerializer serializer)
         {
@@ -92,15 +103,16 @@ namespace Cell
                 yield return serializer.Deserialize<CellData>(reader);
         }
 
-        private Cell[] LivingCells => transform.GetComponentsInChildren<Cell>();
-
         public Cell FindCell(Guid genealogyNodeGuid)
         {
             return LivingCells
                 .FirstOrDefault(c => genealogyNodeGuid == c.GenealogyNode.Guid);
         }
 
-        public void AddListener(ICellColonyListener listener) => listeners.Add(listener);
+        public void AddListener(ICellColonyListener listener)
+        {
+            listeners.Add(listener);
+        }
     }
 
     public class CellColonyData
