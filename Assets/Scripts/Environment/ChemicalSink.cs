@@ -11,12 +11,16 @@ namespace Environment
 {
     public class ChemicalSink : MonoBehaviour, ICellColonyListener
     {
+        private Transform cellsTransform;
         private Flask<Substance> flask;
+        private Transform inanimatesTransform;
 
         private void Start()
         {
-            GetComponent<CellColony>().AddListener(this);
+            cellsTransform = transform.Find("Cells");
+            cellsTransform.GetComponent<CellColony>().AddListener(this);
             flask = new Flask<Substance>();
+            inanimatesTransform = transform.Find("Inanimate");
         }
 
         private void Update()
@@ -26,7 +30,7 @@ namespace Environment
             if (Time.frameCount % 30 == 0)
             {
                 var totalMass = flask.TotalMass +
-                                GetComponentsInChildren<CellCauldron>()
+                                cellsTransform.GetComponentsInChildren<CellCauldron>()
                                     .Sum(cauldron => cauldron.TotalMass);
                 Grapher.Log(totalMass, "TotalMass");
             }
@@ -56,13 +60,9 @@ namespace Environment
 
         public void Dump(Vector3 dumpSite, Flask<Substance> source, Mixture<Substance> mix)
         {
-            //TODO Manifest as blob at dump site
-            Flask<Substance>.Transfer(flask, source, mix);
+            ChemicalBlob.InstantiateBlob(source, mix, dumpSite, inanimatesTransform);
         }
 
-        private string PersistenceFilePath(string saveDir)
-        {
-            return $"{saveDir}/chemicalSink1.json";
-        }
+        private string PersistenceFilePath(string saveDir) => $"{saveDir}/chemicalSink1.json";
     }
 }

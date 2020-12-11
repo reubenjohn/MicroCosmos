@@ -13,6 +13,7 @@ namespace ChemistryMicro
     public class RecipeBook
     {
         public static readonly RecipeBook Singleton = new RecipeBook();
+        public static readonly float Density = .01f;
 
         private readonly Dictionary<Recipe, Reaction<Substance>> recipes = new Dictionary<Recipe, Reaction<Substance>>
         {

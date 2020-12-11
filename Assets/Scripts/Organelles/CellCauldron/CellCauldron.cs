@@ -55,7 +55,7 @@ namespace Organelles.CellCauldron
             foreach (var recipe in InvoluntaryRecipes)
                 flask.Convert(recipeBook[recipe]);
             var waste = flask[Substance.Waste];
-            if (waste > 0)
+            if (waste > ChemicalBlob.MinBlobSize)
                 sink.Dump(transform.position, flask,
                     new MixtureDictionary<Substance> {{Substance.Waste, waste}}.ToMixture());
         }
