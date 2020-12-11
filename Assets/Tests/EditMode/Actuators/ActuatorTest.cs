@@ -1,5 +1,5 @@
 ﻿using NUnit.Framework;
-using Organelles;
+using Organelles.Flagella;
 using UnityEngine;
 
 namespace Tests.EditMode.Actuators
@@ -19,10 +19,10 @@ namespace Tests.EditMode.Actuators
         public void TestFlagellaTorque()
         {
             var gene = new FlagellaGene(100f, 2f);
-            
+
             var torque = FlagellaActuator.CalculateTorque(gene, new[] {.2f, .3f}, .1f);
             Assert.IsTrue(Mathf.Approximately(.06f, torque));
-            
+
             var torque2 = FlagellaActuator.CalculateTorque(gene, new[] {.2f, -1f}, .1f);
             Assert.IsTrue(Mathf.Approximately(-.2f, torque2));
         }

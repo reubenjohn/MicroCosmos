@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Genealogy.Graph;
+using Newtonsoft.Json;
 
 namespace Genealogy.Persistence
 {
@@ -6,7 +7,7 @@ namespace Genealogy.Persistence
     {
         public static void Load(JsonReader sw, GenealogyGraph graph)
         {
-            var jsonSerializer = new JsonSerializer()
+            var jsonSerializer = new JsonSerializer
             {
                 TypeNameHandling = TypeNameHandling.Auto,
                 ContractResolver = new GenealogyScrollContractResolver(graph)

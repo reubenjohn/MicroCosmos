@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Runtime.Serialization;
+using Genealogy.Graph;
 using Newtonsoft.Json.Serialization;
 using UnityEngine.Assertions;
 

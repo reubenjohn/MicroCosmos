@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Genealogy;
+using Genealogy.Graph;
 using Genealogy.Persistence;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -27,7 +27,7 @@ namespace Tests.EditMode.Genealogy.Persistence
 
         private static readonly string RootNodeJson = @"{""rootEntry"": {
     ""RootNode"": {
-      ""$type"": ""Genealogy.CellNode, MicroCosmosScripts"",
+      ""$type"": ""Genealogy.Graph.CellNode, MicroCosmosScripts"",
       ""displayName"": ""Cell"",
       ""NodeType"": 0,
       ""Guid"": ""00000000-0000-0000-0000-000000000000"",
@@ -37,7 +37,7 @@ namespace Tests.EditMode.Genealogy.Persistence
 
         private static readonly string RelationJson = @"{""rootEntry"": {
     ""RootNode"": {
-      ""$type"": ""Genealogy.CellNode, MicroCosmosScripts"",
+      ""$type"": ""Genealogy.Graph.CellNode, MicroCosmosScripts"",
       ""displayName"": ""Cell"",
       ""NodeType"": 0,
       ""Guid"": ""00000000-0000-0000-0000-000000000000"",
@@ -46,7 +46,7 @@ namespace Tests.EditMode.Genealogy.Persistence
   },""entries"":[
     {
       ""Node"": {
-        ""$type"": ""Genealogy.Reproduction, MicroCosmosScripts"",
+        ""$type"": ""Genealogy.Graph.Reproduction, MicroCosmosScripts"",
         ""NodeType"": 1,
         ""Guid"": ""00000000-1111-1111-1111-111111111111"",
         ""CreatedAt"": ""2020-01-01T01:00:01""

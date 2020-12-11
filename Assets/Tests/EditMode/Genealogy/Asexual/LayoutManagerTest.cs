@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using Genealogy;
-using Genealogy.Asexual;
+using Genealogy.Graph;
+using Genealogy.Layout.Asexual;
 using NUnit.Framework;
 
 namespace Tests.EditMode.Genealogy.Asexual
@@ -44,7 +44,7 @@ namespace Tests.EditMode.Genealogy.Asexual
             LayoutNodeTest.AssertDisplayHierarchy(@"
 00
 00
-00", 
+00",
                 layoutNodes[Root.Guid]);
 
             Assert.AreEqual(3, layoutNodes.Count);
@@ -73,7 +73,7 @@ namespace Tests.EditMode.Genealogy.Asexual
             LayoutNodeTest.AssertDisplayHierarchy(@"
   00
 00  01
-00  00", 
+00  00",
                 layoutNodes[Root.Guid]);
         }
 

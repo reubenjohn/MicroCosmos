@@ -1,4 +1,4 @@
-﻿using Brains;
+﻿using Brains.SimpleGeneticBrain1;
 using NUnit.Framework;
 
 namespace Tests.EditMode.Brains
@@ -8,7 +8,7 @@ namespace Tests.EditMode.Brains
         [Test]
         public static void TestNeuralInterface()
         {
-            var nn = new SimpleNeuralNetwork1(new GeneticBrainGene()
+            var nn = new SimpleNeuralNetwork1(new SimpleGeneticBrain1Gene
             {
                 biases = new[] {.1f},
                 weights = new[,] {{.1f, .2f}}

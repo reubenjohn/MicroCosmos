@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using Genealogy;
-using Genealogy.Asexual;
+using Genealogy.Graph;
+using Genealogy.Layout;
+using Genealogy.Layout.Asexual;
 using Newtonsoft.Json;
 using NUnit.Framework;
 
@@ -21,7 +22,10 @@ namespace Tests.EditMode.Genealogy.Asexual
         private static readonly List<ILayoutChangeListener<LayoutNode>> Listeners =
             new List<ILayoutChangeListener<LayoutNode>>();
 
-        private LayoutNode NewLayoutNode(Node node, LayoutNode parent) => new LayoutNode(Listeners, node, parent);
+        private LayoutNode NewLayoutNode(Node node, LayoutNode parent)
+        {
+            return new LayoutNode(Listeners, node, parent);
+        }
 
         internal static void AssertDisplayHierarchy(string expected, LayoutNode node)
         {

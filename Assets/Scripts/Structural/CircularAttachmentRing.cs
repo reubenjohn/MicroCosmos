@@ -1,5 +1,4 @@
-﻿using DefaultNamespace;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Structural
 {

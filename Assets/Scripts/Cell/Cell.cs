@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Linq;
-using Genealogy;
+using Environment;
+using Genealogy.Graph;
 using Genetics;
 using Newtonsoft.Json.Linq;
 using Organelles;
-using Organelles.ChemicalBag;
+using Organelles.CellCauldron;
 using UnityEngine;
 
 namespace Cell
 {
-    [RequireComponent(typeof(Rigidbody2D), typeof(CellCauldron))]
+    [RequireComponent(typeof(Rigidbody2D))]
     public class Cell : AbstractLivingComponent<CellGene>
     {
         private CellCauldron cauldron;
@@ -105,7 +106,8 @@ namespace Cell
         {
             Debug.Log($"{name} died!");
             cauldron.Burst();
-            GenealogyGraphManager.RegisterDeath(genealogyNode);
+            if (GenealogyGraphManager != null)
+                GenealogyGraphManager.RegisterDeath(genealogyNode);
             Destroy(gameObject);
         }
     }

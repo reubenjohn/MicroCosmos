@@ -1,14 +1,9 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using System.IO;
 using Cell;
-using Genetics;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Organelles;
-using Persistence;
-using TestCommon;
-using Tests.Common;
+using Organelles.Flagella;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -39,14 +34,14 @@ namespace Tests.PlayMode.Actuators
             yield return null;
             flagella.Actuate(logits);
             yield return new WaitForSeconds(.1f);
-            Assert.Greater(Vector2.Dot((cell.transform.position - pos0), cell.transform.up), 0f, "Cell moved forward");
+            Assert.Greater(Vector2.Dot(cell.transform.position - pos0, cell.transform.up), 0f, "Cell moved forward");
             Assert.Greater(cell.transform.rotation.eulerAngles.z - angle0, 0, "Cell turned right");
 
             logits[0] = -.8f;
             logits[1] = -.9f;
             flagella.Actuate(logits);
             yield return new WaitForSeconds(.2f);
-            Assert.Less(Vector2.Dot((cell.transform.position - pos0), cell.transform.up), 0f, "Cell moved backward");
+            Assert.Less(Vector2.Dot(cell.transform.position - pos0, cell.transform.up), 0f, "Cell moved backward");
             Assert.Less(cell.transform.rotation.eulerAngles.z - angle0, 0, "Cell turned left");
         }
     }

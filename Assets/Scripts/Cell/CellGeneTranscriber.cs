@@ -1,7 +1,7 @@
 using System.Linq;
 using Genetics;
 using Newtonsoft.Json.Linq;
-using Organelles.ChemicalBag;
+using Organelles.CellCauldron;
 
 namespace Cell
 {

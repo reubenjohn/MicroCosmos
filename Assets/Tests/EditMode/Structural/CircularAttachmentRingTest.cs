@@ -1,5 +1,4 @@
-﻿using DefaultNamespace;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using Structural;
 using UnityEngine;
 

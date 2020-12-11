@@ -1,4 +1,4 @@
-﻿using Genealogy;
+﻿using Genealogy.Graph;
 using Genealogy.Persistence;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -70,13 +70,13 @@ namespace Tests.EditMode.Genealogy.Persistence
   },
   ""DateTime"": ""2020-11-29T15:25:50.9801908+05:30""
 }";
-            var deserialized = JsonConvert.DeserializeObject<Relation>(expected, new JsonSerializerSettings()
+            var deserialized = JsonConvert.DeserializeObject<Relation>(expected, new JsonSerializerSettings
             {
                 ContractResolver = new NodeAsGuidContract()
             });
             // Assert.AreSame(NodeResolver(Guid1), deserialized.From);
             // Assert.AreSame(NodeResolver(Guid2), deserialized.To);
-            var actual = JsonConvert.SerializeObject(deserialized, new JsonSerializerSettings()
+            var actual = JsonConvert.SerializeObject(deserialized, new JsonSerializerSettings
             {
                 Formatting = Formatting.Indented,
                 ContractResolver = new NodeAsGuidContract()
@@ -100,24 +100,24 @@ namespace Tests.EditMode.Genealogy.Persistence
     ""CreatedAt"": ""2020-01-01T01:00:00""
   },
   {
-    ""$type"": ""Genealogy.Reproduction, MicroCosmosScripts"",
+    ""$type"": ""Genealogy.Graph.Reproduction, MicroCosmosScripts"",
     ""NodeType"": 1,
     ""Guid"": ""11111111-1111-1111-1111-111111111111"",
     ""CreatedAt"": ""2020-01-01T01:00:00""
   },
   {
-    ""$type"": ""Genealogy.CellNode, MicroCosmosScripts"",
+    ""$type"": ""Genealogy.Graph.CellNode, MicroCosmosScripts"",
     ""displayName"": ""cell_1"",
     ""NodeType"": 0,
     ""Guid"": ""11111111-1111-1111-1111-111111111111"",
     ""CreatedAt"": ""2020-01-01T01:00:00""
   }
 ]";
-            var deserialized = JsonConvert.DeserializeObject<Node[]>(expected, new JsonSerializerSettings()
+            var deserialized = JsonConvert.DeserializeObject<Node[]>(expected, new JsonSerializerSettings
             {
                 TypeNameHandling = TypeNameHandling.Auto
             });
-            var actual = JsonConvert.SerializeObject(deserialized, new JsonSerializerSettings()
+            var actual = JsonConvert.SerializeObject(deserialized, new JsonSerializerSettings
             {
                 Formatting = Formatting.Indented,
                 TypeNameHandling = TypeNameHandling.Auto

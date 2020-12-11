@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Genealogy;
+using Genealogy.Graph;
 using NUnit.Framework;
 
 namespace Tests.EditMode.Genealogy

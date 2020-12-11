@@ -5,7 +5,7 @@ namespace ChemistryMicro
 {
     public enum Recipe
     {
-        NOP,
+        Nop,
         GrowSkin,
         AgeSkin
     }
@@ -17,7 +17,7 @@ namespace ChemistryMicro
         private readonly Dictionary<Recipe, Reaction<Substance>> recipes = new Dictionary<Recipe, Reaction<Substance>>
         {
             //No-Operation
-            [Recipe.NOP] = Substance.Waste.M(0) > Substance.Waste.M(0),
+            [Recipe.Nop] = Substance.Waste.M(0) > Substance.Waste.M(0),
 
             // Vitals
             [Recipe.GrowSkin] =
@@ -31,21 +31,21 @@ namespace ChemistryMicro
         public readonly Recipe[] voluntaryRecipes =
         {
             Recipe.GrowSkin,
-            Recipe.NOP,
-            Recipe.NOP,
-            Recipe.NOP,
-            Recipe.NOP,
-            Recipe.NOP,
-            Recipe.NOP,
-            Recipe.NOP,
-            Recipe.NOP,
-            Recipe.NOP,
-            Recipe.NOP,
-            Recipe.NOP,
-            Recipe.NOP,
-            Recipe.NOP,
-            Recipe.NOP,
-            Recipe.NOP
+            Recipe.Nop,
+            Recipe.Nop,
+            Recipe.Nop,
+            Recipe.Nop,
+            Recipe.Nop,
+            Recipe.Nop,
+            Recipe.Nop,
+            Recipe.Nop,
+            Recipe.Nop,
+            Recipe.Nop,
+            Recipe.Nop,
+            Recipe.Nop,
+            Recipe.Nop,
+            Recipe.Nop,
+            Recipe.Nop
         };
 
         public Reaction<Substance> this[Recipe key] => recipes[key];

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Genealogy
+namespace Cinematics
 {
     public interface IChoreographerListener
     {

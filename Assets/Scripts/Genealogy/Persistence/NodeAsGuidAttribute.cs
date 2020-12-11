@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Genealogy
+namespace Genealogy.Persistence
 {
     [AttributeUsage(AttributeTargets.Field |
                     AttributeTargets.Property |

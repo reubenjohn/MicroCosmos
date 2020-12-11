@@ -1,6 +1,7 @@
 ﻿using System.Collections;
-using Genealogy;
-using Genealogy.Asexual;
+using Genealogy.Graph;
+using Genealogy.Layout.Asexual;
+using Genealogy.Visualization;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -33,7 +34,7 @@ namespace Tests.PlayMode.Genealogy
             tree.RegisterReproductionAndOffspring(new Node[] {rootNode}, cell1Node);
 
             Assert.AreEqual(new Vector3(60, 10, 0), LocalPositionOf(rootNode));
-            
+
             var rep0 = AsexualReproductionNodeOf(tree, cell0Node);
             Assert.AreEqual(new Vector3(30, -10, 0), LocalPositionOf(rep0));
             Assert.AreEqual(new Vector3(30, -30, 0), LocalPositionOf(cell0Node));
@@ -47,7 +48,7 @@ namespace Tests.PlayMode.Genealogy
 
         private static Vector3 LocalPositionOf(Node node) =>
             GameObject.Find(node.ToString()).GetComponent<RectTransform>().localPosition;
-        
+
         private static Node AsexualReproductionNodeOf(GenealogyGraph tree, CellNode node) =>
             tree.GetRelationsTo(node.Guid)[0].From;
     }

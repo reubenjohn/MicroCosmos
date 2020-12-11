@@ -1,7 +1,8 @@
 ﻿using System;
+using Genealogy.Graph;
 using Newtonsoft.Json;
 
-namespace Genealogy
+namespace Genealogy.Persistence
 {
     public class NodeAsGuidConverter : JsonConverter
     {
@@ -19,6 +20,9 @@ namespace Genealogy
             throw new NotImplementedException();
         }
 
-        public override bool CanConvert(Type objectType) => false;
+        public override bool CanConvert(Type objectType)
+        {
+            return false;
+        }
     }
 }

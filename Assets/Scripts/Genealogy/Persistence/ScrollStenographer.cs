@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using Genealogy.Graph;
 using Newtonsoft.Json;
 
 namespace Genealogy.Persistence
 {
     public class ScrollStenographer : IGenealogyGraphListener
     {
-        private readonly Func<JsonTextWriter> writerSupplier;
-        private JsonTextWriter writer;
         private readonly JsonSerializer serializer;
+        private readonly Func<JsonTextWriter> writerSupplier;
+        private bool isScrollEntriesStarted;
 
         private bool isScrollStarted;
-        private bool isScrollEntriesStarted;
+        private JsonTextWriter writer;
 
         public ScrollStenographer(Func<JsonTextWriter> writerSupplier)
         {
@@ -43,6 +44,12 @@ namespace Genealogy.Persistence
             }
         }
 
+        public void OnClear()
+        {
+            CloseScroll();
+            StartScroll();
+        }
+
         private void StartScroll()
         {
             writer = writerSupplier.Invoke();
@@ -64,12 +71,6 @@ namespace Genealogy.Persistence
                 writer.Close();
                 isScrollStarted = false;
             }
-        }
-
-        public void OnClear()
-        {
-            CloseScroll();
-            StartScroll();
         }
     }
 }
