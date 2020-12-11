@@ -13,10 +13,8 @@ namespace Organelles.CellCauldron
     }
 
     [RequireComponent(typeof(Cell.Cell), typeof(Rigidbody2D))]
-    public class CellCauldron : MonoBehaviour, IActuator
+    public partial class CellCauldron : MonoBehaviour, IActuator
     {
-        private static readonly Recipe[] InvoluntaryRecipes = {Recipe.AgeSkin};
-
         private readonly RecipeBook recipeBook = RecipeBook.Singleton;
         private Cell.Cell cell;
         private Flask<Substance> flask;
@@ -38,19 +36,17 @@ namespace Organelles.CellCauldron
         private void Update()
         {
             GrapherUtil.LogFlask(flask, "Cauldron", 15, cell.IsInFocus);
-            rb.mass = TotalMass;
+            if (Time.frameCount % 15 == 0)
+                rb.mass = TotalMass;
         }
 
-        public float[] Connect()
-        {
-            return new float[recipeBook.voluntaryRecipes.Length];
-        }
+        public float[] Connect() => new float[VoluntaryRecipes.Length];
 
         public void Actuate(float[] logits)
         {
-            for (var i = 0; i < recipeBook.voluntaryRecipes.Length; i++)
+            for (var i = 0; i < VoluntaryRecipes.Length; i++)
             {
-                var recipe = recipeBook.voluntaryRecipes[i];
+                var recipe = VoluntaryRecipes[i];
                 if (recipe == Recipe.Nop) continue;
 
                 flask.Convert(recipeBook[recipe], Mathf.Max(0, logits[i]));
@@ -72,10 +68,7 @@ namespace Organelles.CellCauldron
             flask = new Flask<Substance>(parsedDict);
         }
 
-        public ChemicalBagGene GetGene()
-        {
-            return gene;
-        }
+        public ChemicalBagGene GetGene() => gene;
 
         public void SetState(JObject jObject)
         {
@@ -88,13 +81,11 @@ namespace Organelles.CellCauldron
             }
         }
 
-        public JObject GetState()
-        {
-            return new JObject
+        public JObject GetState() =>
+            new JObject
             {
                 ["chemicals"] = JToken.FromObject(EnumUtils.ToNamedDictionary(flask.ToMixtureDictionary()))
             };
-        }
 
         public void Burst()
         {

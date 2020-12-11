@@ -28,26 +28,6 @@ namespace ChemistryMicro
                 Substance.SkinGrowthFactor.M(1) + Substance.Waste.M(.01)
         };
 
-        public readonly Recipe[] voluntaryRecipes =
-        {
-            Recipe.GrowSkin,
-            Recipe.Nop,
-            Recipe.Nop,
-            Recipe.Nop,
-            Recipe.Nop,
-            Recipe.Nop,
-            Recipe.Nop,
-            Recipe.Nop,
-            Recipe.Nop,
-            Recipe.Nop,
-            Recipe.Nop,
-            Recipe.Nop,
-            Recipe.Nop,
-            Recipe.Nop,
-            Recipe.Nop,
-            Recipe.Nop
-        };
-
         public Reaction<Substance> this[Recipe key] => recipes[key];
     }
 }
