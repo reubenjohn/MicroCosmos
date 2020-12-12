@@ -3,6 +3,7 @@ using ChemistryMicro;
 using Genetics;
 using Structural;
 using UnityEngine;
+using Util;
 
 namespace Organelles.Membrane
 {
@@ -39,15 +40,9 @@ namespace Organelles.Membrane
                 cell.Die();
         }
 
-        public override GeneTranscriber<MembraneGene> GetGeneTranscriber()
-        {
-            return MembraneGeneTranscriber.Singleton;
-        }
+        public override GeneTranscriber<MembraneGene> GetGeneTranscriber() => MembraneGeneTranscriber.Singleton;
 
-        public override string GetResourcePath()
-        {
-            return ResourcePath;
-        }
+        public override string GetResourcePath() => ResourcePath;
 
         public override ILivingComponent[] GetSubLivingComponents()
         {
@@ -58,10 +53,7 @@ namespace Organelles.Membrane
                 .ToArray();
         }
 
-        public override MembraneGene GetGene()
-        {
-            return gene ?? new MembraneGene();
-        }
+        public override MembraneGene GetGene() => gene ?? new MembraneGene();
 
         public override Transform OnInheritGene(MembraneGene inheritedGene)
         {

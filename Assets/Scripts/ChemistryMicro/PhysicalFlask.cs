@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Chemistry;
 using UnityEngine;
 
@@ -16,9 +15,8 @@ namespace ChemistryMicro
         private void OnDestroy()
         {
             if (!Mathf.Approximately(TotalMass, 0))
-                throw new InvalidOperationException(
-                    $"Attempting to destroy a flask host with non-zero mass of {TotalMass} " +
-                    "violates the conservation of mass!");
+                Debug.LogWarning($"Attempting to destroy a flask of game object '{gameObject.name}' " +
+                                 $" with non-zero mass of {TotalMass} violates the conservation of mass!");
         }
 
         public float TotalMass => flask.TotalMass;
@@ -38,13 +36,13 @@ namespace ChemistryMicro
             source.OnReflectPhysicalProperties();
         }
 
-        protected void LoadFlask(Dictionary<Substance, float> newFlaskContents)
+        public void LoadFlask(Dictionary<Substance, float> newFlaskContents)
         {
             var source = new Flask<Substance>(newFlaskContents);
             Flask<Substance>.Transfer(flask, source, source - flask);
             OnReflectPhysicalProperties();
             if (source.TotalMass > 0)
-                Debug.LogWarning($"Destroying {source.TotalMass}kg while inheriting gene");
+                Debug.LogWarning($"'{gameObject.name}' destroying {source.TotalMass}kg while loading");
         }
 
         private void OnReflectPhysicalProperties()

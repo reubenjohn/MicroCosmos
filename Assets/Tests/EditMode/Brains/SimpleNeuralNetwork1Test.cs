@@ -1,5 +1,6 @@
 ﻿using Brains.SimpleGeneticBrain1;
 using NUnit.Framework;
+using Util;
 
 namespace Tests.EditMode.Brains
 {

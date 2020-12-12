@@ -44,5 +44,11 @@ namespace Tests.PlayMode.Actuators
             Assert.Less(Vector2.Dot(cell.transform.position - pos0, cell.transform.up), 0f, "Cell moved backward");
             Assert.Less(cell.transform.rotation.eulerAngles.z - angle0, 0, "Cell turned left");
         }
+
+        [OneTimeTearDown]
+        public void TearDown()
+        {
+            Object.Destroy(GameObject.Find("Container"));
+        }
     }
 }

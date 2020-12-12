@@ -4,6 +4,7 @@ using Genetics;
 using Persistence;
 using Structural;
 using UnityEngine;
+using Util;
 
 namespace Organelles.BirthCanal
 {
@@ -18,10 +19,7 @@ namespace Organelles.BirthCanal
             cell = GetComponentInParent<Cell.Cell>();
         }
 
-        public float[] Connect()
-        {
-            return new float[1];
-        }
+        public float[] Connect() => new float[1];
 
         public void Actuate(float[] logits)
         {
@@ -52,15 +50,9 @@ namespace Organelles.BirthCanal
                     new Node[] {parent.GenealogyNode}, childCell);
         }
 
-        public override GeneTranscriber<BirthCanalGene> GetGeneTranscriber()
-        {
-            return BirthCanalGeneTranscriber.Singleton;
-        }
+        public override GeneTranscriber<BirthCanalGene> GetGeneTranscriber() => BirthCanalGeneTranscriber.Singleton;
 
-        public override BirthCanalGene GetGene()
-        {
-            return gene ?? new BirthCanalGene();
-        }
+        public override BirthCanalGene GetGene() => gene ?? new BirthCanalGene();
 
         public override Transform OnInheritGene(BirthCanalGene inheritedGene)
         {
@@ -74,9 +66,6 @@ namespace Organelles.BirthCanal
             return base.OnInheritGene(inheritedGene);
         }
 
-        public override string GetResourcePath()
-        {
-            return "Organelles/BirthCanal1";
-        }
+        public override string GetResourcePath() => "Organelles/BirthCanal1";
     }
 }

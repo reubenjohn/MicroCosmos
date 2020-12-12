@@ -2,6 +2,7 @@
 using Genetics;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
+using Util;
 
 namespace Brains.SimpleGeneticBrain1
 {
@@ -29,25 +30,15 @@ namespace Brains.SimpleGeneticBrain1
                 new SimpleNeuralNetwork1(gene));
         }
 
-        public string GetNodeName()
-        {
-            return gameObject.name;
-        }
+        public string GetNodeName() => gameObject.name;
 
-        Transform ILivingComponent.OnInheritGene(object inheritedGene)
-        {
-            return OnInheritGene((SimpleGeneticBrain1Gene) inheritedGene);
-        }
+        Transform ILivingComponent.OnInheritGene(object inheritedGene) =>
+            OnInheritGene((SimpleGeneticBrain1Gene) inheritedGene);
 
-        public GeneTranscriber<SimpleGeneticBrain1Gene> GetGeneTranscriber()
-        {
-            return SimpleGeneticBrain1GeneTranscriber.Singleton;
-        }
+        public GeneTranscriber<SimpleGeneticBrain1Gene> GetGeneTranscriber() =>
+            SimpleGeneticBrain1GeneTranscriber.Singleton;
 
-        public SimpleGeneticBrain1Gene GetGene()
-        {
-            return gene;
-        }
+        public SimpleGeneticBrain1Gene GetGene() => gene;
 
         public Transform OnInheritGene(SimpleGeneticBrain1Gene inheritedGene)
         {
@@ -55,25 +46,13 @@ namespace Brains.SimpleGeneticBrain1
             return transform;
         }
 
-        IGeneTranscriber ILivingComponent.GetGeneTranscriber()
-        {
-            return GetGeneTranscriber();
-        }
+        IGeneTranscriber ILivingComponent.GetGeneTranscriber() => GetGeneTranscriber();
 
-        object ILivingComponent.GetGene()
-        {
-            return GetGene();
-        }
+        object ILivingComponent.GetGene() => GetGene();
 
-        public string GetResourcePath()
-        {
-            return "Organelles/GeneticBrain1";
-        }
+        public string GetResourcePath() => "Organelles/GeneticBrain1";
 
-        public JObject GetState()
-        {
-            return new JObject();
-        }
+        public JObject GetState() => new JObject();
 
         public void SetState(JObject state)
         {

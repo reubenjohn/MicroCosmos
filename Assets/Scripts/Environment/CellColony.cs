@@ -6,6 +6,7 @@ using Cell;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
+using Util;
 
 namespace Environment
 {
@@ -71,10 +72,8 @@ namespace Environment
             Debug.Log($"Loaded cell colony from {SavePath}");
         }
 
-        private CellColonyData SaveCellData()
-        {
-            return new CellColonyData {cells = LivingCells.Select(CellData.Save).ToArray()};
-        }
+        private CellColonyData SaveCellData() =>
+            new CellColonyData {cells = LivingCells.Select(CellData.Save).ToArray()};
 
         private void Load(JsonReader reader, JsonSerializer serializer)
         {

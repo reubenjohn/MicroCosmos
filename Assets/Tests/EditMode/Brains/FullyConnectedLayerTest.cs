@@ -1,6 +1,7 @@
 ﻿using System;
 using Brains;
 using NUnit.Framework;
+using Util;
 
 namespace Tests.EditMode.Brains
 {

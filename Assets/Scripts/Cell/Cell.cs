@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 using Organelles;
 using Organelles.CellCauldron;
 using UnityEngine;
+using Util;
 
 namespace Cell
 {
@@ -94,7 +95,7 @@ namespace Cell
 
         public void Die()
         {
-            Debug.Log($"{name} died!");
+            Debug.Log($"{name} dying!");
             cauldron.OnDying();
             if (GenealogyGraphManager != null)
                 GenealogyGraphManager.RegisterDeath(genealogyNode);
