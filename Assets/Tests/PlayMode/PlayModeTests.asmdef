@@ -1,11 +1,13 @@
 {
     "name": "PlayModeTests",
     "references": [
-        "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner",
-        "MicroCosmosScripts",
-        "Genetics",
-        "TestCommon"
+      "UnityEngine.TestRunner",
+      "UnityEditor.TestRunner",
+      "MicroCosmosScripts",
+      "Genetics",
+      "TestCommon",
+      "Chemistry",
+      "ChemistryMicro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

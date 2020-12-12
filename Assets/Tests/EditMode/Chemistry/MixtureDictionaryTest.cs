@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using Chemistry;
 using NUnit.Framework;
-using static Tests.EditMode.Chemistry.TestSubstance;
+using Tests.Common;
+using static Tests.Common.TestSubstance;
 
 namespace Tests.EditMode.Chemistry
 {
@@ -13,9 +13,9 @@ namespace Tests.EditMode.Chemistry
         {
             Assert.AreEqual("{  }", new Mixture<TestSubstance>().ToString());
             Assert.AreEqual("{ Cow: 1.2, Grass: 0.5 }",
-                new MixtureDictionary<TestSubstance>() {{Grass, .5f}, {Cow, 1.2f}}.ToMixture().ToString());
+                new MixtureDictionary<TestSubstance> {{Grass, .5f}, {Cow, 1.2f}}.ToMixture().ToString());
             Assert.AreEqual("{ Grass: 0.3333333 }",
-                new MixtureDictionary<TestSubstance>() {{Grass, 1f / 3}, {Cow, 0f}}.ToMixture().ToString());
+                new MixtureDictionary<TestSubstance> {{Grass, 1f / 3}, {Cow, 0f}}.ToMixture().ToString());
         }
 
         [Test]

@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Chemistry;
 using NUnit.Framework;
-using static Tests.EditMode.Chemistry.TestSubstance;
+using Tests.Common;
+using static Tests.Common.TestSubstance;
 
 namespace Tests.EditMode.Chemistry
 {

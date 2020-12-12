@@ -17,7 +17,7 @@ namespace Environment
 
         private void Start()
         {
-            cellsTransform = transform.Find("Cells");
+            cellsTransform = transform.Find("CellColony");
             cellsTransform.GetComponent<CellColony>().AddListener(this);
             flask = new Flask<Substance>();
             inanimatesTransform = transform.Find("Inanimate");

@@ -708,7 +708,7 @@ GameObject:
   - component: {fileID: 832437384}
   - component: {fileID: 832437383}
   m_Layer: 0
-  m_Name: Cells
+  m_Name: CellColony
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2608,7 +2608,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -2407056.2, y: 2296043.2}
+  m_AnchoredPosition: {x: -2409771.2, y: 2297408.2}
   m_SizeDelta: {x: -5.2972717, y: -9.890289}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1574356413

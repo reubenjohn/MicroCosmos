@@ -2,17 +2,11 @@
 using System.Collections.Generic;
 using Chemistry;
 using NUnit.Framework;
-using static Tests.EditMode.Chemistry.TestSubstance;
+using Tests.Common;
+using static Tests.Common.TestSubstance;
 
 namespace Tests.EditMode.Chemistry
 {
-    public enum TestSubstance
-    {
-        Cow,
-        Grass,
-        Dung
-    }
-
     public class MixtureTest
     {
         [Test]

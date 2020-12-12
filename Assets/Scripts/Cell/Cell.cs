@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Cell
 {
-    [RequireComponent(typeof(Rigidbody2D))]
+    [RequireComponent(typeof(Rigidbody2D), typeof(CellCauldron))]
     public class Cell : AbstractLivingComponent<CellGene>
     {
         private CellCauldron cauldron;
@@ -39,13 +39,11 @@ namespace Cell
             GenealogyGraphManager = GetComponentInParent<GenealogyGraphManager>();
         }
 
-        public override CellGene GetGene()
-        {
-            return new CellGene
+        public override CellGene GetGene() =>
+            new CellGene
             {
                 cauldron = cauldron.GetGene()
             };
-        }
 
         public override Transform OnInheritGene(CellGene inheritedGene)
         {
@@ -53,15 +51,9 @@ namespace Cell
             return transform;
         }
 
-        public override GeneTranscriber<CellGene> GetGeneTranscriber()
-        {
-            return CellGeneTranscriber.Singleton;
-        }
+        public override GeneTranscriber<CellGene> GetGeneTranscriber() => CellGeneTranscriber.Singleton;
 
-        public override string GetResourcePath()
-        {
-            return "Cells/Cell1";
-        }
+        public override string GetResourcePath() => "Cells/Cell1";
 
         public override JObject GetState()
         {
@@ -94,13 +86,11 @@ namespace Cell
                                     new[] {GenealogyGraphManager.RootNode}, this);
         }
 
-        public override ILivingComponent[] GetSubLivingComponents()
-        {
-            return transform.Children()
+        public override ILivingComponent[] GetSubLivingComponents() =>
+            transform.Children()
                 .Select(organelleTransform => organelleTransform.GetComponent<ILivingComponent>())
                 .Where(e => e != null)
                 .ToArray();
-        }
 
         public void Die()
         {
