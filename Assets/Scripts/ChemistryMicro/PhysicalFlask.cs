@@ -26,14 +26,14 @@ namespace ChemistryMicro
 
         public Mixture<Substance> ToMixture() => flask.Copy();
 
-        protected void Convert(Reaction<Substance> reaction, float conversionFactor = 1f) =>
+        public void Convert(Reaction<Substance> reaction, float conversionFactor = 1f) =>
             flask.Convert(reaction, conversionFactor);
 
-        public void Transfer(PhysicalFlask source, Mixture<Substance> mix)
+        public void TransferTo(PhysicalFlask destination, Mixture<Substance> mix)
         {
-            Flask<Substance>.Transfer(flask, source.flask, mix);
+            Flask<Substance>.Transfer(destination.flask, flask, mix);
             OnReflectPhysicalProperties();
-            source.OnReflectPhysicalProperties();
+            destination.OnReflectPhysicalProperties();
         }
 
         public void LoadFlask(Dictionary<Substance, float> newFlaskContents)

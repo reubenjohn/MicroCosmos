@@ -18,7 +18,7 @@ namespace Environment
                     Mathf.Approximately(TotalMass, otherBlob.TotalMass) &&
                     gameObject.GetInstanceID() < other.GetInstanceID())
                 {
-                    otherBlob.Transfer(this, ToMixture());
+                    TransferTo(otherBlob, ToMixture());
                     Destroy(gameObject);
                 }
             }
@@ -30,7 +30,7 @@ namespace Environment
             var obj = Instantiate(Resources.Load<GameObject>("Objects/ChemicalBlob"),
                 dumpSite, Quaternion.identity, parent);
             var blob = obj.GetComponent<ChemicalBlob>();
-            blob.Transfer(source, mix);
+            source.TransferTo(blob, mix);
             return blob;
         }
     }

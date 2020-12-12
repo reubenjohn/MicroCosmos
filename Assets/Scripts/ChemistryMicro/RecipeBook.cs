@@ -7,7 +7,8 @@ namespace ChemistryMicro
     {
         Nop,
         GrowSkin,
-        AgeSkin
+        AgeSkin,
+        Recycle
     }
 
     public class RecipeBook
@@ -26,7 +27,10 @@ namespace ChemistryMicro
                 Substance.SkinGrowthFactor.M(1) + Substance.Skin.M(.5) + Substance.Waste.M(.5),
             [Recipe.AgeSkin] =
                 Substance.SkinGrowthFactor.M(1) + Substance.Skin.M(.01) >
-                Substance.SkinGrowthFactor.M(1) + Substance.Waste.M(.01)
+                Substance.SkinGrowthFactor.M(1) + Substance.Waste.M(.01),
+
+            [Recipe.Recycle] =
+                Substance.Waste.M(1) > Substance.Fat.M(1)
         };
 
         public Reaction<Substance> this[Recipe key] => recipes[key];

@@ -9,6 +9,7 @@ using Util;
 
 namespace Environment
 {
+    [RequireComponent(typeof(Rigidbody2D))]
     public class ChemicalSink : PhysicalFlask, ICellColonyListener
     {
         private Transform cellsTransform;

@@ -61,7 +61,7 @@ namespace Tests.PlayMode.Environment
             Assert.IsTrue(Mathf.Approximately(.025f, chemicalSink.TotalMass));
             Assert.AreEqual(.075f, blob.TotalMass);
 
-            blob.Transfer(chemicalSink, new Mixture<Substance>() - mix); //Empty blob to conserve mass
+            chemicalSink.TransferTo(blob, new Mixture<Substance>() - mix); //Empty blob to conserve mass
 
             Object.Destroy(blob.gameObject);
             yield return null;
@@ -88,7 +88,7 @@ namespace Tests.PlayMode.Environment
             Assert.IsTrue(blobB == null);
 
             //Empty blob to conserve mass
-            blobA.Transfer(chemicalSink, new MixtureDictionary<Substance> {{Substance.Fat, -.1f}}.ToMixture());
+            chemicalSink.TransferTo(blobA, new MixtureDictionary<Substance> {{Substance.Fat, -.1f}}.ToMixture());
 
             Object.Destroy(blobA.gameObject);
             yield return null;
