@@ -1,12 +1,13 @@
 {
     "name": "Tests",
     "references": [
-        "GUID:27619889b8ba8c24980f49ee34dbb44a",
-        "GUID:0acc523941302664db1f4e527237feb3",
-        "GUID:9f3ac36623725514e9edcb5b1c6b905f",
-        "GUID:5078c423b610444449795e740c8bcabd",
-        "GUID:926eb82c0f8776a4eb79fb89df99f3c4",
-        "GUID:0cf83595432405a4db80fe86356d2fa0"
+      "GUID:27619889b8ba8c24980f49ee34dbb44a",
+      "GUID:0acc523941302664db1f4e527237feb3",
+      "GUID:9f3ac36623725514e9edcb5b1c6b905f",
+      "GUID:5078c423b610444449795e740c8bcabd",
+      "GUID:926eb82c0f8776a4eb79fb89df99f3c4",
+      "GUID:0cf83595432405a4db80fe86356d2fa0",
+      "GUID:19b4a43f709be3542896682a2a244ded"
     ],
     "includePlatforms": [
         "Editor"

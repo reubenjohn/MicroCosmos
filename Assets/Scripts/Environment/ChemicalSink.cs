@@ -4,34 +4,31 @@ using System.Linq;
 using Chemistry;
 using ChemistryMicro;
 using Newtonsoft.Json;
-using Organelles.CellCauldron;
 using UnityEngine;
 
 namespace Environment
 {
-    public class ChemicalSink : MonoBehaviour, ICellColonyListener
+    public class ChemicalSink : PhysicalFlask, ICellColonyListener
     {
         private Transform cellsTransform;
-        private Flask<Substance> flask;
         private Transform inanimatesTransform;
 
         private void Start()
         {
             cellsTransform = transform.Find("CellColony");
             cellsTransform.GetComponent<CellColony>().AddListener(this);
-            flask = new Flask<Substance>();
             inanimatesTransform = transform.Find("Inanimate");
         }
 
         private void Update()
         {
-            GrapherUtil.LogFlask(flask, "ChemicalSink", 30);
+            GrapherUtil.LogFlask(this, "ChemicalSink", 30);
 
             if (Time.frameCount % 30 == 0)
             {
-                var totalMass = flask.TotalMass +
-                                cellsTransform.GetComponentsInChildren<CellCauldron>()
-                                    .Sum(cauldron => cauldron.TotalMass);
+                var totalMass = TotalMass +
+                                transform.GetComponentsInChildren<IFlaskBehavior<Substance>>()
+                                    .Sum(flaskBehavior => flaskBehavior.TotalMass);
                 Grapher.Log(totalMass, "TotalMass");
             }
         }
@@ -54,14 +51,12 @@ namespace Environment
             {
                 var namedDict = serializer.Deserialize<Dictionary<string, float>>(reader);
                 var mixDict = EnumUtils.ParseNamedDictionary(namedDict, Substance.Waste);
-                flask = new Flask<Substance>(mixDict);
+                LoadFlask(mixDict);
             }
         }
 
-        public void Dump(Vector3 dumpSite, Flask<Substance> source, Mixture<Substance> mix)
-        {
+        public void Dump(Vector3 dumpSite, PhysicalFlask source, Mixture<Substance> mix) =>
             ChemicalBlob.InstantiateBlob(source, mix, dumpSite, inanimatesTransform);
-        }
 
         private string PersistenceFilePath(string saveDir) => $"{saveDir}/chemicalSink1.json";
     }

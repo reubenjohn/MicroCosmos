@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Tests/PlayMode/Genealogy/GenealogyGraphViewerTestScene.unity
     guid: 060b17396880bab49ad4c5f55c19c6f5
+  - enabled: 1
+    path: Assets/Tests/PlayMode/Environment/CoalesceTestScene.unity
+    guid: 5d8a7de1eb09b5744afee79c7064365b
   m_configObjects: {}

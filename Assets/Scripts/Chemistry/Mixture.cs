@@ -7,12 +7,13 @@ namespace Chemistry
 {
     public class Mixture<T> where T : Enum
     {
+        private readonly Lazy<float> cachedTotalMass;
         public readonly float[] contents;
 
         public Mixture()
         {
             contents = new float[EnumCount(typeof(T))];
-            // totalMass = new Lazy<float>(Mass);
+            cachedTotalMass = new Lazy<float>(Mass);
         }
 
         public Mixture(IDictionary<T, float> source) : this()
@@ -34,25 +35,16 @@ namespace Chemistry
         public int Length => contents.Length;
 
         // [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        public float TotalMass => Mass();
+        public virtual float TotalMass => cachedTotalMass.Value;
 
         public float this[T substance] => contents[Convert.ToInt32(substance)];
         // private readonly Lazy<float> totalMass;
 
-        private static int EnumCount(Type t)
-        {
-            return Enum.GetValues(t).Length;
-        }
+        private static int EnumCount(Type t) => Enum.GetValues(t).Length;
 
-        public float Mass()
-        {
-            return contents.Sum();
-        }
+        public float Mass() => contents.Sum();
 
-        public Mixture<T> Copy()
-        {
-            return new Mixture<T>(contents);
-        }
+        public Mixture<T> Copy() => new Mixture<T>(contents);
 
         public override string ToString()
         {
@@ -82,10 +74,7 @@ namespace Chemistry
             return Equals((Mixture<T>) obj);
         }
 
-        public override int GetHashCode()
-        {
-            throw new NotImplementedException();
-        }
+        public override int GetHashCode() => throw new NotImplementedException();
 
         public static Mixture<T> operator +(Mixture<T> a, Mixture<T> b)
         {
@@ -113,9 +102,7 @@ namespace Chemistry
 
     public static class MixtureUtils
     {
-        public static Mixture<T> ToMixture<T>(this MixtureDictionary<T> mixDict) where T : Enum
-        {
-            return new Mixture<T>(mixDict);
-        }
+        public static Mixture<T> ToMixture<T>(this MixtureDictionary<T> mixDict) where T : Enum =>
+            new Mixture<T>(mixDict);
     }
 }

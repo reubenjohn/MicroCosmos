@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.IO;
 using Chemistry;
 using ChemistryMicro;
 using Environment;
@@ -12,7 +13,22 @@ namespace Tests.PlayMode.Environment
     public class CoalesceTest
     {
         [OneTimeSetUp]
-        public void SetupScene() => SceneManager.LoadScene("Tests/PlayMode/GeneralTestScene");
+        public void MySetup()
+        {
+            SceneManager.LoadScene("Tests/PlayMode/Environment/CoalesceTestScene");
+        }
+
+        public ChemicalSink ResetChemicalSink()
+        {
+            var cellColony = GameObject.Find("CellColony").GetComponent<CellColony>();
+            cellColony.SaveDirectory = $"{Application.temporaryCachePath}/testing/CoalesceTest";
+            cellColony.OnSave();
+            File.WriteAllText($"{cellColony.SaveDirectory}/chemicalSink1.json",
+                Resources.Load<TextAsset>("CoalesceTest-chemicalSink").text);
+            var chemicalSink = GameObject.Find("Environment").GetComponent<ChemicalSink>();
+            cellColony.OnLoad();
+            return chemicalSink;
+        }
 
         [Test]
         public void DensityAssumption() => Assert.AreEqual(.01f, RecipeBook.Density);
@@ -20,10 +36,11 @@ namespace Tests.PlayMode.Environment
         [UnityTest]
         public IEnumerator TestEmptyBlobInstantiation()
         {
-            var flask = new Flask<Substance>(new MixtureDictionary<Substance> {{Substance.Fat, .1f}});
-            var blob = ChemicalBlob.InstantiateBlob(flask, new Mixture<Substance>(), Vector3.left, null);
+            var chemicalSink = ResetChemicalSink();
 
-            Assert.AreEqual(.1f, flask.TotalMass);
+            var blob = ChemicalBlob.InstantiateBlob(chemicalSink, new Mixture<Substance>(), Vector3.left, null);
+
+            Assert.IsTrue(Mathf.Approximately(.1f, chemicalSink.TotalMass));
             Assert.IsTrue(Mathf.Approximately(0f, blob.TotalMass));
             Assert.AreEqual(Vector3.left, blob.transform.position);
             Assert.AreEqual(Quaternion.identity, blob.transform.rotation);
@@ -36,28 +53,32 @@ namespace Tests.PlayMode.Environment
         [UnityTest]
         public IEnumerator TestNonEmptyBlobInstantiation()
         {
-            var flask = new Flask<Substance>(new MixtureDictionary<Substance> {{Substance.Fat, .1f}});
-            var mix = new MixtureDictionary<Substance> {{Substance.Fat, .075f}}.ToMixture();
-            var blob = ChemicalBlob.InstantiateBlob(flask, mix, Vector3.zero, null);
+            var chemicalSink = ResetChemicalSink();
 
-            Assert.IsTrue(Mathf.Approximately(.025f, flask.TotalMass));
+            var mix = new MixtureDictionary<Substance> {{Substance.Fat, .075f}}.ToMixture();
+            var blob = ChemicalBlob.InstantiateBlob(chemicalSink, mix, Vector3.zero, null);
+
+            Assert.IsTrue(Mathf.Approximately(.025f, chemicalSink.TotalMass));
             Assert.AreEqual(.075f, blob.TotalMass);
 
-            blob.Transfer(flask, new Mixture<Substance>() - mix); //Empty blob to conserve mass
+            blob.Transfer(chemicalSink, new Mixture<Substance>() - mix); //Empty blob to conserve mass
 
             Object.Destroy(blob.gameObject);
             yield return null;
         }
 
+
         [UnityTest]
         public IEnumerator TestBlobCoalescesWithBlob()
         {
-            var flask = new Flask<Substance>(new MixtureDictionary<Substance> {{Substance.Fat, .1f}});
-            var mixA = new MixtureDictionary<Substance> {{Substance.Fat, .075f}}.ToMixture();
-            var blobA = ChemicalBlob.InstantiateBlob(flask, mixA, Vector3.right, null);
-            var blobB = ChemicalBlob.InstantiateBlob(flask, flask, Vector3.right * 1.1f, null);
+            var chemicalSink = ResetChemicalSink();
 
-            Assert.AreEqual(0, flask.TotalMass);
+            var mixA = new MixtureDictionary<Substance> {{Substance.Fat, .075f}}.ToMixture();
+            var blobA = ChemicalBlob.InstantiateBlob(chemicalSink, mixA, Vector3.right, null);
+            var blobB = ChemicalBlob.InstantiateBlob(chemicalSink, chemicalSink.ToMixture(),
+                Vector3.right * 1.1f, null);
+
+            Assert.AreEqual(0, chemicalSink.TotalMass);
             Assert.AreEqual(.075f, blobA.TotalMass);
             Assert.IsTrue(Mathf.Approximately(.025f, blobB.TotalMass));
 
@@ -67,7 +88,7 @@ namespace Tests.PlayMode.Environment
             Assert.IsTrue(blobB == null);
 
             //Empty blob to conserve mass
-            blobA.Transfer(flask, new MixtureDictionary<Substance> {{Substance.Fat, -.1f}}.ToMixture());
+            blobA.Transfer(chemicalSink, new MixtureDictionary<Substance> {{Substance.Fat, -.1f}}.ToMixture());
 
             Object.Destroy(blobA.gameObject);
             yield return null;

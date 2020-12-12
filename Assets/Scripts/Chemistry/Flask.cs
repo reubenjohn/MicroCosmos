@@ -2,22 +2,30 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Util;
 
 namespace Chemistry
 {
-    public class Flask<T> : Mixture<T> where T : Enum
+    public class Flask<T> : Mixture<T>, IFlaskBehavior<T> where T : Enum
     {
+        private readonly Cacheable<float> cacheable;
+
         public Flask()
         {
+            cacheable = new Cacheable<float>(Mass);
         }
 
         public Flask(IDictionary<T, float> initialMix) : base(initialMix)
         {
+            cacheable = new Cacheable<float>(Mass);
         }
 
         public Flask(Mixture<T> initialMix) : base(initialMix)
         {
+            cacheable = new Cacheable<float>(Mass);
         }
+
+        public override float TotalMass => cacheable.Value;
 
         private bool Take(Mixture<T> b)
         {
@@ -25,6 +33,7 @@ namespace Chemistry
                 return false;
             for (var i = 0; i < contents.Length; i++)
                 contents[i] -= b.contents[i];
+            cacheable.Invalidate();
             return true;
         }
 
@@ -32,6 +41,7 @@ namespace Chemistry
         {
             for (var i = 0; i < contents.Length; i++)
                 contents[i] += b.contents[i];
+            cacheable.Invalidate();
         }
 
         private bool MassesGreaterThanEqualTo(Mixture<T> other) =>

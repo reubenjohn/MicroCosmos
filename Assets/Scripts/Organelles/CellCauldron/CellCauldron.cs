@@ -13,32 +13,21 @@ namespace Organelles.CellCauldron
     }
 
     [RequireComponent(typeof(Cell.Cell), typeof(Rigidbody2D))]
-    public partial class CellCauldron : MonoBehaviour, IActuator
+    public partial class CellCauldron : PhysicalFlask, IActuator
     {
         private readonly RecipeBook recipeBook = RecipeBook.Singleton;
         private Cell.Cell cell;
-        private Flask<Substance> flask;
 
         private ChemicalBagGene gene;
-        private Rigidbody2D rb;
         private ChemicalSink sink;
-        public float TotalMass => flask.TotalMass;
-
-        public float this[Substance substance] => flask[substance];
 
         private void Start()
         {
             cell = GetComponent<Cell.Cell>();
-            rb = GetComponent<Rigidbody2D>();
             sink = GetComponentInParent<ChemicalSink>();
         }
 
-        private void Update()
-        {
-            GrapherUtil.LogFlask(flask, "Cauldron", 15, cell.IsInFocus);
-            if (Time.frameCount % 15 == 0)
-                rb.mass = TotalMass;
-        }
+        private void Update() => GrapherUtil.LogFlask(this, "Cauldron", 15, cell.IsInFocus);
 
         public float[] Connect() => new float[VoluntaryRecipes.Length];
 
@@ -49,14 +38,15 @@ namespace Organelles.CellCauldron
                 var recipe = VoluntaryRecipes[i];
                 if (recipe == Recipe.Nop) continue;
 
-                flask.Convert(recipeBook[recipe], Mathf.Max(0, logits[i]));
+                Convert(recipeBook[recipe], Mathf.Max(0, logits[i]));
             }
 
             foreach (var recipe in InvoluntaryRecipes)
-                flask.Convert(recipeBook[recipe]);
-            var waste = flask[Substance.Waste];
+                Convert(recipeBook[recipe]);
+
+            var waste = this[Substance.Waste];
             if (waste > ChemicalBlob.MinBlobSize)
-                sink.Dump(transform.position, flask,
+                sink.Dump(transform.position, this,
                     new MixtureDictionary<Substance> {{Substance.Waste, waste}}.ToMixture());
         }
 
@@ -65,7 +55,7 @@ namespace Organelles.CellCauldron
             gene = chemicalBagGene;
 
             var parsedDict = EnumUtils.ParseNamedDictionary(gene.initialCauldron, Substance.Fat);
-            flask = new Flask<Substance>(parsedDict);
+            LoadFlask(parsedDict);
         }
 
         public ChemicalBagGene GetGene() => gene;
@@ -77,19 +67,16 @@ namespace Organelles.CellCauldron
             {
                 var deserialized = chemicals.ToObject<Dictionary<string, float>>();
                 var initialMix = EnumUtils.ParseNamedDictionary(deserialized, Substance.Waste);
-                flask = new Flask<Substance>(initialMix);
+                LoadFlask(initialMix);
             }
         }
 
         public JObject GetState() =>
             new JObject
             {
-                ["chemicals"] = JToken.FromObject(EnumUtils.ToNamedDictionary(flask.ToMixtureDictionary()))
+                ["chemicals"] = JToken.FromObject(EnumUtils.ToNamedDictionary(ToMixture().ToMixtureDictionary()))
             };
 
-        public void Burst()
-        {
-            sink.Dump(transform.position, flask, flask);
-        }
+        public void OnDying() => sink.Dump(transform.position, this, ToMixture());
     }
 }

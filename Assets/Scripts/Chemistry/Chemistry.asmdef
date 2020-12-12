@@ -1,3 +1,16 @@
-﻿{
-	"name": "Chemistry"
+{
+  "name": "Chemistry",
+  "references": [
+    "GUID:23ffc7b4c55025442958275b12c7eec1",
+    "GUID:19b4a43f709be3542896682a2a244ded"
+  ],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
 }

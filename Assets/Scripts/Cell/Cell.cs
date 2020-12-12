@@ -95,7 +95,7 @@ namespace Cell
         public void Die()
         {
             Debug.Log($"{name} died!");
-            cauldron.Burst();
+            cauldron.OnDying();
             if (GenealogyGraphManager != null)
                 GenealogyGraphManager.RegisterDeath(genealogyNode);
             Destroy(gameObject);
