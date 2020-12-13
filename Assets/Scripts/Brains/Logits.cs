@@ -11,7 +11,7 @@ namespace Brains
                 flattenedOutput[i] = Mathf.Clamp(flattenedOutput[i], -1, 1);
         }
 
-        public static void Flatten(float[][] inputs, float[] flattenedOutput)
+        public static void Flatten(float[][] inputs, float[] flattenedOutput, bool failIfOutputTooLong = true)
         {
             var inputFullyCompleted = 0;
             foreach (var input in inputs)
@@ -20,7 +20,7 @@ namespace Brains
                 inputFullyCompleted += input.Length;
             }
 
-            if (inputFullyCompleted < flattenedOutput.Length)
+            if (failIfOutputTooLong && inputFullyCompleted < flattenedOutput.Length)
                 throw new ArgumentException("Destination array was too long");
         }
 

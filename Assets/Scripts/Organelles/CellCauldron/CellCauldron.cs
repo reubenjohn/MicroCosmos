@@ -1,10 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Chemistry;
 using ChemistryMicro;
 using Environment;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using Util;
+using Random = UnityEngine.Random;
 
 namespace Organelles.CellCauldron
 {
@@ -79,5 +81,17 @@ namespace Organelles.CellCauldron
             };
 
         public void OnDying() => sink.Dump(transform.position, this, ToMixture());
+
+        public static ChemicalBagGene SampleGene()
+        {
+            var dic = new Dictionary<string, float>();
+            foreach (var substanceName in Enum.GetNames(typeof(Substance)))
+                dic[substanceName] = Random.Range(0f, 1f);
+
+            return new ChemicalBagGene
+            {
+                initialCauldron = dic
+            };
+        }
     }
 }

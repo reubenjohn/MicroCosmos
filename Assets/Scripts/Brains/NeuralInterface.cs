@@ -4,11 +4,11 @@ namespace Brains
 {
     public class NeuralInterface
     {
-        private readonly float[][] sensorLogits;
         private readonly float[][] actuatorLogits;
-        private readonly INeuralNetwork neuralNetwork;
         private readonly float[] flattenedInput;
         private readonly float[] flattenedOutput;
+        private readonly INeuralNetwork neuralNetwork;
+        private readonly float[][] sensorLogits;
 
         public NeuralInterface(float[][] sensorLogits, float[][] actuatorLogits,
             INeuralNetwork neuralNetwork)
@@ -24,7 +24,7 @@ namespace Brains
 
         public void React()
         {
-            Logits.Flatten(sensorLogits, flattenedInput);
+            Logits.Flatten(sensorLogits, flattenedInput, false);
 
             Logits.Clamp(flattenedInput);
 

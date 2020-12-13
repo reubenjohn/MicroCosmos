@@ -1,6 +1,7 @@
 using Genetics;
 using Newtonsoft.Json.Linq;
 using TestCommon;
+using UnityEngine;
 
 namespace Tests.Common
 {
@@ -11,10 +12,16 @@ namespace Tests.Common
 
         private SampleSubGeneTranscriber() { }
 
+        public override SampleSubGene Sample() =>
+            new SampleSubGene(
+                Random.Range(0, 1f)
+            );
+
         public override SampleSubGene Deserialize(JToken gene) => gene.ToObject<SampleSubGene>();
 
-        public override SampleSubGene Mutate(SampleSubGene gene) => new SampleSubGene(
-            HappinessMutator.Mutate(gene.happiness)
-        );
+        public override SampleSubGene Mutate(SampleSubGene gene) =>
+            new SampleSubGene(
+                HappinessMutator.Mutate(gene.happiness)
+            );
     }
 }

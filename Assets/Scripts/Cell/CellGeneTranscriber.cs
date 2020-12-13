@@ -9,22 +9,22 @@ namespace Cell
     {
         public static readonly CellGeneTranscriber Singleton = new CellGeneTranscriber();
 
-        private CellGeneTranscriber()
-        {
-        }
+        private CellGeneTranscriber() { }
 
-        public override CellGene Deserialize(JToken gene)
-        {
-            return gene.ToObject<CellGene>();
-        }
 
-        public override CellGene Mutate(CellGene gene)
-        {
-            return new CellGene
+        public override CellGene Sample() =>
+            new CellGene
+            {
+                cauldron = CellCauldron.SampleGene()
+            };
+
+        public override CellGene Deserialize(JToken gene) => gene.ToObject<CellGene>();
+
+        public override CellGene Mutate(CellGene gene) =>
+            new CellGene
             {
                 cauldron = Mutate(gene.cauldron)
             };
-        }
 
         private ChemicalBagGene Mutate(ChemicalBagGene gene)
         {

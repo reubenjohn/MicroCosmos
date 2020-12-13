@@ -1,5 +1,8 @@
+using System;
+using System.Linq;
 using Genetics;
 using Newtonsoft.Json.Linq;
+using Random = UnityEngine.Random;
 
 namespace Tests.Common
 {
@@ -10,13 +13,23 @@ namespace Tests.Common
 
         private SampleGeneTranscriber() { }
 
+        public override SampleGene Sample() =>
+            new SampleGene(
+                Random.Range(0f, 1f),
+                (uint) Random.Range(0, 10),
+                (DietaryRestriction) Enum.ToObject(typeof(DietaryRestriction),
+                    Enum.GetValues(typeof(DietaryRestriction)).Cast<int>().LastOrDefault()),
+                new Limb[] { }
+            );
+
         public override SampleGene Deserialize(JToken gene) => gene.ToObject<SampleGene>();
 
-        public override SampleGene Mutate(SampleGene gene) => new SampleGene(
-            FurrinessMutator.Mutate(gene.furriness),
-            gene.nEyes.Mutate(.1f),
-            gene.dietaryRestriction.Mutate(.1f),
-            gene.limbs.Mutate(Limb.Mutator)
-        );
+        public override SampleGene Mutate(SampleGene gene) =>
+            new SampleGene(
+                FurrinessMutator.Mutate(gene.furriness),
+                gene.nEyes.Mutate(.1f),
+                gene.dietaryRestriction.Mutate(.1f),
+                gene.limbs.Mutate(Limb.Mutator)
+            );
     }
 }

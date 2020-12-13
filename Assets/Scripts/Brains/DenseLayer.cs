@@ -2,14 +2,14 @@
 
 namespace Brains
 {
-    public class FullyConnectedLayer
+    public class DenseLayer
     {
+        private readonly float[] biases;
         private readonly int nInputs;
         private readonly int nOutputs;
         private readonly float[,] weights;
-        private readonly float[] biases;
 
-        public FullyConnectedLayer(float[,] weights, float[] biases)
+        public DenseLayer(float[,] weights, float[] biases)
         {
             nOutputs = weights.GetLength(0);
             nInputs = weights.GetLength(1);

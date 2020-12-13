@@ -7,14 +7,10 @@ namespace Organelles.ProximitySensor
     {
         public static readonly GeneTranscriber<ProximitySensorGene> Singleton = new ProximitySensorGeneTranscriber();
 
-        public override ProximitySensorGene Deserialize(JToken gene)
-        {
-            return gene.ToObject<ProximitySensorGene>();
-        }
+        public override ProximitySensorGene Sample() => new ProximitySensorGene();
 
-        public override ProximitySensorGene Mutate(ProximitySensorGene gene)
-        {
-            return new ProximitySensorGene();
-        }
+        public override ProximitySensorGene Deserialize(JToken gene) => gene.ToObject<ProximitySensorGene>();
+
+        public override ProximitySensorGene Mutate(ProximitySensorGene gene) => new ProximitySensorGene();
     }
 }

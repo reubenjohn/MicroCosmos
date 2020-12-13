@@ -10,7 +10,7 @@ namespace Tests.EditMode.Brains
         [Test]
         public void TestCalculation()
         {
-            var dense = new FullyConnectedLayer(
+            var dense = new DenseLayer(
                 new[,] {{.8f, -.8f, .1f}, {.1f, .2f, .3f}},
                 new[] {-.4f, .2f}
             );
@@ -22,7 +22,7 @@ namespace Tests.EditMode.Brains
         [Test]
         public void TestIncompatibleSizes()
         {
-            var dense = new FullyConnectedLayer(
+            var dense = new DenseLayer(
                 new[,] {{.8f, -.8f, .1f}, {.1f, .2f, .3f}},
                 new[] {-.4f, .2f}
             );

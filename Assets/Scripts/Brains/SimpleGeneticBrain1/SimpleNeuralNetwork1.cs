@@ -2,16 +2,14 @@
 {
     public class SimpleNeuralNetwork1 : INeuralNetwork
     {
-        private readonly FullyConnectedLayer dense;
+        private readonly DenseLayer dense;
 
         public SimpleNeuralNetwork1(SimpleGeneticBrain1Gene gene)
         {
-            dense = new FullyConnectedLayer(gene.weights, gene.biases);
+            dense = new DenseLayer(gene.denseLayer1.Weights, gene.denseLayer1.Biases);
         }
 
-        public void React(float[] receivedInputs, float[] receivedOutputs)
-        {
+        public void React(float[] receivedInputs, float[] receivedOutputs) =>
             dense.Calculate(receivedInputs, receivedOutputs);
-        }
     }
 }

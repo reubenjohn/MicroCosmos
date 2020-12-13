@@ -1,8 +1,6 @@
-﻿using System.Linq;
-using Genetics;
+﻿using Genetics;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
-using Util;
 
 namespace Brains.SimpleGeneticBrain1
 {
@@ -15,19 +13,11 @@ namespace Brains.SimpleGeneticBrain1
         private new void Start()
         {
             base.Start();
-            if (gene == null)
-            {
-                var inputLength = sensorLogits.Select(logits => logits.Length).Sum();
-                var outputLength = actuatorLogits.Select(logits => logits.Length).Sum();
-                gene = new SimpleGeneticBrain1Gene
-                {
-                    biases = RandomUtils.RandomLogits(outputLength),
-                    weights = RandomUtils.RandomLogits(outputLength, inputLength)
-                };
-            }
+            var livingDescription = new SimpleGeneticBrain1Description(sensorLogits.Length, actuatorLogits.Length);
+            if (gene is IRepairableGene<SimpleGeneticBrain1Gene, SimpleGeneticBrain1Description> repairableGene)
+                gene = repairableGene.RepairGene(livingDescription);
 
-            neuralInterface = new NeuralInterface(sensorLogits, actuatorLogits,
-                new SimpleNeuralNetwork1(gene));
+            neuralInterface = new NeuralInterface(sensorLogits, actuatorLogits, new SimpleNeuralNetwork1(gene));
         }
 
         public string GetNodeName() => gameObject.name;
@@ -54,18 +44,10 @@ namespace Brains.SimpleGeneticBrain1
 
         public JObject GetState() => new JObject();
 
-        public void SetState(JObject state)
-        {
-        }
+        public void SetState(JObject state) { }
 
-        public ILivingComponent[] GetSubLivingComponents()
-        {
-            return new ILivingComponent[] { };
-        }
+        public ILivingComponent[] GetSubLivingComponents() => new ILivingComponent[] { };
 
-        protected override void React()
-        {
-            neuralInterface.React();
-        }
+        protected override void React() => neuralInterface.React();
     }
 }
