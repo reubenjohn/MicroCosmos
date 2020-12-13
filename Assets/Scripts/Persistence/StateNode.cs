@@ -1,13 +1,13 @@
-using System;
 using System.Data;
 using System.Linq;
 using Genetics;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Persistence
 {
-    [Serializable]
+    [NoReorder]
     public class StateNode
     {
         public JObject state;

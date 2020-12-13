@@ -1,10 +1,12 @@
 using System.Linq;
 using Genetics;
+using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Persistence
 {
+    [NoReorder]
     [JsonConverter(typeof(GeneNodeJsonDeserializer))]
     public class GeneNode
     {
@@ -16,9 +18,8 @@ namespace Persistence
         [JsonIgnore] public ILivingComponent livingComponent;
 
 
-        public static GeneNode Save(ILivingComponent livingComponent)
-        {
-            return new GeneNode
+        public static GeneNode Save(ILivingComponent livingComponent) =>
+            new GeneNode
             {
                 resource = livingComponent.GetResourcePath(),
                 name = livingComponent.GetNodeName(),
@@ -27,7 +28,6 @@ namespace Persistence
                     .Select(Save)
                     .ToArray()
             };
-        }
 
         public static GameObject Load(GeneNode geneNode, Transform container, Vector3 position, Quaternion rotation)
         {
@@ -58,9 +58,8 @@ namespace Persistence
             }
         }
 
-        public static GeneNode GetMutated(ILivingComponent livingComponent)
-        {
-            return new GeneNode
+        public static GeneNode GetMutated(ILivingComponent livingComponent) =>
+            new GeneNode
             {
                 resource = livingComponent.GetResourcePath(),
                 name = livingComponent.GetNodeName(),
@@ -69,6 +68,5 @@ namespace Persistence
                     .Select(GetMutated)
                     .ToArray()
             };
-        }
     }
 }

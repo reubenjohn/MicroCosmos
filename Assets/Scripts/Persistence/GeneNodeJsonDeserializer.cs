@@ -10,10 +10,7 @@ namespace Persistence
     {
         public override bool CanWrite => false;
 
-        public override bool CanConvert(Type objectType)
-        {
-            return typeof(GeneNode).IsAssignableFrom(objectType);
-        }
+        public override bool CanConvert(Type objectType) => typeof(GeneNode).IsAssignableFrom(objectType);
 
         public override object ReadJson(JsonReader reader, Type objectType, object existingValue,
             JsonSerializer serializer)
