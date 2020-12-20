@@ -1,30 +1,32 @@
-using Genetics;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using UnityEngine;
+using Organelles.SimpleContainment;
 
 namespace Organelles.Membrane
 {
-    public class MembraneGeneTranscriber : GeneTranscriber<MembraneGene>
+    public class MembraneGeneTranscriber : AbstractContainmentGeneTranscriber<MembraneGene>
     {
         public static readonly MembraneGeneTranscriber Singleton = new MembraneGeneTranscriber();
+
+        [JsonIgnore] private static readonly string[] SupportedSubLivingComponentsResources =
+            {BirthCanal.BirthCanal.ResourcePath};
+
+        private MembraneGeneTranscriber() { }
 
         public override MembraneGene Sample() =>
             new MembraneGene
             {
-                radius = Random.Range(.1f, 5f)
+                radius = .25f,
+                nSubOrganelles = new SubOrganelleCounts(SupportedSubLivingComponentsResources)
             };
 
-        public override MembraneGene Deserialize(JToken gene)
-        {
-            return gene.ToObject<MembraneGene>();
-        }
+        public override MembraneGene Deserialize(JToken gene) => gene.ToObject<MembraneGene>();
 
-        public override MembraneGene Mutate(MembraneGene gene)
-        {
-            return new MembraneGene
+        public override MembraneGene Mutate(MembraneGene gene) =>
+            new MembraneGene
             {
-                radius = gene.radius.MutateClamped(gene.radius * .1f, .1f, 5f)
+                radius = gene.radius,
+                nSubOrganelles = gene.nSubOrganelles.Mutate(.1f)
             };
-        }
     }
 }

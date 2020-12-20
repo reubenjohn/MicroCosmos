@@ -12,6 +12,7 @@ namespace Environment
     [RequireComponent(typeof(Rigidbody2D))]
     public class ChemicalSink : PhysicalFlask, ICellColonyListener
     {
+        public string saveFile = "chemicalSink1";
         private Transform cellsTransform;
         private Transform inanimatesTransform;
 
@@ -57,9 +58,21 @@ namespace Environment
             }
         }
 
+        private void LoadFlask(Dictionary<Substance, float> newFlaskContents)
+        {
+            var source = new Flask<Substance>(newFlaskContents);
+            Flask<Substance>.Transfer(flask, source, source - flask);
+            OnReflectPhysicalProperties();
+            if (source.TotalMass > 0)
+                Debug.LogWarning($"'{gameObject.name}' destroying {source.TotalMass}kg while loading");
+        }
+
         public void Dump(Vector3 dumpSite, PhysicalFlask source, Mixture<Substance> mix) =>
             ChemicalBlob.InstantiateBlob(source, mix, dumpSite, inanimatesTransform);
 
-        private string PersistenceFilePath(string saveDir) => $"{saveDir}/chemicalSink1.json";
+        public string PersistenceFilePath(string saveDir) => $"{saveDir}/{saveFile}.json";
+
+        // TODO Instead of override, create a base class that does not reflect physical properties
+        protected override void OnReflectPhysicalProperties() { }
     }
 }

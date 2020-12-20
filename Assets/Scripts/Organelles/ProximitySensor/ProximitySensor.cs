@@ -6,6 +6,8 @@ namespace Organelles.ProximitySensor
 {
     public class ProximitySensor : AbstractLivingComponent<ProximitySensorGene>, ISensor
     {
+        public static readonly string ResourcePath = "Organelles/ProximitySensor";
+
         public ContactFilter2D contactFilter2D;
         private readonly List<Collider2D> cellCollidersInRange = new List<Collider2D>();
         private Cell.Cell cell;
@@ -60,9 +62,6 @@ namespace Organelles.ProximitySensor
             return ProximitySensorGeneTranscriber.Singleton;
         }
 
-        public override string GetResourcePath()
-        {
-            return "Organelles/ProximitySensor";
-        }
+        public override string GetResourcePath() => ResourcePath;
     }
 }

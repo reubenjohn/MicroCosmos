@@ -1,4 +1,5 @@
-﻿using Genetics;
+﻿using System.Linq;
+using Genetics;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 
@@ -6,6 +7,7 @@ namespace Brains.SimpleGeneticBrain1
 {
     public class SimpleGeneticBrain1 : AbstractBrain, ILivingComponent<SimpleGeneticBrain1Gene>
     {
+        public static readonly string ResourcePath = "Organelles/GeneticBrain1";
         private SimpleGeneticBrain1Gene gene;
 
         private NeuralInterface neuralInterface;
@@ -13,7 +15,10 @@ namespace Brains.SimpleGeneticBrain1
         private new void Start()
         {
             base.Start();
-            var livingDescription = new SimpleGeneticBrain1Description(sensorLogits.Length, actuatorLogits.Length);
+            var livingDescription = new SimpleGeneticBrain1Description(
+                sensorLogits.Select(logits => logits.Length).Sum(),
+                actuatorLogits.Select(logits => logits.Length).Sum()
+            );
             if (gene is IRepairableGene<SimpleGeneticBrain1Gene, SimpleGeneticBrain1Description> repairableGene)
                 gene = repairableGene.RepairGene(livingDescription);
 
@@ -40,7 +45,7 @@ namespace Brains.SimpleGeneticBrain1
 
         object ILivingComponent.GetGene() => GetGene();
 
-        public string GetResourcePath() => "Organelles/GeneticBrain1";
+        public string GetResourcePath() => ResourcePath;
 
         public JObject GetState() => new JObject();
 

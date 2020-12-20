@@ -1,0 +1,61 @@
+﻿{
+  "cells": [
+    {
+      "geneTree": {
+        "resource": "Cells/Cell1",
+        "name": "Cell1[0]",
+        "gene": {
+          "cauldron": {
+            "initialCauldron": {
+              "Fat": 0.5,
+              "SkinGrowthFactor": 0.01,
+              "Skin": 0.5
+            }
+          }
+        },
+        "children": [
+          {
+            "resource": "Organelles/Flagella1",
+            "name": "Flagella1-0",
+            "gene": {
+              "linearPower": 5000.0,
+              "angularPower": 10.0
+            },
+            "children": []
+          },
+          {
+            "resource": "Organelles/Membrane1",
+            "name": "Membrane1-0",
+            "gene": {},
+            "children": []
+          }
+        ]
+      },
+      "stateTree": {
+        "state": {
+          "guid": "9a98cefa-3b01-4257-b8c2-fee9876e2140",
+          "position": "0.2252748 0.3537433",
+          "rotation": 254.19635,
+          "cauldron": {
+            "chemicals": {
+              "Fat": 0.5,
+              "SkinGrowthFactor": 0.01,
+              "Skin": 0.5
+            },
+            "convertBabyFat": false
+          }
+        },
+        "children": [
+          {
+            "state": {},
+            "children": []
+          },
+          {
+            "state": {},
+            "children": []
+          }
+        ]
+      }
+    }
+  ]
+}

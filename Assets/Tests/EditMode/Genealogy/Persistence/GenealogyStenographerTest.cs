@@ -5,6 +5,7 @@ using Genealogy.Graph;
 using Genealogy.Persistence;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using UnityEngine;
 
 namespace Tests.EditMode.Genealogy.Persistence
 {
@@ -33,7 +34,8 @@ namespace Tests.EditMode.Genealogy.Persistence
       ""Guid"": ""00000000-0000-0000-0000-000000000000"",
       ""CreatedAt"": ""2020-01-01T01:00:00""
     }
-  },""entries"":[]}";
+  },""entries"":[]
+}";
 
         private static readonly string RelationJson = @"{""rootEntry"": {
     ""RootNode"": {
@@ -63,7 +65,8 @@ namespace Tests.EditMode.Genealogy.Persistence
           ""DateTime"": ""2020-01-01T01:00:01""
         }
       ]
-    }]}";
+    }]
+}";
 
         [Test]
         public void TestUnopenedScroll()
@@ -185,14 +188,15 @@ namespace Tests.EditMode.Genealogy.Persistence
 
         private string DoStenography(GenealogyGraph graph, Action action)
         {
-            StringWriter sw = null;
-            var stenographer = new ScrollStenographer(() => new JsonTextWriter(sw = new StringWriter()));
+            var stenographer = new ScrollStenographer();
             graph.AddListener(stenographer);
 
             action.Invoke();
 
+            var tmpFile = $"{Application.temporaryCachePath}/testing/GenealogyStenographerTest/tmp.json";
+            stenographer.SaveCopy(tmpFile);
             stenographer.CloseScroll();
-            return sw?.ToString();
+            return File.ReadAllText(tmpFile);
         }
     }
 }

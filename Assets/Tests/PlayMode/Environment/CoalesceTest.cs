@@ -31,7 +31,7 @@ namespace Tests.PlayMode.Environment
         }
 
         [Test]
-        public void DensityAssumption() => Assert.AreEqual(.01f, RecipeBook.Density);
+        public void DensityAssumption() => Assert.AreEqual(1f, RecipeBook.Density);
 
         [UnityTest]
         public IEnumerator TestEmptyBlobInstantiation()
@@ -76,7 +76,7 @@ namespace Tests.PlayMode.Environment
             var mixA = new MixtureDictionary<Substance> {{Substance.Fat, .075f}}.ToMixture();
             var blobA = ChemicalBlob.InstantiateBlob(chemicalSink, mixA, Vector3.right, null);
             var blobB = ChemicalBlob.InstantiateBlob(chemicalSink, chemicalSink.ToMixture(),
-                Vector3.right * 1.1f, null);
+                Vector3.right * 1.01f, null);
 
             Assert.AreEqual(0, chemicalSink.TotalMass);
             Assert.AreEqual(.075f, blobA.TotalMass);

@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Genealogy.Graph;
 using Newtonsoft.Json;
+using UnityEngine;
 
 namespace Genealogy.Persistence
 {
     public class ScrollStenographer : IGenealogyGraphListener
     {
         private readonly JsonSerializer serializer;
-        private readonly Func<JsonTextWriter> writerSupplier;
-        private bool isScrollEntriesStarted;
-
-        private bool isScrollStarted;
         private JsonTextWriter writer;
+        private string writerPath;
 
-        public ScrollStenographer(Func<JsonTextWriter> writerSupplier)
+        public ScrollStenographer()
         {
-            this.writerSupplier = writerSupplier;
             serializer = new JsonSerializer
             {
                 Formatting = Formatting.Indented,
@@ -29,18 +27,20 @@ namespace Genealogy.Persistence
 
         public void OnTransactionComplete(GenealogyGraph genealogyGraph, Node node, List<Relation> relations)
         {
-            if (relations.Count == 0)
+            lock (writer)
             {
-                writer.WritePropertyName("rootEntry");
-                serializer.Serialize(writer, new GenealogyScrollRootEntry(node));
+                if (relations.Count == 0)
+                {
+                    writer.WritePropertyName("rootEntry");
+                    serializer.Serialize(writer, new GenealogyScrollRootEntry(node));
 
-                writer.WritePropertyName("entries");
-                writer.WriteStartArray();
-            }
-            else
-            {
-                isScrollEntriesStarted = true;
-                serializer.Serialize(writer, new GenealogyScrollEntry(node, relations));
+                    writer.WritePropertyName("entries");
+                    writer.WriteStartArray();
+                }
+                else
+                {
+                    serializer.Serialize(writer, new GenealogyScrollEntry(node, relations));
+                }
             }
         }
 
@@ -52,24 +52,42 @@ namespace Genealogy.Persistence
 
         private void StartScroll()
         {
-            writer = writerSupplier.Invoke();
-            writer.WriteStartObject();
-            isScrollStarted = true;
+            if (writer != null)
+                throw new InvalidOperationException("Cannot start a scroll that is already open");
+            var saveDir = $"{Application.temporaryCachePath}/ScrollStenographer";
+            Directory.CreateDirectory(saveDir);
+            writerPath = $"{saveDir}/scroll1.json";
+            writer = new JsonTextWriter(new StreamWriter(writerPath));
+            lock (writer)
+                writer.WriteStartObject();
+        }
+
+        public void SaveCopy(string filePath)
+        {
+            lock (writer)
+            {
+                writer.Flush();
+                Directory.GetParent(filePath).Create();
+                File.Copy(writerPath, filePath, true);
+                using (var copyWriter = new StreamWriter(filePath, true))
+                {
+                    if (writer.Path == "" && writer.WriteState == WriteState.Object)
+                        copyWriter.Write("}");
+                    else if (writer.WriteState == WriteState.Array)
+                        copyWriter.Write($"]{System.Environment.NewLine}}}");
+                    else
+                        throw new InvalidOperationException(
+                            $"Unable to close scroll from path '{writer.Path}' and state '{writer.WriteState}'");
+                }
+            }
         }
 
         public void CloseScroll()
         {
-            if (isScrollStarted)
+            lock (writer)
             {
-                if (isScrollEntriesStarted)
-                {
-                    writer.WriteEndArray();
-                    isScrollEntriesStarted = false;
-                }
-
-                writer.WriteEndObject();
                 writer.Close();
-                isScrollStarted = false;
+                writer = null;
             }
         }
     }

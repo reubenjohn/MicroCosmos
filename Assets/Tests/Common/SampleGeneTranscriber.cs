@@ -9,9 +9,12 @@ namespace Tests.Common
     public class SampleGeneTranscriber : GeneTranscriber<SampleGene>
     {
         public static readonly SampleGeneTranscriber Singleton = new SampleGeneTranscriber();
-        public static readonly Mutator.ClampedFloat FurrinessMutator = new Mutator.ClampedFloat(0.1f, 0f, 1f);
+        private static readonly Mutator.ClampedFloat FurrinessMutator = new Mutator.ClampedFloat(0.1f, 0f, 1f);
 
         private SampleGeneTranscriber() { }
+
+        protected override GeneTreeMutator<SampleGene> GetGeneTreeMutator() =>
+            new GeneTreeMutator<SampleGene>(Mutate, DefaultGeneTreeChildrenMutator.Singleton);
 
         public override SampleGene Sample() =>
             new SampleGene(
@@ -23,6 +26,7 @@ namespace Tests.Common
             );
 
         public override SampleGene Deserialize(JToken gene) => gene.ToObject<SampleGene>();
+
 
         public override SampleGene Mutate(SampleGene gene) =>
             new SampleGene(

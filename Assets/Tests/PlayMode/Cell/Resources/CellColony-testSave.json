@@ -3,20 +3,22 @@
     {
       "geneTree": {
         "resource": "Cells/Cell1",
-        "name": "Cell1[0]",
         "gene": {
           "cauldron": {
             "initialCauldron": {
-              "Fat": 0.5,
-              "SkinGrowthFactor": 0.01,
-              "Skin": 0.5
+              "Fat": 0.05,
+              "SkinGrowthFactor": 0.001,
+              "Skin": 0.05
             }
+          },
+          "nSubOrganelles": {
+            "Organelles/Flagella1": 0.6,
+            "Organelles/Membrane1": 0.6
           }
         },
         "children": [
           {
             "resource": "Organelles/Flagella1",
-            "name": "Flagella1-0",
             "gene": {
               "linearPower": 250.0,
               "angularPower": 10.0
@@ -25,9 +27,11 @@
           },
           {
             "resource": "Organelles/Membrane1",
-            "name": "Membrane1-0",
             "gene": {
-              "radius": 0.5
+              "radius": 0.25,
+              "nSubOrganelles": {
+                "Organelles/BirthCanal1": 0.365015328
+              }
             },
             "children": []
           }
@@ -35,14 +39,16 @@
       },
       "stateTree": {
         "state": {
+          "guid": "9a98cefa-3b01-4257-b8c2-fee9876e2140",
           "position": "0.2252748 0.3537433",
           "rotation": 254.19635,
           "cauldron": {
             "chemicals": {
               "Fat": 0.5,
               "SkinGrowthFactor": 0.01,
-              "Skin": 0.5
-            }
+              "Skin": 0.25
+            },
+            "convertBabyFat": false
           }
         },
         "children": [
@@ -60,18 +66,22 @@
     {
       "geneTree": {
         "resource": "Cells/Cell1",
-        "name": "Cell1[1]",
         "gene": {
           "cauldron": {
             "initialCauldron": {}
+          },
+          "nSubOrganelles": {
+            "Organelles/Membrane1": 0.6
           }
         },
         "children": [
           {
             "resource": "Organelles/Membrane1",
-            "name": "Membrane1-0",
             "gene": {
-              "radius": 0.5
+              "radius": 0.25,
+              "nSubOrganelles": {
+                "Organelles/BirthCanal1": 0.0
+              }
             },
             "children": []
           }
@@ -79,10 +89,14 @@
       },
       "stateTree": {
         "state": {
+          "guid": "6597e9db-36f6-4aa4-bfee-3b6a69c46ae3",
           "position": "1 0",
           "rotation": 0.0,
           "cauldron": {
-            "chemicals": {}
+            "chemicals": {
+              "Skin": 0.25
+            },
+            "convertBabyFat": false
           }
         },
         "children": [

@@ -4,7 +4,7 @@
     {
         private readonly DenseLayer dense;
 
-        public SimpleNeuralNetwork1(SimpleGeneticBrain1Gene gene)
+        public SimpleNeuralNetwork1(SimpleGeneticBrain1Gene gene) // TODO Validate against LivingDescription
         {
             dense = new DenseLayer(gene.denseLayer1.Weights, gene.denseLayer1.Biases);
         }

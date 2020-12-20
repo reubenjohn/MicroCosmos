@@ -23,6 +23,7 @@ namespace Organelles.CellCauldron
 
         private ChemicalBagGene gene;
         private ChemicalSink sink;
+        public PhysicalFlask SourceFlask { get; set; }
 
         private void Start()
         {
@@ -53,13 +54,7 @@ namespace Organelles.CellCauldron
                     new MixtureDictionary<Substance> {{Substance.Waste, waste}}.ToMixture());
         }
 
-        public void OnInheritGene(ChemicalBagGene chemicalBagGene)
-        {
-            gene = chemicalBagGene;
-
-            var parsedDict = EnumUtils.ParseNamedDictionary(gene.initialCauldron, Substance.Fat);
-            LoadFlask(parsedDict);
-        }
+        public void OnInheritGene(ChemicalBagGene chemicalBagGene) => gene = chemicalBagGene;
 
         public ChemicalBagGene GetGene() => gene;
 
@@ -69,15 +64,31 @@ namespace Organelles.CellCauldron
             if (chemicals != null)
             {
                 var deserialized = chemicals.ToObject<Dictionary<string, float>>();
-                var initialMix = EnumUtils.ParseNamedDictionary(deserialized, Substance.Waste);
-                LoadFlask(initialMix);
+                var contents = EnumUtils.ParseNamedDictionary(deserialized, Substance.Waste);
+                var mixture = new Mixture<Substance>(contents);
+                SourceFlask.TransferTo(this, mixture);
+                SourceFlask = null;
+                var initialMix = new Mixture<Substance>(
+                    EnumUtils.ParseNamedDictionary(gene.initialCauldron, Substance.Waste));
+                var convertBabyFat = (bool) (jObject["convertBabyFat"] ?? true);
+                if (convertBabyFat)
+                {
+                    var reaction = new Reaction<Substance>(
+                        new MixtureDictionary<Substance> {{Substance.Fat, initialMix.TotalMass}}.ToMixture(),
+                        initialMix
+                    );
+                    Convert(reaction);
+                }
             }
         }
 
-        public JObject GetState() =>
+        public JObject GetState() => GetState(ToMixture(), false);
+
+        public static JObject GetState(Mixture<Substance> mixture, bool convertBabyFat) =>
             new JObject
             {
-                ["chemicals"] = JToken.FromObject(EnumUtils.ToNamedDictionary(ToMixture().ToMixtureDictionary()))
+                ["chemicals"] = JObject.FromObject(EnumUtils.ToNamedDictionary(mixture.ToMixtureDictionary())),
+                ["convertBabyFat"] = convertBabyFat
             };
 
         public void OnDying() => sink.Dump(transform.position, this, ToMixture());
@@ -86,7 +97,10 @@ namespace Organelles.CellCauldron
         {
             var dic = new Dictionary<string, float>();
             foreach (var substanceName in Enum.GetNames(typeof(Substance)))
-                dic[substanceName] = Random.Range(0f, 1f);
+                dic[substanceName] = Random.Range(0f, .1f);
+            dic[Substance.Fat.ToString()] = Random.Range(.5f, .8f);
+            dic[Substance.Skin.ToString()] = Random.Range(.5f, .8f);
+            dic[Substance.SkinGrowthFactor.ToString()] = Random.Range(.001f, .01f);
 
             return new ChemicalBagGene
             {

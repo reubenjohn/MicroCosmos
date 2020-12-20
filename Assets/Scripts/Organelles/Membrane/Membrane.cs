@@ -9,18 +9,19 @@ namespace Organelles.Membrane
 {
     public class Membrane : AbstractLivingComponent<MembraneGene>
     {
-        private static readonly string ResourcePath = "Organelles/Membrane1";
-        private static readonly float MinMembraneThickness = .01f;
+        public static readonly string ResourcePath = "Organelles/Membrane1";
+        private static readonly float MinMembraneRatio = .05f;
         private readonly CircularAttachmentRing attachmentAdapter = new CircularAttachmentRing();
         private CellCauldron.CellCauldron cauldron;
         private Cell.Cell cell;
 
         private float Thickness => Radius - InnerRadius;
+        private float ThicknessRatio => Thickness / Radius;
 
         private float Radius
         {
-            get => transform.localScale.x;
-            set => transform.localScale = Vector3.one * value;
+            get => transform.localScale.x * .5f;
+            set => transform.localScale = Vector3.one * value * 2f;
         }
 
         private float InnerRadius =>
@@ -34,9 +35,9 @@ namespace Organelles.Membrane
 
         private void Update()
         {
-            var thickness = Thickness;
-            if (cell.IsInFocus) Grapher.Log(thickness, "Membrane.Thickness");
-            if (thickness < MinMembraneThickness)
+            var ratio = ThicknessRatio;
+            if (cell.IsInFocus) Grapher.Log(ratio, "Membrane.ThicknessRatio");
+            if (ratio < MinMembraneRatio)
                 cell.Die();
         }
 
@@ -58,14 +59,10 @@ namespace Organelles.Membrane
         public override Transform OnInheritGene(MembraneGene inheritedGene)
         {
             base.OnInheritGene(inheritedGene);
-            // GetComponent<CircleCollider2D>();
             Radius = inheritedGene.radius;
             return transform.Find("Attachments");
         }
 
-        public void Attach(CircularAttachment attachment)
-        {
-            attachmentAdapter.AttachAt(attachment);
-        }
+        public void Attach(CircularAttachment attachment) => attachmentAdapter.AttachAt(attachment);
     }
 }

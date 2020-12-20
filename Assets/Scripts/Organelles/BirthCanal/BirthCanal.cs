@@ -1,6 +1,10 @@
-﻿using Environment;
+﻿using Cell;
+using Chemistry;
+using ChemistryMicro;
+using Environment;
 using Genealogy.Graph;
 using Genetics;
+using Newtonsoft.Json.Linq;
 using Persistence;
 using Structural;
 using UnityEngine;
@@ -10,9 +14,12 @@ namespace Organelles.BirthCanal
 {
     public class BirthCanal : AbstractLivingComponent<BirthCanalGene>, IActuator
     {
+        public static readonly string ResourcePath = "Organelles/BirthCanal1";
         public Control.BinaryControlVariable birthSignal = new Control.BinaryControlVariable(1);
         private CircularAttachment attachment;
         private Cell.Cell cell;
+
+        private Vector3 SpawnPoint => transform.Find("SpawnPoint").position;
 
         private void Start()
         {
@@ -25,7 +32,7 @@ namespace Organelles.BirthCanal
         {
             var giveBirthSignal = birthSignal.FeedInput(logits[0] > -.5f, logits[0] < .5, Time.deltaTime);
             if (Mathf.Approximately(giveBirthSignal, 1))
-                GiveBirth();
+                TryGiveBirth();
             if (cell.IsInFocus)
             {
                 Grapher.Log(logits[0], "GiveBirth?", Color.magenta);
@@ -33,21 +40,45 @@ namespace Organelles.BirthCanal
             }
         }
 
-        private void GiveBirth()
+        private void TryGiveBirth()
         {
             birthSignal.Value = 0;
 
-            var parent = cell;
-            var geneTree = GeneNode.GetMutated(parent);
+            var geneTree = GeneNode.GetMutated(cell);
+            var babyGene = (CellGene) geneTree.gene;
+            var babyMix = new Mixture<Substance>(
+                EnumUtils.ParseNamedDictionary(babyGene.cauldron.initialCauldron, Substance.Waste));
+            var cauldron = cell.Cauldron;
+            var babyMass = babyMix.TotalMass;
+            var mamaMass = cauldron.TotalMass;
+            if (babyMass >= mamaMass)
+                DieMaternally();
+            else if (babyMass > mamaMass * .5f)
+                Miscarriage(cauldron, babyMix);
+            else
+                SpawnBaby(geneTree);
+        }
 
-            var t = transform;
+        private void SpawnBaby(GeneNode geneTree)
+        {
+            Debug.Log("A new cell is being born :)");
             var cellColony = GetComponentInParent<CellColony>();
-            var child = GeneNode.Load(geneTree, cellColony.transform, t.Find("SpawnPoint").position, t.rotation);
+            var genealogyGraphManager = GetComponentInParent<GenealogyGraphManager>();
+            var childGenealogyNode = genealogyGraphManager.RegisterAsexualCellBirth(new Node[] {cell.GenealogyNode});
+            var cellState = Cell.Cell.GetState(childGenealogyNode.Guid, SpawnPoint, transform.rotation, new JObject());
+            cellColony.SpawnCell(geneTree, cellState, cell.Cauldron);
+        }
 
-            var childCell = child.GetComponent<Cell.Cell>();
-            if (parent.GenealogyGraphManager)
-                childCell.GenealogyNode = parent.GenealogyGraphManager.RegisterAsexualCellBirth(
-                    new Node[] {parent.GenealogyNode}, childCell);
+        private void DieMaternally()
+        {
+            Debug.Log("Cell is drying through child birth :(");
+            cell.Die();
+        }
+
+        private void Miscarriage(CellCauldron.CellCauldron cauldron, Mixture<Substance> babyMix)
+        {
+            Debug.Log("Cell is having a miscarriage :(");
+            GetComponentInParent<ChemicalSink>().Dump(SpawnPoint, cauldron, babyMix);
         }
 
         public override GeneTranscriber<BirthCanalGene> GetGeneTranscriber() => BirthCanalGeneTranscriber.Singleton;
@@ -66,6 +97,6 @@ namespace Organelles.BirthCanal
             return base.OnInheritGene(inheritedGene);
         }
 
-        public override string GetResourcePath() => "Organelles/BirthCanal1";
+        public override string GetResourcePath() => ResourcePath;
     }
 }

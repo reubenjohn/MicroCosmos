@@ -13,17 +13,17 @@ using UnityEngine.Serialization;
 
 namespace Environment
 {
-    [RequireComponent(typeof(CellColony))]
+    [RequireComponent(typeof(CellColony), typeof(DivinePossession))]
     public class GenealogyGraphManager : MonoBehaviour, IGraphViewerListener, ICellColonyListener
     {
         [FormerlySerializedAs("Choreographer")] [SerializeField]
         private Choreographer choreographer;
 
         [SerializeField] private GenealogyGraphViewer viewer;
+        public string saveFile = "genealogy1";
         public readonly GenealogyGraph genealogyGraph = new GenealogyGraph();
         private DivinePossession divinePossession;
         private ScrollStenographer stenographer;
-        private string stenographerPath;
         private CellColony CellColony { get; set; }
 
         public Node RootNode => genealogyGraph.rootNode;
@@ -33,13 +33,12 @@ namespace Environment
             CellColony = GetComponent<CellColony>();
             divinePossession = GetComponent<DivinePossession>();
 
-            stenographerPath = $"{CellColony.SaveDirectory}/{Guid.NewGuid()}.json";
-            stenographer = new ScrollStenographer(() => new JsonTextWriter(new StreamWriter(stenographerPath)));
+            stenographer = new ScrollStenographer();
             genealogyGraph.AddListener(stenographer);
 
             if (viewer)
             {
-                choreographer.AddListener(viewer);
+                if (choreographer) choreographer.AddListener(viewer);
 
                 var layoutManager = new LayoutManager();
                 layoutManager.AddListener(viewer);
@@ -57,24 +56,17 @@ namespace Environment
                 new CellNode(Guid.Parse("00000000-0000-0000-0000-000000000000"), new DateTime(1), "Cell"));
         }
 
-        private void OnDestroy()
-        {
-            stenographer.CloseScroll();
-        }
+        private void OnDestroy() => stenographer.CloseScroll();
 
-        public void OnSave(string saveDirectory)
-        {
-            stenographer.CloseScroll();
-            var destFileName = PersistenceFilePath(saveDirectory);
-            File.Delete(destFileName);
-            File.Move(stenographerPath, destFileName);
-        }
+        public void OnSave(string saveDirectory) => stenographer.SaveCopy(PersistenceFilePath(saveDirectory));
 
         public void OnLoad(string saveDirectory)
         {
             genealogyGraph.Clear();
-            ScrollReader.Load(new JsonTextReader(new StreamReader(PersistenceFilePath(saveDirectory))),
-                genealogyGraph);
+            using (var sw = new JsonTextReader(new StreamReader(PersistenceFilePath(saveDirectory))))
+            {
+                ScrollReader.Load(sw, genealogyGraph);
+            }
         }
 
         public void OnSelectNode(ViewerNode viewerNode, PointerEventData eventData)
@@ -84,7 +76,7 @@ namespace Environment
                 var targetCell = CellColony.FindCell(viewerNode.GenealogyNode.Guid);
                 if (targetCell != null)
                 {
-                    choreographer.SetFocus(targetCell.gameObject);
+                    if (choreographer) choreographer.SetFocus(targetCell.gameObject);
                     divinePossession.SetPossessionTarget(targetCell);
                     targetCell.IsInFocus = true;
                 }
@@ -95,7 +87,7 @@ namespace Environment
         {
             if (viewerNode.GenealogyNode.NodeType == NodeType.Cell)
             {
-                choreographer.SetFocus(null);
+                if (choreographer) choreographer.SetFocus(null);
                 divinePossession.SetPossessionTarget(null);
                 var targetCell = CellColony.FindCell(viewerNode.GenealogyNode.Guid);
                 if (targetCell != null)
@@ -103,22 +95,17 @@ namespace Environment
             }
         }
 
-        public CellNode RegisterAsexualCellBirth(Node[] parentGenealogyNodes, Cell.Cell child)
+        public CellNode RegisterAsexualCellBirth(Node[] parentGenealogyNodes)
         {
-            child.name = NamingSystem.GetChildName(genealogyGraph, (CellNode) parentGenealogyNodes[0]);
-            var childGenealogyNode = new CellNode(child.name);
-            genealogyGraph.RegisterReproductionAndOffspring(parentGenealogyNodes, childGenealogyNode);
-            return childGenealogyNode;
+            var displayName = NamingSystem.GetChildName(genealogyGraph, (CellNode) parentGenealogyNodes[0]);
+            var genealogyNode = new CellNode(displayName);
+            genealogyGraph.RegisterReproductionAndOffspring(parentGenealogyNodes, genealogyNode);
+            return genealogyNode;
         }
 
-        private static string PersistenceFilePath(string saveDirectory)
-        {
-            return $"{saveDirectory}/genealogy1.json";
-        }
+        public string PersistenceFilePath(string saveDirectory) => $"{saveDirectory}/{saveFile}.json";
 
-        public void RegisterDeath(CellNode cellNode)
-        {
+        public void RegisterDeath(CellNode cellNode) =>
             genealogyGraph.RegisterDeath(cellNode, new CellDeath(Guid.NewGuid(), DateTime.Now));
-        }
     }
 }

@@ -22,14 +22,11 @@ namespace Tests.EditMode.Genealogy.Asexual
         private static readonly List<ILayoutChangeListener<LayoutNode>> Listeners =
             new List<ILayoutChangeListener<LayoutNode>>();
 
-        private LayoutNode NewLayoutNode(Node node, LayoutNode parent)
-        {
-            return new LayoutNode(Listeners, node, parent);
-        }
+        private LayoutNode NewLayoutNode(Node node, LayoutNode parent) => new LayoutNode(Listeners, node, parent);
 
         internal static void AssertDisplayHierarchy(string expected, LayoutNode node)
         {
-            var actual = node.GetHierarchyDisplayString(nodeWidth: 2);
+            var actual = node.GetHierarchyDisplayString(System.Environment.NewLine, 2);
             try
             {
                 Assert.AreEqual(expected, actual);

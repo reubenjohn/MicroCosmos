@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Diagnostics.CodeAnalysis;
-using Cell;
-using Newtonsoft.Json;
+using Environment;
 using NUnit.Framework;
 using Organelles.Flagella;
 using UnityEngine;
@@ -15,16 +14,20 @@ namespace Tests.PlayMode.Actuators
         [OneTimeSetUp]
         public void GeneNodeTestSimplePasses()
         {
-            SceneManager.LoadScene("Tests/PlayMode/GeneralTestScene");
+            SceneManager.LoadScene("Tests/PlayMode/CellColonyTestScene");
         }
 
         [UnityTest]
         [SuppressMessage("ReSharper", "Unity.InefficientPropertyAccess")]
         public IEnumerator TestFlagellaActuatorCausesCellMovement()
         {
-            var container = GameObject.Find("Container").transform;
-            var cellDataResource = Resources.Load<TextAsset>("Cell-FlagellaActuator-Test");
-            var cell = CellData.Load(JsonConvert.DeserializeObject<CellData>(cellDataResource.text), container);
+            EnvironmentInitializer.LoadEnvironmentFromResources(
+                "ActuatorTest-testSave", out _,
+                "ActuatorTest-testChemicalSinkSaveFile", out _,
+                "ActuatorTest-testGenealogyScroll", out _
+            );
+
+            var cell = GameObject.Find("Cell.1").GetComponent<global::Cell.Cell>();
             var pos0 = cell.transform.position;
             var angle0 = cell.transform.rotation.eulerAngles.z;
             var flagella = cell.GetComponentInChildren<FlagellaActuator>();

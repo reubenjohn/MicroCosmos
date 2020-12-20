@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Chemistry;
+﻿using Chemistry;
 using UnityEngine;
 
 namespace ChemistryMicro
@@ -36,16 +35,7 @@ namespace ChemistryMicro
             destination.OnReflectPhysicalProperties();
         }
 
-        public void LoadFlask(Dictionary<Substance, float> newFlaskContents)
-        {
-            var source = new Flask<Substance>(newFlaskContents);
-            Flask<Substance>.Transfer(flask, source, source - flask);
-            OnReflectPhysicalProperties();
-            if (source.TotalMass > 0)
-                Debug.LogWarning($"'{gameObject.name}' destroying {source.TotalMass}kg while loading");
-        }
-
-        private void OnReflectPhysicalProperties()
+        protected virtual void OnReflectPhysicalProperties()
         {
             rb.mass = TotalMass;
             transform.localScale = Vector3.one * Mathf.Sqrt(rb.mass / RecipeBook.Density);

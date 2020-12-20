@@ -8,31 +8,37 @@ namespace Persistence
 {
     [NoReorder]
     [JsonConverter(typeof(GeneNodeJsonDeserializer))]
-    public class GeneNode
+    public class GeneNode // TODO Rename to GeneTree
     {
-        public string resource;
-        public string name;
-        public object gene;
+        public readonly string resource;
+        public readonly object gene;
         public GeneNode[] children;
 
-        [JsonIgnore] public ILivingComponent livingComponent;
+        [JsonIgnore] public readonly ILivingComponent livingComponent;
+
+        public GeneNode(ILivingComponent livingComponent, object gene, GeneNode[] children)
+        {
+            resource = livingComponent.GetResourcePath();
+            this.gene = gene;
+            this.children = children;
+            this.livingComponent = livingComponent;
+        }
 
 
-        public static GeneNode Save(ILivingComponent livingComponent) =>
-            new GeneNode
-            {
-                resource = livingComponent.GetResourcePath(),
-                name = livingComponent.GetNodeName(),
-                gene = livingComponent.GetGene(),
-                children = livingComponent.GetSubLivingComponents()
+        public static GeneNode Save(ILivingComponent livingComponent) => // TODO Rename to From
+            new GeneNode(
+                livingComponent,
+                livingComponent.GetGene(),
+                livingComponent.GetSubLivingComponents()
                     .Select(Save)
                     .ToArray()
-            };
+            );
 
+        // TODO Rename to Instantiate
         public static GameObject Load(GeneNode geneNode, Transform container, Vector3 position, Quaternion rotation)
         {
-            var gameObject =
-                (GameObject) Object.Instantiate(Resources.Load(geneNode.resource), position, rotation, container);
+            var gameObject = (GameObject) Object.Instantiate(Resources.Load(geneNode.resource),
+                position, rotation, container);
             Load(geneNode, gameObject);
             return gameObject;
         }
@@ -48,7 +54,6 @@ namespace Persistence
         {
             var gameObject = newlyInstantiatedTarget;
             var livingComponent = gameObject.GetComponent<ILivingComponent>();
-            gameObject.name = geneNode.name;
             var subLivingComponentContainer = livingComponent.OnInheritGene(geneNode.gene);
             foreach (var subGeneNode in geneNode.children)
             {
@@ -59,14 +64,6 @@ namespace Persistence
         }
 
         public static GeneNode GetMutated(ILivingComponent livingComponent) =>
-            new GeneNode
-            {
-                resource = livingComponent.GetResourcePath(),
-                name = livingComponent.GetNodeName(),
-                gene = livingComponent.GetGeneTranscriber().Mutate(livingComponent.GetGene()),
-                children = livingComponent.GetSubLivingComponents()
-                    .Select(GetMutated)
-                    .ToArray()
-            };
+            livingComponent.GetGeneTranscriber().GetTreeMutator().GetMutated(Save(livingComponent));
     }
 }

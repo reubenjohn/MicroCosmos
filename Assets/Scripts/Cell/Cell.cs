@@ -3,6 +3,7 @@ using System.Linq;
 using Environment;
 using Genealogy.Graph;
 using Genetics;
+using JetBrains.Annotations;
 using Newtonsoft.Json.Linq;
 using Organelles;
 using Organelles.CellCauldron;
@@ -14,16 +15,17 @@ namespace Cell
     [RequireComponent(typeof(Rigidbody2D), typeof(CellCauldron))]
     public class Cell : AbstractLivingComponent<CellGene>
     {
-        private CellCauldron cauldron;
+        public static readonly string ResourcePath = "Cells/Cell1";
 
         private CellNode genealogyNode;
         private Rigidbody2D rb;
-        public GenealogyGraphManager GenealogyGraphManager { get; private set; }
+        public CellCauldron Cauldron { get; private set; }
+        private GenealogyGraphManager GenealogyGraphManager { get; set; }
 
         public CellNode GenealogyNode
         {
             get => genealogyNode;
-            set
+            private set
             {
                 if (genealogyNode != null)
                     throw new InvalidOperationException($"Cell.GenealogyNode is already set to {GenealogyNode}");
@@ -36,38 +38,42 @@ namespace Cell
         private void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
-            cauldron = GetComponent<CellCauldron>();
+            Cauldron = GetComponent<CellCauldron>();
             GenealogyGraphManager = GetComponentInParent<GenealogyGraphManager>();
         }
 
-        public override CellGene GetGene() =>
-            new CellGene
-            {
-                cauldron = cauldron.GetGene()
-            };
+        public override CellGene GetGene()
+        {
+            gene.cauldron = Cauldron.GetGene();
+            return gene;
+        }
 
         public override Transform OnInheritGene(CellGene inheritedGene)
         {
-            cauldron.OnInheritGene(inheritedGene.cauldron);
+            gene = inheritedGene;
+            Cauldron.OnInheritGene(inheritedGene.cauldron);
             return transform;
         }
 
         public override GeneTranscriber<CellGene> GetGeneTranscriber() => CellGeneTranscriber.Singleton;
 
-        public override string GetResourcePath() => "Cells/Cell1";
+        public override string GetResourcePath() => ResourcePath;
 
         public override JObject GetState()
         {
-            var jObject = new JObject
-            {
-                ["position"] = Serialization.ToSerializable(transform.position),
-                ["rotation"] = transform.rotation.eulerAngles.z,
-                ["cauldron"] = cauldron.GetState()
-            };
-            if (GenealogyNode != null)
-                jObject["guid"] = GenealogyNode.Guid.ToString();
+            var t = transform;
+            var jObject = GetState(GenealogyNode.Guid, t.position, t.rotation, Cauldron.GetState());
             return jObject;
         }
+
+        public static JObject GetState(Guid guid, Vector3 position, Quaternion rotation, [NotNull] JObject cauldron) =>
+            new JObject
+            {
+                ["guid"] = guid.ToString(),
+                ["position"] = Serialization.ToSerializable(position),
+                ["rotation"] = rotation.eulerAngles.z,
+                ["cauldron"] = cauldron
+            };
 
         public override void SetState(JObject state)
         {
@@ -78,13 +84,11 @@ namespace Cell
             var rotation = state["rotation"];
             transform.rotation = rotation != null ? Quaternion.Euler(0, 0, (float) rotation) : new Quaternion();
 
-            cauldron.SetState((JObject) state["cauldron"]);
+            Cauldron.SetState((JObject) state["cauldron"]);
 
             var guid = (string) state["guid"];
-            if (guid != null && GenealogyGraphManager != null)
-                GenealogyNode = (CellNode) GenealogyGraphManager.genealogyGraph.GetNodeOrDefault(Guid.Parse(guid)) ??
-                                GenealogyGraphManager.RegisterAsexualCellBirth(
-                                    new[] {GenealogyGraphManager.RootNode}, this);
+            GenealogyNode = (CellNode) GenealogyGraphManager.genealogyGraph.GetNode(Guid.Parse(guid));
+            name = GenealogyNode.displayName;
         }
 
         public override ILivingComponent[] GetSubLivingComponents() =>
@@ -96,7 +100,7 @@ namespace Cell
         public void Die()
         {
             Debug.Log($"{name} dying!");
-            cauldron.OnDying();
+            Cauldron.OnDying();
             if (GenealogyGraphManager != null)
                 GenealogyGraphManager.RegisterDeath(genealogyNode);
             Destroy(gameObject);

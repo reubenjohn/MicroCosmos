@@ -14,12 +14,12 @@ namespace Tests.PlayMode.Persistence
     public class GeneNodeTest
     {
         public static readonly string Serialized1 =
-            @"{""resource"":""SampleOrganelle1"",""name"":""MySampleLivingComponent1"",""gene"":" +
+            @"{""resource"":""SampleOrganelle1"",""gene"":" +
             SampleGene.Serialized1 +
             @",""children"":[" +
-            @"{""resource"":""SampleSubOrganelle1"",""name"":""MySampleSubLivingComponent1"",""gene"":" +
+            @"{""resource"":""SampleSubOrganelle1"",""gene"":" +
             SampleSubGene.Serialized1 + @",""children"":[]}," +
-            @"{""resource"":""SampleSubOrganelle1"",""name"":""MySampleSubLivingComponent2"",""gene"":" +
+            @"{""resource"":""SampleSubOrganelle1"",""gene"":" +
             SampleSubGene.Serialized1 + @",""children"":[]}"
             + @"]}";
 
@@ -64,10 +64,10 @@ namespace Tests.PlayMode.Persistence
             Random.InitState(0);
             var mutated = GeneNode.GetMutated(livingComponent);
             var expectedJson =
-                @"{""resource"":""SampleOrganelle1"",""name"":""MySampleLivingComponent1"",""gene"":" +
+                @"{""resource"":""SampleOrganelle1"",""gene"":" +
                 @"{""furriness"":0.483172059,""nEyes"":2,""dietaryRestriction"":0,""limbs"":[{""length"":3.34669876},{""length"":3.43899369}]},""children"":["
-                + @"{""resource"":""SampleSubOrganelle1"",""name"":""MySampleSubLivingComponent1"",""gene"":{""happiness"":0.9700247},""children"":[]}," +
-                @"{""resource"":""SampleSubOrganelle1"",""name"":""MySampleSubLivingComponent2"",""gene"":{""happiness"":0.9694879},""children"":[]}]}";
+                + @"{""resource"":""SampleSubOrganelle1"",""gene"":{""happiness"":0.9700247},""children"":[]}," +
+                @"{""resource"":""SampleSubOrganelle1"",""gene"":{""happiness"":0.9694879},""children"":[]}]}";
             Assert.AreEqual(expectedJson, JsonConvert.SerializeObject(mutated, Formatting.None));
             yield return null;
         }

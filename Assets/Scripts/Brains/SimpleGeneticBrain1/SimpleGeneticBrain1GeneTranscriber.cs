@@ -2,6 +2,7 @@
 using System.Linq;
 using Genetics;
 using Newtonsoft.Json.Linq;
+using UnityEngine;
 using Util;
 
 namespace Brains.SimpleGeneticBrain1
@@ -39,7 +40,10 @@ namespace Brains.SimpleGeneticBrain1
                 interfaceDescription.OutputLength <= gene.Biases.Length)
                 return gene;
 
-            var weights = new float[interfaceDescription.OutputLength, interfaceDescription.InputLength];
+            var weights = new float[
+                Mathf.Max(gene.Weights.GetLength(0), interfaceDescription.OutputLength),
+                Mathf.Max(gene.Weights.GetLength(1), interfaceDescription.InputLength)
+            ];
             var biases = new float[interfaceDescription.OutputLength];
             ArrayUtils.Copy(gene.Weights, weights,
                 gene.Weights.GetLength(0), gene.Weights.GetLength(1));

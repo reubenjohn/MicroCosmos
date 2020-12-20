@@ -20,21 +20,21 @@ namespace Persistence
 
             var jsonObject = JObject.Load(reader);
 
-            var geneNode = existingValue as GeneNode ?? new GeneNode();
+            var resourceToken = jsonObject["resource"];
+            var resource = (string) resourceToken;
+            resourceToken.Parent.Remove();
 
-            var resource = jsonObject["resource"];
-            geneNode.resource = (string) resource;
-            resource.Parent.Remove();
-
-            var gameObject = (GameObject) Resources.Load(geneNode.resource);
+            var gameObject = (GameObject) Resources.Load(resource);
             if (gameObject == null)
-                throw new ArgumentNullException($"Resource {geneNode.resource} not found");
-            geneNode.livingComponent = gameObject.GetComponent<ILivingComponent>();
+                throw new ArgumentNullException($"Resource {resource} not found");
 
-            var gene = jsonObject["gene"];
-            geneNode.gene = geneNode.livingComponent.GetGeneTranscriber().Deserialize(gene);
-            gene.Parent.Remove();
+            var livingComponent = gameObject.GetComponent<ILivingComponent>();
 
+            var geneToken = jsonObject["gene"];
+            var gene = livingComponent.GetGeneTranscriber().Deserialize(geneToken);
+            geneToken.Parent.Remove();
+
+            var geneNode = new GeneNode(livingComponent, gene, new GeneNode[0]);
 
             using (var subReader = jsonObject.CreateReader())
             {

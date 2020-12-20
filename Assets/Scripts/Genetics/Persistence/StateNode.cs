@@ -38,5 +38,14 @@ namespace Persistence
             for (var i = 0; i < subStateNodes.Length; i++)
                 Load(subLivingComponents[i], subStateNodes[i]);
         }
+
+        public static StateNode Empty(GeneNode geneNode) =>
+            new StateNode
+            {
+                state = new JObject(),
+                children = geneNode.children
+                    .Select(Empty)
+                    .ToArray()
+            };
     }
 }

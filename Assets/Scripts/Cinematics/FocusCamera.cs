@@ -5,10 +5,9 @@ namespace Cinematics
     [RequireComponent(typeof(Camera))]
     public class FocusCamera : MonoBehaviour
     {
-        public Camera cam { get; private set; }
+        public Vector3 offset = new Vector3(0, 0, -2f);
         private GameObject focus;
-
-        public Vector3 offset = new Vector3(0, 0, -4f);
+        public Camera cam { get; private set; }
 
         public GameObject Focus
         {
@@ -28,9 +27,7 @@ namespace Cinematics
         private void Update()
         {
             if (cam.enabled)
-            {
-                transform.position = focus.transform.position + offset;
-            }
+                transform.position = focus.transform.position + offset * focus.transform.localScale.magnitude;
         }
     }
 }
