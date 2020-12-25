@@ -5,6 +5,7 @@ Fun little Unity evolution simulator.
 TODO
 ---
  - ~~Divine intervention to recycle fat~~
+ - Include chemical blobs in save
  - Flagella:
    - Force scales with mass
    - Display flagella as corona (thickness indicates relative power)

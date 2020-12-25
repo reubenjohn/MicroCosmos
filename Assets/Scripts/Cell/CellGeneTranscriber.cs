@@ -17,7 +17,6 @@ namespace Cell
 
         [JsonIgnore] private static readonly string[] SupportedSubLivingComponentsResources =
         {
-            FlagellaActuator.ResourcePath,
             ProximitySensor.ResourcePath
         };
 
@@ -31,7 +30,8 @@ namespace Cell
                 nSubOrganelles = new SubOrganelleCounts(SupportedSubLivingComponentsResources)
                 {
                     {Membrane.ResourcePath, .6f}, // Exactly one membrane
-                    {SimpleGeneticBrain1.ResourcePath, .6f} // Exactly one brain
+                    {SimpleGeneticBrain1.ResourcePath, .6f}, // Exactly one brain
+                    {FlagellaActuator.ResourcePath, .6f} // Exactly one flagella
                 }
             };
 
