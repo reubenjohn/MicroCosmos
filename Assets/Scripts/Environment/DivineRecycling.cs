@@ -1,40 +1,20 @@
-﻿using System.Collections.Generic;
-using Chemistry;
-using ChemistryMicro;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Environment
 {
     public class DivineRecycling : MonoBehaviour
     {
-        public float divineRecycleInterval = 1;
+        private static DivineRecycling singleton;
+        public float divineRecycleInterval = 5;
 
-        private readonly Dictionary<int, float> creationTimes = new Dictionary<int, float>();
-
-        private void Update()
+        public static DivineRecycling Instance
         {
-            if (Time.frameCount % 11 == 0 && divineRecycleInterval > 0)
-                foreach (var blob in transform.GetComponentsInChildren<ChemicalBlob>())
-                {
-                    var instanceID = blob.GetInstanceID();
-                    if (creationTimes.TryGetValue(instanceID, out var creationTime))
-                    {
-                        if (Time.time - creationTime > divineRecycleInterval)
-                        {
-                            if (Mathf.Approximately(blob[Substance.Fat], blob.TotalMass))
-                                break;
-                            var blobMix = blob.ToMixture();
-                            var fatMix = new MixtureDictionary<Substance> {{Substance.Fat, blobMix.TotalMass}}
-                                .ToMixture();
-                            var reaction = new Reaction<Substance>(blobMix, fatMix);
-                            blob.Convert(reaction);
-                        }
-                    }
-                    else
-                    {
-                        creationTimes[instanceID] = Time.time;
-                    }
-                }
+            get
+            {
+                if (singleton)
+                    return singleton;
+                return singleton = GameObject.Find("Environment").GetComponent<DivineRecycling>();
+            }
         }
     }
 }

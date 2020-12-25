@@ -76,7 +76,7 @@ namespace Environment
         {
             if (blobQueue == null || !blobQueue.MoveNext())
                 blobQueue = transform.GetComponentsInChildren<ChemicalBlob>()
-                    .Where(blob => blob != null && blob.gameObject != null && blob.TotalMass > minMass)
+                    .Where(blob => blob != null && blob.gameObject != null && blob[Substance.Fat] > minMass)
                     .GetEnumerator();
             if (!blobQueue.MoveNext())
                 return null;

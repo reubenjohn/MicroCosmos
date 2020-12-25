@@ -29,6 +29,7 @@ namespace Genealogy.Visualization
         {
             canvas = GetComponent<Canvas>();
             genealogyGraphContentTransform = GameObject.Find("_Family Tree Content").transform;
+            genealogyGraphContentTransform.transform.localPosition = Vector2.zero;
         }
 
         private void Update()

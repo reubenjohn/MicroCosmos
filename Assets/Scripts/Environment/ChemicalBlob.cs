@@ -9,6 +9,8 @@ namespace Environment
     {
         public static readonly double MinBlobSize = .01f;
 
+        private void Start() => name = $"ChemicalBlob{GetInstanceID()}";
+
         private void OnTriggerEnter2D(Collider2D other)
         {
             if (other.CompareTag("ChemicalBlob"))
