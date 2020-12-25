@@ -15,6 +15,7 @@ namespace Organelles.BirthCanal
     public class BirthCanal : AbstractLivingComponent<BirthCanalGene>, IActuator
     {
         public static readonly string ResourcePath = "Organelles/BirthCanal1";
+        public static readonly string ActuatorType = typeof(BirthCanal).FullName;
         public Control.BinaryControlVariable birthSignal = new Control.BinaryControlVariable(1);
         private CircularAttachment attachment;
         private Cell.Cell cell;
@@ -25,6 +26,8 @@ namespace Organelles.BirthCanal
         {
             cell = GetComponentInParent<Cell.Cell>();
         }
+
+        public string GetActuatorType() => ActuatorType;
 
         public float[] Connect() => new float[1];
 

@@ -27,7 +27,7 @@ namespace Organelles.SimpleContainment
             return subOrganelleCounts;
         }
 
-        private float GetLogit(string resource) => TryGetValue(resource, out var count) ? count : Random.Range(0f, .9f);
+        public float GetLogit(string resource) => TryGetValue(resource, out var count) ? count : Random.Range(0f, .9f);
 
         private int ToCount(float unsignedLogit) => (int) (Mathf.Log(1f / (1 - unsignedLogit)) / Mathf.Log(2));
 

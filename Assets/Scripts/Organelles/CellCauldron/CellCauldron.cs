@@ -33,6 +33,8 @@ namespace Organelles.CellCauldron
 
         private void Update() => GrapherUtil.LogFlask(this, "Cauldron", 15, cell.IsInFocus);
 
+        public string GetActuatorType() => typeof(CellCauldron).FullName;
+
         public float[] Connect() => new float[VoluntaryRecipes.Length];
 
         public void Actuate(float[] logits)

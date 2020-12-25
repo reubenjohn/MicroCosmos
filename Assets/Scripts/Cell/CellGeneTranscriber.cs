@@ -1,7 +1,7 @@
+using System.Collections.Generic;
 using System.Linq;
 using Brains.SimpleGeneticBrain1;
 using Genetics;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Organelles.CellCauldron;
 using Organelles.Flagella;
@@ -15,10 +15,14 @@ namespace Cell
     {
         public static readonly CellGeneTranscriber Singleton = new CellGeneTranscriber();
 
-        [JsonIgnore] private static readonly string[] SupportedSubLivingComponentsResources =
-        {
-            ProximitySensor.ResourcePath
-        };
+        private static readonly SubOrganelleCountsSimpleMutator SubOrganelleCountsMutator =
+            new SubOrganelleCountsSimpleMutator(new Dictionary<string, GeneMutator<float>>
+            {
+                {Membrane.ResourcePath, x => .6f}, // Exactly one membrane
+                {SimpleGeneticBrain1.ResourcePath, x => .6f}, // Exactly one brain
+                {FlagellaActuator.ResourcePath, x => .6f}, // Exactly one flagella
+                {ProximitySensor.ResourcePath, x => x.MutateClamped(.01f, 0f, .95f)}
+            });
 
         private CellGeneTranscriber() { }
 
@@ -27,27 +31,17 @@ namespace Cell
             new CellGene
             {
                 cauldron = CellCauldron.SampleGene(),
-                nSubOrganelles = new SubOrganelleCounts(SupportedSubLivingComponentsResources)
-                {
-                    {Membrane.ResourcePath, .6f}, // Exactly one membrane
-                    {SimpleGeneticBrain1.ResourcePath, .6f}, // Exactly one brain
-                    {FlagellaActuator.ResourcePath, .6f} // Exactly one flagella
-                }
+                nSubOrganelles = SubOrganelleCountsMutator.Mutate(new SubOrganelleCounts())
             };
 
         public override CellGene Deserialize(JToken gene) => gene.ToObject<CellGene>();
 
-        public override CellGene Mutate(CellGene gene)
-        {
-            var subOrganelleCounts = gene.nSubOrganelles.Mutate(.1f);
-            subOrganelleCounts[Membrane.ResourcePath] = .6f;
-            subOrganelleCounts[SimpleGeneticBrain1.ResourcePath] = .6f;
-            return new CellGene
+        public override CellGene Mutate(CellGene gene) =>
+            new CellGene
             {
                 cauldron = Mutate(gene.cauldron),
-                nSubOrganelles = subOrganelleCounts
+                nSubOrganelles = SubOrganelleCountsMutator.Mutate(gene.nSubOrganelles)
             };
-        }
 
         private ChemicalBagGene Mutate(ChemicalBagGene gene)
         {

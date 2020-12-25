@@ -12,7 +12,7 @@ namespace Brains.SimpleGeneticBrain1
 
         private NeuralInterface neuralInterface;
 
-        private new void Start()
+        protected override void Start()
         {
             base.Start();
             var livingDescription = new SimpleGeneticBrain1Description(

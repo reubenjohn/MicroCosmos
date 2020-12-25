@@ -8,10 +8,10 @@ namespace Brains
     {
         private ISensor[] sensors;
         protected float[][] sensorLogits { get; private set; }
-        private IActuator[] actuators { get; set; }
+        protected IActuator[] actuators { get; private set; }
         protected float[][] actuatorLogits { get; private set; }
 
-        public void Start()
+        protected virtual void Start()
         {
             actuators = GetComponentInParent<Cell.Cell>().GetComponentsInChildren<IActuator>();
             Debug.Log(

@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using Organelles.BirthCanal;
+using Organelles.Flagella;
+using UnityEngine;
 using Util;
 
 namespace Brains
@@ -7,11 +10,27 @@ namespace Brains
     {
         public float linearFlagellaSensitivity = 10f;
         public float angularFlagellaSensitivity = 10f;
+        private float[] birthCanalLogits;
+
+        private float[] flagellaLogits;
+
+        protected override void Start()
+        {
+            base.Start();
+            flagellaLogits = FindLogits(FlagellaActuator.ActuatorType);
+            birthCanalLogits = FindLogits(BirthCanal.ActuatorType);
+        }
+
+        private float[] FindLogits(string actuatorType)
+        {
+            var index = Array.FindIndex(actuators, actuator => actuator.GetActuatorType() == actuatorType);
+            return index > -1 ? actuatorLogits[index] : null;
+        }
 
         protected override void React()
         {
-            UpdateFlagellaLogits(actuatorLogits[1]);
-            UpdateBirthCanalLogits(actuatorLogits[2]);
+            if (flagellaLogits != null) UpdateFlagellaLogits(flagellaLogits);
+            if (birthCanalLogits != null) UpdateBirthCanalLogits(birthCanalLogits);
         }
 
         private void UpdateFlagellaLogits(float[] logits)

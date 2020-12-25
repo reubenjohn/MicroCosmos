@@ -1,4 +1,5 @@
-using Newtonsoft.Json;
+using System.Collections.Generic;
+using Genetics;
 using Newtonsoft.Json.Linq;
 using Organelles.SimpleContainment;
 
@@ -8,8 +9,11 @@ namespace Organelles.Membrane
     {
         public static readonly MembraneGeneTranscriber Singleton = new MembraneGeneTranscriber();
 
-        [JsonIgnore] private static readonly string[] SupportedSubLivingComponentsResources =
-            {BirthCanal.BirthCanal.ResourcePath};
+        private static readonly SubOrganelleCountsSimpleMutator SubOrganelleCountsMutator =
+            new SubOrganelleCountsSimpleMutator(new Dictionary<string, GeneMutator<float>>
+            {
+                {BirthCanal.BirthCanal.ResourcePath, x => x.MutateClamped(.01f, .6f, .99f)}
+            });
 
         private MembraneGeneTranscriber() { }
 
@@ -17,7 +21,7 @@ namespace Organelles.Membrane
             new MembraneGene
             {
                 radius = .25f,
-                nSubOrganelles = new SubOrganelleCounts(SupportedSubLivingComponentsResources)
+                nSubOrganelles = SubOrganelleCountsMutator.Mutate(new SubOrganelleCounts())
             };
 
         public override MembraneGene Deserialize(JToken gene) => gene.ToObject<MembraneGene>();
@@ -26,7 +30,7 @@ namespace Organelles.Membrane
             new MembraneGene
             {
                 radius = gene.radius,
-                nSubOrganelles = gene.nSubOrganelles.Mutate(.1f)
+                nSubOrganelles = SubOrganelleCountsMutator.Mutate(gene.nSubOrganelles)
             };
     }
 }

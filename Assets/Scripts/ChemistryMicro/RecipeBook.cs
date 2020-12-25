@@ -27,7 +27,7 @@ namespace ChemistryMicro
                 Substance.SkinGrowthFactor.M(1) + Substance.Skin.M(.5) + Substance.Waste.M(.5),
             [Recipe.AgeSkin] =
                 Substance.Skin.M(1) >
-                Substance.Skin.M(.99) + Substance.Waste.M(.01),
+                Substance.Skin.M(.999) + Substance.Waste.M(.001),
 
             [Recipe.Recycle] =
                 Substance.Waste.M(1) > Substance.Fat.M(1)

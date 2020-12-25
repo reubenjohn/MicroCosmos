@@ -6,6 +6,7 @@ namespace Organelles.Flagella
     public class FlagellaActuator : AbstractLivingComponent<FlagellaGene>, IActuator
     {
         public static readonly string ResourcePath = "Organelles/Flagella1";
+        public static readonly string ActuatorType = typeof(FlagellaActuator).FullName;
         private Cell.Cell cell;
         private Rigidbody2D rb { get; set; }
 
@@ -15,6 +16,8 @@ namespace Organelles.Flagella
             rb = GetComponentInParent<Rigidbody2D>();
             gene = gene ?? new FlagellaGene(250f, 10f);
         }
+
+        public string GetActuatorType() => ActuatorType;
 
         public float[] Connect() => new float[2];
 

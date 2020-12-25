@@ -4,13 +4,12 @@ namespace Organelles
 {
     public class OrificeActuator : MonoBehaviour, IActuator
     {
-        public void Actuate(float[] logits)
-        {
-        }
+        private static readonly string ActuatorType = typeof(OrificeActuator).FullName;
 
-        public float[] Connect()
-        {
-            return new float[0];
-        }
+        public void Actuate(float[] logits) { }
+
+        public string GetActuatorType() => ActuatorType;
+
+        public float[] Connect() => new float[0];
     }
 }
