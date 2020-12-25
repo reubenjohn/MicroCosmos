@@ -33,20 +33,23 @@ namespace Organelles.ProximitySensor
 
         public void Sense(float[] logits)
         {
-            logits[0] = 0;
+            var minDistance = float.MaxValue;
             spriteRenderer.color = new Color(0, 0, 0, .2f);
-            // TODO Select closest one only
             foreach (var otherCollider in cellCollidersInRange)
             {
                 Vector2 pos = transform.position;
                 var closestPoint = otherCollider.ClosestPoint(pos);
                 var distance = (closestPoint - pos).magnitude;
-                spriteRenderer.color = Color.Lerp(Color.HSVToRGB(0, 1f, 1f), spriteRenderer.color, distance);
-                logits[0] = 1 - 2 * distance;
-                if (cell.IsInFocus)
-                    // TODO Handle multiple proximity sensors
-                    Grapher.Log(logits[0], "Proximity.Closeness", Color.green);
+                minDistance = Mathf.Min(minDistance, distance);
             }
+
+            spriteRenderer.color = Color.Lerp(Color.HSVToRGB(0, 1f, 1f), spriteRenderer.color, minDistance);
+            var distanceLogit = 1 - 2 * minDistance;
+            if (cell.IsInFocus)
+                // TODO Handle multiple proximity sensors
+                Grapher.Log(distanceLogit, "Proximity.Closeness", Color.green);
+
+            logits[0] = distanceLogit;
         }
 
         public override GeneTranscriber<ProximitySensorGene> GetGeneTranscriber() =>

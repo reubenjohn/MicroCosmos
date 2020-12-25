@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Util;
 
 namespace Chemistry
 {
@@ -12,7 +13,7 @@ namespace Chemistry
 
         public Mixture()
         {
-            contents = new float[EnumCount(typeof(T))];
+            contents = new float[EnumUtils.EnumCount(typeof(T))];
             cachedTotalMass = new Lazy<float>(Mass);
         }
 
@@ -28,9 +29,7 @@ namespace Chemistry
             Array.Copy(contents, this.contents, this.contents.Length);
         }
 
-        protected Mixture(Mixture<T> initialMix) : this(initialMix.contents)
-        {
-        }
+        protected Mixture(Mixture<T> initialMix) : this(initialMix.contents) { }
 
         public int Length => contents.Length;
 
@@ -39,8 +38,6 @@ namespace Chemistry
 
         public float this[T substance] => contents[Convert.ToInt32(substance)];
         // private readonly Lazy<float> totalMass;
-
-        private static int EnumCount(Type t) => Enum.GetValues(t).Length;
 
         public float Mass() => contents.Sum();
 

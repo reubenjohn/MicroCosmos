@@ -50,7 +50,7 @@ namespace Organelles.BirthCanal
             var geneTree = GeneNode.GetMutated(cell);
             var babyGene = (CellGene) geneTree.gene;
             var babyMix = new Mixture<Substance>(
-                EnumUtils.ParseNamedDictionary(babyGene.cauldron.initialCauldron, Substance.Waste));
+                EnumUtils.ParseNamedDictionary<Substance, float>(babyGene.cauldron.initialCauldron));
             var cauldron = cell.Cauldron;
             var babyMass = babyMix.TotalMass;
             var mamaMass = cauldron.TotalMass;

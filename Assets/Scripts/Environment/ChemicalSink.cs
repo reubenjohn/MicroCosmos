@@ -53,7 +53,7 @@ namespace Environment
             using (JsonReader reader = new JsonTextReader(sr))
             {
                 var namedDict = serializer.Deserialize<Dictionary<string, float>>(reader);
-                var mixDict = EnumUtils.ParseNamedDictionary(namedDict, Substance.Waste);
+                var mixDict = EnumUtils.ParseNamedDictionary<Substance, float>(namedDict);
                 LoadFlask(mixDict);
             }
         }

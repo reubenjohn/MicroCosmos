@@ -66,12 +66,12 @@ namespace Organelles.CellCauldron
             if (chemicals != null)
             {
                 var deserialized = chemicals.ToObject<Dictionary<string, float>>();
-                var contents = EnumUtils.ParseNamedDictionary(deserialized, Substance.Waste);
+                var contents = EnumUtils.ParseNamedDictionary<Substance, float>(deserialized);
                 var mixture = new Mixture<Substance>(contents);
                 SourceFlask.TransferTo(this, mixture);
                 SourceFlask = null;
                 var initialMix = new Mixture<Substance>(
-                    EnumUtils.ParseNamedDictionary(gene.initialCauldron, Substance.Waste));
+                    EnumUtils.ParseNamedDictionary<Substance, float>(gene.initialCauldron));
                 var convertBabyFat = (bool) (jObject["convertBabyFat"] ?? true);
                 if (convertBabyFat)
                 {
