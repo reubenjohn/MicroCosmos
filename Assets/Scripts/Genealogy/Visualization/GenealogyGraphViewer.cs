@@ -7,6 +7,7 @@ using Genealogy.Layout;
 using Genealogy.Layout.Asexual;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace Genealogy.Visualization
 {
@@ -24,12 +25,13 @@ namespace Genealogy.Visualization
 
         private ViewerNode currentSelectedNode;
         private Transform genealogyGraphContentTransform;
+        private ScrollRect scrollRect;
 
         private void Start()
         {
             canvas = GetComponent<Canvas>();
             genealogyGraphContentTransform = GameObject.Find("_Family Tree Content").transform;
-            genealogyGraphContentTransform.transform.localPosition = Vector2.zero;
+            scrollRect = GameObject.Find("_Family Tree").GetComponent<ScrollRect>();
         }
 
         private void Update()
@@ -80,7 +82,7 @@ namespace Genealogy.Visualization
 
         private IEnumerator SetVisibility(bool visibility)
         {
-            canvas.enabled = visibility;
+            canvas.enabled = scrollRect.enabled = visibility;
             foreach (Transform connection in ConnectionManager.instance.transform)
             {
                 SetVisibility(connection.GetComponent<Connection>(), visibility);
