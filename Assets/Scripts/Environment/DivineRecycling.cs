@@ -6,6 +6,7 @@ namespace Environment
     {
         private static DivineRecycling singleton;
         public float divineRecycleInterval = 5;
+        public Color popAnimationColor = Color.magenta;
 
         public static DivineRecycling Instance
         {

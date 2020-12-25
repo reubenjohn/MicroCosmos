@@ -11,11 +11,14 @@ namespace Environment
         private static readonly Mixture<Substance> UnitFatMix = new MixtureDictionary<Substance> {{Substance.Fat, 1}}
             .ToMixture();
 
+        private DivineRecycling divineRecycling;
+
         private ChemicalBlob flask;
 
         private void Start()
         {
             flask = GetComponent<ChemicalBlob>();
+            divineRecycling = DivineRecycling.Instance;
             StartCoroutine(StartRecycling());
         }
 
@@ -25,11 +28,11 @@ namespace Environment
         {
             while (true)
             {
-                yield return new WaitForSeconds(DivineRecycling.Instance.divineRecycleInterval);
+                yield return new WaitForSeconds(divineRecycling.divineRecycleInterval);
                 if (flask != null && !Mathf.Approximately(flask[Substance.Fat], flask.TotalMass))
                 {
                     Instantiate(Resources.Load<GameObject>("Objects/HaloPop"), transform)
-                        .GetComponent<Light>().color = Color.yellow;
+                        .GetComponent<Light>().color = divineRecycling.popAnimationColor;
                     var blobMix = flask.ToMixture();
                     var reaction = new Reaction<Substance>(blobMix, UnitFatMix * blobMix.TotalMass);
                     flask.Convert(reaction);
