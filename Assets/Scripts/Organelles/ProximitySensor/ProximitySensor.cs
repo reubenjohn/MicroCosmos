@@ -18,7 +18,6 @@ namespace Organelles.ProximitySensor
         {
             cell = GetComponentInParent<Cell.Cell>();
             spriteRenderer = transform.Find("Overlay").GetComponent<SpriteRenderer>();
-            gene = gene ?? new ProximitySensorGene();
         }
 
         public void OnTriggerEnter2D(Collider2D other)
@@ -28,15 +27,9 @@ namespace Organelles.ProximitySensor
                 cellCollidersInRange.Add(other);
         }
 
-        public void OnTriggerExit2D(Collider2D other)
-        {
-            cellCollidersInRange.Remove(other);
-        }
+        public void OnTriggerExit2D(Collider2D other) => cellCollidersInRange.Remove(other);
 
-        public float[] Connect()
-        {
-            return new float[10]; // TODO Match number of substances
-        }
+        public float[] Connect() => new float[10]; // TODO Match number of substances
 
         public void Sense(float[] logits)
         {
@@ -45,7 +38,6 @@ namespace Organelles.ProximitySensor
             // TODO Select closest one only
             foreach (var otherCollider in cellCollidersInRange)
             {
-                // var cell = otherCollider.GetComponent<Cell.Cell>();
                 Vector2 pos = transform.position;
                 var closestPoint = otherCollider.ClosestPoint(pos);
                 var distance = (closestPoint - pos).magnitude;
@@ -57,10 +49,8 @@ namespace Organelles.ProximitySensor
             }
         }
 
-        public override GeneTranscriber<ProximitySensorGene> GetGeneTranscriber()
-        {
-            return ProximitySensorGeneTranscriber.Singleton;
-        }
+        public override GeneTranscriber<ProximitySensorGene> GetGeneTranscriber() =>
+            ProximitySensorGeneTranscriber.Singleton;
 
         public override string GetResourcePath() => ResourcePath;
     }
