@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7195993554825696188}
   - component: {fileID: 1326599707693238428}
   - component: {fileID: -3775110473358118369}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: ChemicalBlob
   m_TagString: ChemicalBlob
   m_Icon: {fileID: 0}

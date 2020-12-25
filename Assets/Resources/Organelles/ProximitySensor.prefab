@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a989996b7b63a647a8e710b77e4bfab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  contactFilter2D:
+  cellContactFilter:
     useTriggers: 0
     useLayerMask: 0
     useDepth: 0
@@ -54,7 +54,21 @@ MonoBehaviour:
     useOutsideNormalAngle: 0
     layerMask:
       serializedVersion: 2
-      m_Bits: 3072
+      m_Bits: 2048
+    minDepth: 0
+    maxDepth: 0
+    minNormalAngle: 0
+    maxNormalAngle: 0
+  chemicalBlobContactFilter:
+    useTriggers: 0
+    useLayerMask: 0
+    useDepth: 0
+    useOutsideDepth: 0
+    useNormalAngle: 0
+    useOutsideNormalAngle: 0
+    layerMask:
+      serializedVersion: 2
+      m_Bits: 1024
     minDepth: 0
     maxDepth: 0
     minNormalAngle: 0

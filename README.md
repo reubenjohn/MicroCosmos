@@ -17,14 +17,14 @@ TODO
    - Maintaining relative mass of pump is an involuntary reaction
  - Ability for cells to ingest substances from the environment using it's orifice
  - Ability for cells to sense other cells
-   - Mass
+   - ~~Mass by substance~~
    - ~~Distance~~
    - Incoming velocity
    - Degree of separation (genealogically speaking)
    - Cost of sensor is proportional to range
    - Inter-cell communication signals (3 channels visualized a RGB)
  - Ability for cells to sense nearby substances
-   - Mass by substance
+   - ~~Mass by substance~~
    - Cost of sensor is proportional to range
    - Cost of sensor is proportional to number of substances
  - Ability for cells to sense obstacles
