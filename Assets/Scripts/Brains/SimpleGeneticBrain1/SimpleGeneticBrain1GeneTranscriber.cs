@@ -19,8 +19,8 @@ namespace Brains.SimpleGeneticBrain1
             new SimpleGeneticBrain1Gene(Repairer)
             {
                 denseLayer1 = new DenseLayerGene(
-                    RandomUtils.RandomLogits(8, 16),
-                    RandomUtils.RandomLogits(8)
+                    RandomUtils.RandomLogits(2, 3),
+                    RandomUtils.RandomLogits(2)
                 )
             };
 
@@ -36,18 +36,24 @@ namespace Brains.SimpleGeneticBrain1
         private static DenseLayerGene RepairDenseLayerGene(DenseLayerGene gene,
             DenseLayerInterfaceDescription interfaceDescription)
         {
-            if (interfaceDescription.InputLength <= gene.Weights.GetLength(0) &&
-                interfaceDescription.OutputLength <= gene.Biases.Length)
+            var oldWeightsLength1 = gene.Weights.GetLength(0);
+            var oldWeightsLength2 = gene.Weights.GetLength(1);
+            var newWeightsLength1 = Mathf.Max(oldWeightsLength1, interfaceDescription.OutputLength);
+            var newWeightsLength2 = Mathf.Max(oldWeightsLength2, interfaceDescription.InputLength);
+            var oldBiasesLength = gene.Biases.Length;
+            var newBiasesLength = Mathf.Max(gene.Biases.Length, interfaceDescription.OutputLength);
+
+            if (interfaceDescription.InputLength <= oldWeightsLength1 &&
+                interfaceDescription.OutputLength <= oldBiasesLength)
                 return gene;
 
-            var weights = new float[
-                Mathf.Max(gene.Weights.GetLength(0), interfaceDescription.OutputLength),
-                Mathf.Max(gene.Weights.GetLength(1), interfaceDescription.InputLength)
-            ];
-            var biases = new float[interfaceDescription.OutputLength];
-            ArrayUtils.Copy(gene.Weights, weights,
-                gene.Weights.GetLength(0), gene.Weights.GetLength(1));
-            Array.Copy(gene.Biases, biases, gene.Biases.Length);
+            var weights = new float[newWeightsLength1, newWeightsLength2];
+            var biases = new float[newBiasesLength];
+            ArrayUtils.Copy(gene.Weights, weights, oldWeightsLength1, oldWeightsLength2);
+            RandomUtils.RandomizeLogits(weights, newWeightsLength1, newWeightsLength2,
+                oldWeightsLength1, oldWeightsLength2);
+            Array.Copy(gene.Biases, biases, oldBiasesLength);
+            RandomUtils.RandomizeLogits(biases, newBiasesLength, oldBiasesLength);
             return new DenseLayerGene(weights, biases);
         }
 

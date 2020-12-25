@@ -64,10 +64,10 @@ namespace Tests.EditMode.Brains.SimpleGeneticBrain1
             var gene = Transcriber.Sample();
             Assert.AreSame(Transcriber.GetRepairer(), gene.repairer);
             var dense1 = gene.denseLayer1;
-            Assert.AreEqual(8, dense1.Weights.GetLength(0));
-            Assert.AreEqual(16, dense1.Weights.GetLength(1));
-            Assert.AreEqual(8, dense1.Biases.Length);
-            Assert.AreEqual(0.920621872f, dense1.Biases.Sum());
+            Assert.AreEqual(2, dense1.Weights.GetLength(0));
+            Assert.AreEqual(3, dense1.Weights.GetLength(1));
+            Assert.AreEqual(2, dense1.Biases.Length);
+            Assert.AreEqual(-0.103475809f, dense1.Biases.Sum());
             var enumerator = dense1.Weights.GetEnumerator();
             var count = 0f;
             var sum = 0.0f;
@@ -78,8 +78,8 @@ namespace Tests.EditMode.Brains.SimpleGeneticBrain1
                 sum += (float) enumerator.Current;
             }
 
-            Assert.AreEqual(-1.50783443f, sum);
-            Assert.AreEqual(8 * 16, count);
+            Assert.AreEqual(-2.58920884f, sum);
+            Assert.AreEqual(2 * 3, count);
         }
 
         [Test]
@@ -89,16 +89,13 @@ namespace Tests.EditMode.Brains.SimpleGeneticBrain1
             IRepairableGene<SimpleGeneticBrain1Gene, SimpleGeneticBrain1Description> gene = Transcriber.Sample();
             var simpleGeneticBrain1Gene = (SimpleGeneticBrain1Gene) gene;
             var geneStr = JsonConvert.SerializeObject(simpleGeneticBrain1Gene.denseLayer1);
-            var repairedGene = gene.RepairGene(new SimpleGeneticBrain1Description(18, 9));
+            var repairedGene = gene.RepairGene(new SimpleGeneticBrain1Description(1, 3));
             Assert.AreSame(SimpleGeneticBrain1GeneTranscriber.Repairer, repairedGene.repairer);
-            Assert.AreEqual(geneStr
-                    .Replace(@"],""Weights"":", @",0.0],""Weights"":")
-                    .Replace("],[", ",0.0,0.0],[")
-                    .Replace("0.541667]]}",
-                        "0.541667,0.0,0.0],[0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0]]}"),
+            Debug.Log(JsonConvert.SerializeObject(repairedGene.denseLayer1));
+            Assert.AreEqual(
+                @"{""Biases"":[-0.828767538,0.7252917,0.486216515],""Weights"":[[-0.9993694,-0.5485256,-0.361967683],[0.079087615,-0.188854814,-0.5695789],[0.0,0.0,0.0]]}",
                 JsonConvert.SerializeObject(repairedGene.denseLayer1));
 
-            // simpleGeneticBrain1Gene.repairer = repairedGene.repairer = null;
             simpleGeneticBrain1Gene.denseLayer1 = repairedGene.denseLayer1 = null;
             Assert.AreEqual(JsonConvert.SerializeObject(simpleGeneticBrain1Gene),
                 JsonConvert.SerializeObject(repairedGene));
