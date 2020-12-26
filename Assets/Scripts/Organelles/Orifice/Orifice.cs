@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
-namespace Organelles
+namespace Organelles.Orifice
 {
-    public class OrificeActuator : MonoBehaviour, IActuator
+    public class Orifice : MonoBehaviour, IActuator
     {
-        private static readonly string ActuatorType = typeof(OrificeActuator).FullName;
+        private static readonly string ActuatorType = typeof(Orifice).FullName;
 
         public void Actuate(float[] logits) { }
 
