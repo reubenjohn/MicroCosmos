@@ -57,7 +57,7 @@ namespace Organelles.BirthCanal
             if (babyMass >= mamaMass)
                 DieMaternally();
             else if (babyMass > mamaMass * .5f)
-                Miscarriage(cauldron, babyMix);
+                Miscarriage(cauldron, babyMix * .5f);
             else
                 SpawnBaby(geneTree);
         }
@@ -78,10 +78,10 @@ namespace Organelles.BirthCanal
             cell.Die();
         }
 
-        private void Miscarriage(CellCauldron.CellCauldron cauldron, Mixture<Substance> babyMix)
+        private void Miscarriage(CellCauldron.CellCauldron cauldron, Mixture<Substance> miscarriageMix)
         {
             Debug.Log("Cell is having a miscarriage :(");
-            GetComponentInParent<ChemicalSink>().Dump(SpawnPoint, cauldron, babyMix);
+            GetComponentInParent<ChemicalSink>().Dump(SpawnPoint, cauldron, miscarriageMix);
         }
 
         public override GeneTranscriber<BirthCanalGene> GetGeneTranscriber() => BirthCanalGeneTranscriber.Singleton;

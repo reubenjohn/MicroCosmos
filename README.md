@@ -7,7 +7,7 @@ TODO
  - ~~Divine intervention to recycle fat~~
  - Include chemical blobs in save
  - Flagella:
-   - Force scales with mass
+   - ~~Force scales with mass~~
    - Display flagella as corona (thickness indicates relative power)
  - Membrane:
    - Display membrane as disk inside cell (thickness indicates relative mass)
