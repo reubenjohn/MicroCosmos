@@ -14,7 +14,6 @@ namespace Organelles.Flagella
         {
             cell = GetComponentInParent<Cell.Cell>();
             rb = GetComponentInParent<Rigidbody2D>();
-            gene = gene ?? new FlagellaGene(250f, 10f);
         }
 
         public string GetActuatorType() => ActuatorType;
@@ -29,15 +28,15 @@ namespace Organelles.Flagella
                 Grapher.Log(logits[1], "Flagella[1]", Color.cyan);
             }
 
-            rb.AddRelativeForce(CalculateRelativeForce(gene, logits, Time.deltaTime));
-            rb.AddTorque(CalculateTorque(gene, logits, Time.deltaTime));
+            rb.AddRelativeForce(CalculateRelativeForce(gene, logits, rb.mass, Time.deltaTime));
+            rb.AddTorque(CalculateTorque(gene, logits, rb.inertia, Time.deltaTime));
         }
 
-        public static Vector2 CalculateRelativeForce(FlagellaGene gene, float[] logits, float deltaTime) =>
-            logits[0] * gene.linearPower * deltaTime * Vector2.up;
+        public static Vector2 CalculateRelativeForce(FlagellaGene gene, float[] logits, float mass, float deltaTime) =>
+            logits[0] * gene.linearPower * mass * deltaTime * Vector2.up;
 
-        public static float CalculateTorque(FlagellaGene gene, float[] logits, float deltaTime) =>
-            logits[1] * gene.angularPower * deltaTime;
+        public static float CalculateTorque(FlagellaGene gene, float[] logits, float inertia, float deltaTime) =>
+            logits[1] * gene.angularPower * inertia * deltaTime;
 
         public override GeneTranscriber<FlagellaGene> GetGeneTranscriber() => FlagellaGeneTranscriber.Singleton;
 

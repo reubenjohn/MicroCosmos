@@ -10,9 +10,9 @@ namespace Tests.EditMode.Actuators
         public void TestFlagellaRelativeForce()
         {
             var gene = new FlagellaGene(100f, 2f);
-            var relativeForce = FlagellaActuator.CalculateRelativeForce(gene, new[] {.2f, .3f}, .1f);
+            var relativeForce = FlagellaActuator.CalculateRelativeForce(gene, new[] {.2f, .3f}, .25f, .1f);
 
-            Assert.AreEqual(new Vector2(0, 2f), relativeForce);
+            Assert.AreEqual(new Vector2(0, .5f), relativeForce);
         }
 
         [Test]
@@ -20,11 +20,20 @@ namespace Tests.EditMode.Actuators
         {
             var gene = new FlagellaGene(100f, 2f);
 
-            var torque = FlagellaActuator.CalculateTorque(gene, new[] {.2f, .3f}, .1f);
-            Assert.IsTrue(Mathf.Approximately(.06f, torque));
+            var torque = FlagellaActuator.CalculateTorque(gene, new[] {.2f, .3f}, .5f, .1f);
+            Assert.IsTrue(Mathf.Approximately(.03f, torque));
 
-            var torque2 = FlagellaActuator.CalculateTorque(gene, new[] {.2f, -1f}, .1f);
+            var torque2 = FlagellaActuator.CalculateTorque(gene, new[] {.2f, -1f}, 1f, .1f);
             Assert.IsTrue(Mathf.Approximately(-.2f, torque2));
+        }
+
+        [Test]
+        public void TestFlagellaGeneTranscriberSampling()
+        {
+            Random.InitState(0);
+            var gene = FlagellaGeneTranscriber.Singleton.Sample();
+            Assert.AreEqual(67.8766785f, gene.linearPower);
+            Assert.AreEqual(678.946045f, gene.angularPower);
         }
     }
 }

@@ -12,8 +12,8 @@ namespace Organelles.Flagella
 
         public override FlagellaGene Sample() =>
             new FlagellaGene(
-                Random.Range(.1f, 1024),
-                Random.Range(.1f, 1024)
+                Mathf.Pow(10, Random.Range(1f, 3f)),
+                Mathf.Pow(10, Random.Range(2f, 4f))
             );
 
         public override FlagellaGene Deserialize(JToken gene) => gene.ToObject<FlagellaGene>();
