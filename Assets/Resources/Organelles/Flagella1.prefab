@@ -318,7 +318,6 @@ GameObject:
   - component: {fileID: 6868620854165623886}
   - component: {fileID: 8882141152038949209}
   - component: {fileID: 4505103367207693285}
-  - component: {fileID: 100804352}
   - component: {fileID: 2027816045670867556}
   m_Layer: 0
   m_Name: Flagella1
@@ -367,22 +366,6 @@ SortingGroup:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 1
---- !u!111 &100804352
-Animation:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6519958786220275631}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Animation: {fileID: 7400000, guid: 40163bd5715d883419188266178e501e, type: 2}
-  m_Animations:
-  - {fileID: 7400000, guid: 40163bd5715d883419188266178e501e, type: 2}
-  m_WrapMode: 0
-  m_PlayAutomatically: 1
-  m_AnimatePhysics: 0
-  m_CullingType: 0
 --- !u!95 &2027816045670867556
 Animator:
   serializedVersion: 3
@@ -393,7 +376,7 @@ Animator:
   m_GameObject: {fileID: 6519958786220275631}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: ec125a328563a574cbfa44099a3976c5, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

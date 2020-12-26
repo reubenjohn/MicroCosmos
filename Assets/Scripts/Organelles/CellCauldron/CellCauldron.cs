@@ -50,10 +50,13 @@ namespace Organelles.CellCauldron
             foreach (var recipe in InvoluntaryRecipes)
                 Convert(recipeBook[recipe]);
 
-            var waste = this[Substance.Waste];
-            if (waste > ChemicalBlob.MinBlobSize)
-                sink.Dump(transform.position, this,
-                    new MixtureDictionary<Substance> {{Substance.Waste, waste}}.ToMixture());
+            if (Time.frameCount % 10 == 0)
+            {
+                var waste = this[Substance.Waste];
+                if (waste > ChemicalBlob.MinBlobSize)
+                    sink.Dump(transform.position, this,
+                        new MixtureDictionary<Substance> {{Substance.Waste, waste}}.ToMixture());
+            }
         }
 
         public void OnInheritGene(ChemicalBagGene chemicalBagGene) => gene = chemicalBagGene;
