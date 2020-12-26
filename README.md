@@ -8,7 +8,7 @@ TODO
  - Include chemical blobs in save
  - Flagella:
    - ~~Force scales with mass~~
-   - Display flagella as corona (thickness indicates relative power)
+   - ~~Display flagella as ring (color and spin speed indicates relative power)~~
  - Membrane:
    - Display membrane as disk inside cell (thickness indicates relative mass)
  - Chemical pump:

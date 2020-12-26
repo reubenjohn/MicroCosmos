@@ -39,7 +39,7 @@ namespace Organelles.ProximitySensor
         public void Sense(float[] logits)
         {
             for (var i = 0; i < logits.Length; i++)
-                logits[i] = -1;
+                logits[i] = 0;
 
             var nUsedLogits = 0;
 
@@ -78,7 +78,8 @@ namespace Organelles.ProximitySensor
                     var selfMass = GetComponentInParent<CellCauldron.CellCauldron>().TotalMass;
                     foreach (var substance in Enum.GetValues(typeof(Substance)))
                     {
-                        var relativeMass = flask[(Substance) substance] / selfMass;
+                        var relativeMass = Mathf.Clamp(flask[(Substance) substance] / selfMass, 0f, float.MaxValue);
+                        relativeMass = float.IsNaN(relativeMass) ? 0f : relativeMass;
                         var logRelativeMass = Mathf.Log10(relativeMass);
                         logits[nUsedLogits++] = Mathf.Clamp(logRelativeMass, -1f, 1f);
                     }
