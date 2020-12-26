@@ -92,8 +92,7 @@ namespace Organelles.BirthCanal
         {
             attachment = new CircularAttachment(
                 transform,
-                inheritedGene.circularMembranePreferredAttachmentAngle,
-                inheritedGene.circularMembraneAngularDisplacement
+                inheritedGene.circularMembraneAttachment
             );
             var membrane = GetComponentInParent<Membrane.Membrane>();
             membrane.Attach(attachment);

@@ -4,11 +4,11 @@ namespace Structural
 {
     public class CircularAttachment
     {
-        public CircularAttachment(Transform transform, float preferredAngle, float angularDisplacement)
+        public CircularAttachment(Transform transform, CircularAttachmentGene attachmentGene)
         {
-            PreferredAngle = preferredAngle;
             Transform = transform;
-            AngularDisplacement = angularDisplacement;
+            PreferredAngle = attachmentGene.preferredAngle;
+            AngularDisplacement = attachmentGene.angularDisplacement;
         }
 
         public Transform Transform { get; }

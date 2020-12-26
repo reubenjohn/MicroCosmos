@@ -303,8 +303,10 @@
                 "resource": "Organelles/BirthCanal1",
                 "name": "BirthCanal1-0",
                 "gene": {
-                  "circularMembranePreferredAttachmentAngle": 180.0,
-                  "circularMembraneAngularDisplacement": 30.0
+                  "circularMembraneAttachment": {
+                    "preferredAngle": 180.0,
+                    "angularDisplacement": 30.0
+                  }
                 },
                 "children": []
               }
