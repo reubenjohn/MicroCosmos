@@ -17,6 +17,12 @@ namespace Organelles.BirthCanal
         public static readonly string ResourcePath = "Organelles/BirthCanal1";
         public static readonly string ActuatorType = typeof(BirthCanal).FullName;
         public Control.BinaryControlVariable birthSignal = new Control.BinaryControlVariable(1);
+
+        private readonly Mixture<Substance> UnitFatMix = new MixtureDictionary<Substance>
+        {
+            {Substance.Fat, 1f}
+        }.ToMixture();
+
         private CircularAttachment attachment;
         private Cell.Cell cell;
 
@@ -53,11 +59,11 @@ namespace Organelles.BirthCanal
                 EnumUtils.ParseNamedDictionary<Substance, float>(babyGene.cauldron.initialCauldron));
             var cauldron = cell.Cauldron;
             var babyMass = babyMix.TotalMass;
-            var mamaMass = cauldron.TotalMass;
-            if (babyMass >= mamaMass)
+            var mamaFat = cauldron[Substance.Fat];
+            if (babyMass >= mamaFat)
                 DieMaternally();
-            else if (babyMass > mamaMass * .5f)
-                Miscarriage(cauldron, babyMix * .5f);
+            else if (babyMass > mamaFat * .5f)
+                Miscarriage(cauldron, UnitFatMix * (mamaFat * .5f));
             else
                 SpawnBaby(geneTree);
         }

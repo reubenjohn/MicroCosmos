@@ -309,6 +309,19 @@
                   }
                 },
                 "children": []
+              },
+              {
+                "resource": "Organelles/Orifice1",
+                "name": "BirthCanal1-0",
+                "gene": {
+                  "size": 0.25,
+                  "transferRate": 0.25,
+                  "circularMembraneAttachment": {
+                    "preferredAngle": 180.0,
+                    "angularDisplacement": 30.0
+                  }
+                },
+                "children": []
               }
             ]
           },
@@ -346,6 +359,10 @@
           {
             "state": {},
             "children": [
+              {
+                "state": {},
+                "children": []
+              },
               {
                 "state": {},
                 "children": []

@@ -3,15 +3,18 @@ using Newtonsoft.Json.Linq;
 using Structural;
 using UnityEngine;
 
-namespace Organelles.BirthCanal
+namespace Organelles.Orifice
 {
-    public class BirthCanalGeneTranscriber : GeneTranscriber<BirthCanalGene>
+    public class OrificeGeneTranscriber : GeneTranscriber<OrificeGene>
     {
-        public static readonly BirthCanalGeneTranscriber Singleton = new BirthCanalGeneTranscriber();
+        public static readonly OrificeGeneTranscriber Singleton = new OrificeGeneTranscriber();
+        private OrificeGeneTranscriber() { }
 
-        public override BirthCanalGene Sample() =>
-            new BirthCanalGene
+        public override OrificeGene Sample() =>
+            new OrificeGene
             {
+                size = Random.Range(.1f, 1f),
+                transferRate = Mathf.Pow(10, Random.Range(-2, 0)),
                 circularMembraneAttachment = new CircularAttachmentGene
                 {
                     preferredAngle = Random.Range(-180f, 180f),
@@ -19,11 +22,13 @@ namespace Organelles.BirthCanal
                 }
             };
 
-        public override BirthCanalGene Deserialize(JToken gene) => gene.ToObject<BirthCanalGene>();
+        public override OrificeGene Deserialize(JToken gene) => gene.ToObject<OrificeGene>();
 
-        public override BirthCanalGene Mutate(BirthCanalGene gene) =>
-            new BirthCanalGene
+        public override OrificeGene Mutate(OrificeGene gene) =>
+            new OrificeGene
             {
+                size = gene.size.MutateClamped(.05f, .1f, 1f),
+                transferRate = gene.size.MutateClamped(gene.transferRate * .05f, .1f, 1f),
                 circularMembraneAttachment = MutateMembraneAttachment(gene.circularMembraneAttachment)
             };
 

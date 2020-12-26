@@ -55,12 +55,13 @@ namespace Genealogy.Visualization
         {
             foreach (var relation in relations)
             {
-                var from = viewerHandles[relation.From.Guid].viewerNode.GetComponent<RectTransform>();
+                var viewerNode = viewerHandles[relation.From.Guid].viewerNode;
+                var from = viewerNode.GetComponent<RectTransform>();
                 var to = viewerHandles[relation.To.Guid].viewerNode.GetComponent<RectTransform>();
                 var connection = ConnectionManager.CreateConnection(from, to);
                 SetVisibility(connection, canvas.enabled);
-                if (relation.RelationType == RelationType.Death)
-                    DeselectNode(viewerHandles[relation.From.Guid].viewerNode, null);
+                if (relation.RelationType == RelationType.Death && viewerNode == currentSelectedNode)
+                    DeselectNode(viewerNode, null);
             }
         }
 
