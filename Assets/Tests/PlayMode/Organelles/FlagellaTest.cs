@@ -7,15 +7,12 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 
-namespace Tests.PlayMode.Actuators
+namespace Tests.PlayMode.Organelles
 {
-    public class ActuatorTest
+    public class FlagellaTest
     {
         [OneTimeSetUp]
-        public void GeneNodeTestSimplePasses()
-        {
-            SceneManager.LoadScene("Tests/PlayMode/CellColonyTestScene");
-        }
+        public void Setup() => SceneManager.LoadScene("Tests/PlayMode/CellColonyTestScene");
 
         [UnityTest]
         [SuppressMessage("ReSharper", "Unity.InefficientPropertyAccess")]
@@ -46,12 +43,6 @@ namespace Tests.PlayMode.Actuators
             yield return new WaitForSeconds(.2f);
             Assert.Less(Vector2.Dot(cell.transform.position - pos0, cell.transform.up), 0f, "Cell moved backward");
             Assert.Less(cell.transform.rotation.eulerAngles.z - angle0, 0, "Cell turned left");
-        }
-
-        [OneTimeTearDown]
-        public void TearDown()
-        {
-            Object.Destroy(GameObject.Find("Container"));
         }
     }
 }

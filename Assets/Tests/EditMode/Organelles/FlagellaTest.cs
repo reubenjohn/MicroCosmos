@@ -2,12 +2,12 @@
 using Organelles.Flagella;
 using UnityEngine;
 
-namespace Tests.EditMode.Actuators
+namespace Tests.EditMode.Organelles
 {
-    public class ActuatorTest
+    public class FlagellaTest
     {
         [Test]
-        public void TestFlagellaRelativeForce()
+        public void TestRelativeForce()
         {
             var gene = new FlagellaGene(100f, 2f);
             var relativeForce = FlagellaActuator.CalculateRelativeForce(gene, new[] {.2f, .3f}, .25f, .1f);
@@ -16,7 +16,7 @@ namespace Tests.EditMode.Actuators
         }
 
         [Test]
-        public void TestFlagellaTorque()
+        public void TestTorque()
         {
             var gene = new FlagellaGene(100f, 2f);
 
@@ -28,7 +28,7 @@ namespace Tests.EditMode.Actuators
         }
 
         [Test]
-        public void TestFlagellaGeneTranscriberSampling()
+        public void TestGeneTranscriberSampling()
         {
             Random.InitState(0);
             var gene = FlagellaGeneTranscriber.Singleton.Sample();
