@@ -39,7 +39,7 @@ namespace Organelles.BirthCanal
 
         public void Actuate(float[] logits)
         {
-            var giveBirthSignal = birthSignal.FeedInput(logits[0] > -.5f, logits[0] < .5, Time.deltaTime);
+            var giveBirthSignal = birthSignal.FeedInput(logits[0] > 0, logits[0] < 0, Time.deltaTime);
             if (Mathf.Approximately(giveBirthSignal, 1))
                 TryGiveBirth();
             if (cell.IsInFocus)
