@@ -3,6 +3,7 @@ using System.Linq;
 using Brains.SimpleGeneticBrain1;
 using Genetics;
 using Newtonsoft.Json.Linq;
+using Organelles.CauldronSensor;
 using Organelles.CellCauldron;
 using Organelles.Flagella;
 using Organelles.Membrane;
@@ -20,6 +21,7 @@ namespace Cell
             {
                 {Membrane.ResourcePath, x => .6f}, // Exactly one membrane
                 {SimpleGeneticBrain1.ResourcePath, x => .6f}, // Exactly one brain
+                {CauldronSensor.ResourcePath, x => .6f}, // Exactly one cauldron sensor
                 {FlagellaActuator.ResourcePath, x => .6f}, // Exactly one flagella
                 {ProximitySensor.ResourcePath, x => x.MutateClamped(.01f, 0f, .95f)}
             });
