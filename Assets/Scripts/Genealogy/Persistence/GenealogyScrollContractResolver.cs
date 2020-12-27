@@ -41,7 +41,7 @@ namespace Genealogy.Persistence
         private void OnRootEntry(object o, StreamingContext context)
         {
             var entry = (GenealogyScrollRootEntry) o;
-            graph.RegisterRootNode(entry.RootNode);
+            graph.RegisterRootNode(entry.Node);
             entry.Dispose();
         }
 

@@ -1,8 +1,10 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Environment;
 using NUnit.Framework;
 using Organelles.Flagella;
+using Tests.PlayMode.Persistence;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -18,13 +20,19 @@ namespace Tests.PlayMode.Organelles
         [SuppressMessage("ReSharper", "Unity.InefficientPropertyAccess")]
         public IEnumerator TestFlagellaActuatorCausesCellMovement()
         {
-            EnvironmentInitializer.LoadEnvironmentFromResources(
-                "ActuatorTest-testSave", out _,
-                "ActuatorTest-testChemicalSinkSaveFile", out _,
-                "ActuatorTest-testGenealogyScroll", out _
+            EnvironmentInitializer.LoadMicroCosmosFromResources(
+                new Dictionary<string, string>
+                {
+                    {"Environment.CellColony", $"{nameof(MicroCosmosPersistenceTest)}-{nameof(CellColony)}"},
+                    {"Environment.ChemicalSink", $"{nameof(MicroCosmosPersistenceTest)}-{nameof(ChemicalSink)}"},
+                    {
+                        "Environment.GenealogyGraphManager",
+                        $"{nameof(MicroCosmosPersistenceTest)}-{nameof(GenealogyGraphManager)}"
+                    }
+                }, out _
             );
 
-            var cell = GameObject.Find("Cell.1").GetComponent<global::Cell.Cell>();
+            var cell = GameObject.Find("Cell.1").GetComponent<Cell.Cell>();
             var pos0 = cell.transform.position;
             var angle0 = cell.transform.rotation.eulerAngles.z;
             var flagella = cell.GetComponentInChildren<FlagellaActuator>();

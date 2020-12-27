@@ -30,17 +30,10 @@ namespace Genealogy.Persistence
             lock (writer)
             {
                 if (relations.Count == 0)
-                {
-                    writer.WritePropertyName("rootEntry");
-                    serializer.Serialize(writer, new GenealogyScrollRootEntry(node));
-
-                    writer.WritePropertyName("entries");
-                    writer.WriteStartArray();
-                }
+                    serializer.Serialize(writer, new GenealogyScrollRootEntry(node), typeof(GenealogyScrollEntryBase));
                 else
-                {
-                    serializer.Serialize(writer, new GenealogyScrollEntry(node, relations));
-                }
+                    serializer.Serialize(writer, new GenealogyScrollEntry(node, relations),
+                        typeof(GenealogyScrollEntryBase));
             }
         }
 
@@ -59,7 +52,9 @@ namespace Genealogy.Persistence
             writerPath = $"{saveDir}/scroll1.json";
             writer = new JsonTextWriter(new StreamWriter(writerPath));
             lock (writer)
-                writer.WriteStartObject();
+            {
+                writer.WriteStartArray();
+            }
         }
 
         public void SaveCopy(string filePath)
@@ -71,10 +66,8 @@ namespace Genealogy.Persistence
                 File.Copy(writerPath, filePath, true);
                 using (var copyWriter = new StreamWriter(filePath, true))
                 {
-                    if (writer.Path == "" && writer.WriteState == WriteState.Object)
-                        copyWriter.Write("}");
-                    else if (writer.WriteState == WriteState.Array)
-                        copyWriter.Write($"]{System.Environment.NewLine}}}");
+                    if (writer.WriteState == WriteState.Array)
+                        copyWriter.Write("]");
                     else
                         throw new InvalidOperationException(
                             $"Unable to close scroll from path '{writer.Path}' and state '{writer.WriteState}'");
@@ -89,6 +82,22 @@ namespace Genealogy.Persistence
                 writer.Close();
                 writer = null;
             }
+        }
+
+        public IEnumerable<GenealogyScrollEntryBase> ReadAll()
+        {
+            var tmpPath = $"{Application.temporaryCachePath}/{typeof(ScrollStenographer).FullName}/{Guid.NewGuid()}";
+            SaveCopy(tmpPath);
+            var jsonSerializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.Auto};
+            IEnumerable<GenealogyScrollEntryBase> entries;
+            using (var sr = new StreamReader(tmpPath))
+            using (JsonReader reader = new JsonTextReader(sr))
+            {
+                entries = jsonSerializer.Deserialize<IEnumerable<GenealogyScrollEntryBase>>(reader);
+            }
+
+            File.Delete(tmpPath);
+            return entries;
         }
     }
 }

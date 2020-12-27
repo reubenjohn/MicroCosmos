@@ -1,5 +1,6 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.IO;
+using Persistence;
 using UnityEngine;
 
 namespace Environment
@@ -8,39 +9,41 @@ namespace Environment
     {
         private void Start()
         {
-            LoadEnvironmentFromResources(
-                "Sample-CellColonySave", out _,
-                "Sample-ChemicalSinkSave", out _,
-                "Sample-GenealogyScrollSave", out _
+            LoadMicroCosmosFromResources(
+                new Dictionary<string, string>
+                {
+                    {"Environment.CellColony", $"Sample-{nameof(CellColony)}"},
+                    {"Environment.ChemicalSink", $"Sample-{nameof(ChemicalSink)}"},
+                    {"Environment.GenealogyGraphManager", $"Sample-{nameof(GenealogyGraphManager)}"}
+                }, out _
             );
         }
 
-        public static void LoadEnvironmentFromResources(
-            string cellColonyResource, out string cellColonyResourceText,
-            string chemicalSinkResource, out string chemicalSinkResourceText,
-            string genealogyScrollResource, out string genealogyScrollResourceText
+        public static void LoadMicroCosmosFromResources(
+            Dictionary<string, string> savableResources,
+            out Dictionary<string, string> resourceTexts
         )
         {
-            var cellColony = GameObject.Find("CellColony").GetComponent<CellColony>();
-            var graphManager = GameObject.Find("CellColony").GetComponent<GenealogyGraphManager>();
-            var chemicalSink = GameObject.Find("Environment").GetComponent<ChemicalSink>();
+            CreateSaveDirectoryFromResources(savableResources, out resourceTexts);
+            var microCosmos = GameObject.Find("Environment").GetComponent<MicroCosmosPersistence>();
+            microCosmos.OnLoad();
+        }
 
-            var saveDirBackup = cellColony.SaveDirectory;
-            cellColony.SaveDirectory = $"{Application.temporaryCachePath}/testing/{Guid.NewGuid()}";
+        private static void CreateSaveDirectoryFromResources(
+            Dictionary<string, string> savableResources, out Dictionary<string, string> resourceTexts)
+        {
+            var microCosmos = GameObject.Find("Environment").GetComponent<MicroCosmosPersistence>();
+            resourceTexts = new Dictionary<string, string>();
 
-            var loadFile = cellColony.SavePath;
-            var loadFileChemicalSink = chemicalSink.PersistenceFilePath(cellColony.SaveDirectory);
-            var loadFileGenealogy = graphManager.PersistenceFilePath(cellColony.SaveDirectory);
-
-            Directory.CreateDirectory(cellColony.SaveDirectory);
-
-            cellColonyResourceText = WriteToFile(loadFile, cellColonyResource);
-            chemicalSinkResourceText = WriteToFile(loadFileChemicalSink, chemicalSinkResource);
-            genealogyScrollResourceText = WriteToFile(loadFileGenealogy, genealogyScrollResource);
-
-            cellColony.OnLoad();
-            Directory.Delete(cellColony.SaveDirectory, true);
-            cellColony.SaveDirectory = saveDirBackup;
+            Directory.CreateDirectory(microCosmos.SaveDirectory);
+            foreach (var savable in microCosmos.SavableSubsystems)
+            {
+                var id = savable.GetID();
+                if (savableResources.ContainsKey(id))
+                    resourceTexts[id] = WriteToFile(
+                        SubsystemsPersistence.GetSavePath(microCosmos.SaveDirectory, savable),
+                        savableResources[id]);
+            }
         }
 
         private static string WriteToFile(string filePath, string resource)

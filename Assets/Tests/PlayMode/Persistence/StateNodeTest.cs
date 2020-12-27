@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using NUnit.Framework;
 using Persistence;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Tests.PlayMode.Persistence
@@ -15,12 +14,11 @@ namespace Tests.PlayMode.Persistence
         private SampleLivingComponent livingComponent;
 
         [OneTimeSetUp]
-        public void GeneNodeTestSimplePasses()
+        public void Setup()
         {
             SceneManager.LoadScene("Tests/PlayMode/GeneralTestScene");
             var geneNode = JsonConvert.DeserializeObject<GeneNode>(GeneNodeTest.Serialized1);
-            livingComponent = GeneNode.Load(geneNode, GameObject.Find("Container").transform)
-                .GetComponent<SampleLivingComponent>();
+            livingComponent = GeneNode.Load(geneNode, null).GetComponent<SampleLivingComponent>();
         }
 
         [Test]

@@ -2,7 +2,7 @@
   {
     "$type": "Environment.ChemicalSinkChemicals, MicroCosmosScripts",
     "mixture": {
-      "Fat": 0.1
+      "Fat": 0.5
     }
   }
 ]

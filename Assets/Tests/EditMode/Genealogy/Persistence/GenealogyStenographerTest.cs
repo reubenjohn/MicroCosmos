@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Genealogy.Graph;
 using Genealogy.Persistence;
-using Newtonsoft.Json;
 using NUnit.Framework;
 using UnityEngine;
 
@@ -26,60 +26,63 @@ namespace Tests.EditMode.Genealogy.Persistence
         private static readonly Guid RGuid1 = Guid.Parse("00000000-1111-1111-1111-111111111111");
         private static readonly Guid RGuid2 = Guid.Parse("00000000-2222-2222-2222-222222222222");
 
-        private static readonly string RootNodeJson = @"{""rootEntry"": {
-    ""RootNode"": {
+        private static readonly string RootNodeJson = @"[
+  {
+    ""$type"": ""Genealogy.Persistence.GenealogyScrollRootEntry, MicroCosmosScripts"",
+    ""Node"": {
       ""$type"": ""Genealogy.Graph.CellNode, MicroCosmosScripts"",
       ""displayName"": ""Cell"",
       ""NodeType"": 0,
       ""Guid"": ""00000000-0000-0000-0000-000000000000"",
       ""CreatedAt"": ""2020-01-01T01:00:00""
     }
-  },""entries"":[]
-}";
+  }]";
 
-        private static readonly string RelationJson = @"{""rootEntry"": {
-    ""RootNode"": {
+        private static readonly string RelationJson = @"[
+  {
+    ""$type"": ""Genealogy.Persistence.GenealogyScrollRootEntry, MicroCosmosScripts"",
+    ""Node"": {
       ""$type"": ""Genealogy.Graph.CellNode, MicroCosmosScripts"",
       ""displayName"": ""Cell"",
       ""NodeType"": 0,
       ""Guid"": ""00000000-0000-0000-0000-000000000000"",
       ""CreatedAt"": ""2020-01-01T01:00:00""
     }
-  },""entries"":[
-    {
-      ""Node"": {
-        ""$type"": ""Genealogy.Graph.Reproduction, MicroCosmosScripts"",
-        ""NodeType"": 1,
-        ""Guid"": ""00000000-1111-1111-1111-111111111111"",
-        ""CreatedAt"": ""2020-01-01T01:00:01""
-      },
-      ""Relations"": [
-        {
-          ""From"": {
-            ""GUID"": ""00000000-0000-0000-0000-000000000000""
-          },
-          ""RelationType"": 0,
-          ""To"": {
-            ""GUID"": ""00000000-1111-1111-1111-111111111111""
-          },
-          ""DateTime"": ""2020-01-01T01:00:01""
-        }
-      ]
-    }]
-}";
+  },
+  {
+    ""$type"": ""Genealogy.Persistence.GenealogyScrollEntry, MicroCosmosScripts"",
+    ""Node"": {
+      ""$type"": ""Genealogy.Graph.Reproduction, MicroCosmosScripts"",
+      ""NodeType"": 1,
+      ""Guid"": ""00000000-1111-1111-1111-111111111111"",
+      ""CreatedAt"": ""2020-01-01T01:00:01""
+    },
+    ""Relations"": [
+      {
+        ""From"": {
+          ""GUID"": ""00000000-0000-0000-0000-000000000000""
+        },
+        ""RelationType"": 0,
+        ""To"": {
+          ""GUID"": ""00000000-1111-1111-1111-111111111111""
+        },
+        ""DateTime"": ""2020-01-01T01:00:01""
+      }
+    ]
+  }]";
 
         [Test]
         public void TestUnopenedScroll()
         {
-            var serialized = DoStenography(new GenealogyGraph(), () => { });
-            Assert.AreEqual("{}", serialized);
+            var serialized = DoStenography(new GenealogyGraph(), _ => { });
+            Assert.AreEqual("[]", serialized);
         }
 
         [Test]
         public void TestRootNodeScrollSerialization()
         {
             var graph = new GenealogyGraph();
-            var serialized = DoStenography(graph, () => graph.RegisterRootNode(Root));
+            var serialized = DoStenography(graph, _ => graph.RegisterRootNode(Root));
             Assert.AreEqual(RootNodeJson, serialized);
         }
 
@@ -87,7 +90,7 @@ namespace Tests.EditMode.Genealogy.Persistence
         public void TestRelationSerialization()
         {
             var graph = new GenealogyGraph();
-            var serialized = DoStenography(graph, () =>
+            var serialized = DoStenography(graph, _ =>
             {
                 graph.RegisterRootNode(Root);
                 graph.RegisterReproduction(new[] {Root}, new Reproduction(RGuid1, Root.CreatedAt + OneSec));
@@ -99,11 +102,15 @@ namespace Tests.EditMode.Genealogy.Persistence
         public void TestRootNodeReproducibility()
         {
             var g1 = new GenealogyGraph();
-            var serialized = DoStenography(g1, () => g1.RegisterRootNode(Root));
+            IEnumerable<GenealogyScrollEntryBase> entries1 = null;
+            var serialized = DoStenography(g1, stenographer =>
+            {
+                g1.RegisterRootNode(Root);
+                entries1 = stenographer.ReadAll();
+            });
 
             var g2 = new GenealogyGraph();
-            var sr = new StringReader(serialized);
-            var serialized2 = DoStenography(g2, () => ScrollReader.Load(new JsonTextReader(sr), g2));
+            var serialized2 = DoStenography(g2, _ => new ScrollReader(g2).Load(entries1));
 
             Assert.AreEqual(serialized, serialized2);
 
@@ -121,16 +128,17 @@ namespace Tests.EditMode.Genealogy.Persistence
         public void TestAsexualReproductionReproducibility()
         {
             var g1 = new GenealogyGraph();
-            var serialized = DoStenography(g1, () =>
+            IEnumerable<GenealogyScrollEntryBase> entries1 = null;
+            var serialized = DoStenography(g1, stenographer =>
             {
                 g1.RegisterRootNode(Root);
                 var cell1 = new CellNode(Guid1, Root.CreatedAt + OneSec, "Cell1");
                 g1.RegisterReproductionAndOffspring(new[] {Root}, (Node) cell1);
+                entries1 = stenographer.ReadAll();
             });
 
             var g2 = new GenealogyGraph();
-            var sr = new StringReader(serialized);
-            var serialized2 = DoStenography(g2, () => ScrollReader.Load(new JsonTextReader(sr), g2));
+            var serialized2 = DoStenography(g2, _ => new ScrollReader(g2).Load(entries1));
 
             Assert.AreEqual(serialized, serialized2);
 
@@ -150,7 +158,8 @@ namespace Tests.EditMode.Genealogy.Persistence
         public void TestHeavyIncestReproducibility()
         {
             var g1 = new GenealogyGraph();
-            var serialized = DoStenography(g1, () =>
+            IEnumerable<GenealogyScrollEntryBase> entries1 = null;
+            var serialized = DoStenography(g1, stenographer =>
             {
                 g1.RegisterRootNode(Root);
                 var cell1 = new CellNode(Guid1, Root.CreatedAt + OneSec, "Cell1");
@@ -166,11 +175,11 @@ namespace Tests.EditMode.Genealogy.Persistence
                 g1.RegisterReproduction(new Node[] {cell2, cell3}, cell2Cell3Rep);
                 var cell4 = new CellNode(Guid4, cell2Cell3Rep.CreatedAt + OneTick, "cell4");
                 g1.RegisterOffspring(cell1RootRep, cell4);
+                entries1 = stenographer.ReadAll();
             });
 
             var g2 = new GenealogyGraph();
-            var sr = new StringReader(serialized);
-            var serialized2 = DoStenography(g2, () => ScrollReader.Load(new JsonTextReader(sr), g2));
+            var serialized2 = DoStenography(g2, _ => new ScrollReader(g2).Load(entries1));
 
             Assert.AreEqual(serialized, serialized2);
 
@@ -186,17 +195,22 @@ namespace Tests.EditMode.Genealogy.Persistence
             }
         }
 
-        private string DoStenography(GenealogyGraph graph, Action action)
+        private string DoStenography(GenealogyGraph graph, Action<ScrollStenographer> action)
         {
             var stenographer = new ScrollStenographer();
             graph.AddListener(stenographer);
 
-            action.Invoke();
-
-            var tmpFile = $"{Application.temporaryCachePath}/testing/GenealogyStenographerTest/tmp.json";
-            stenographer.SaveCopy(tmpFile);
-            stenographer.CloseScroll();
-            return File.ReadAllText(tmpFile);
+            try
+            {
+                action(stenographer);
+                var tmpFile = $"{Application.temporaryCachePath}/testing/GenealogyStenographerTest/tmp.json";
+                stenographer.SaveCopy(tmpFile);
+                return File.ReadAllText(tmpFile);
+            }
+            finally
+            {
+                stenographer.CloseScroll();
+            }
         }
     }
 }

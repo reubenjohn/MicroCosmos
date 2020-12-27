@@ -1,9 +1,10 @@
 ﻿using System.Collections;
-using System.IO;
+using System.Collections.Generic;
 using Chemistry;
 using ChemistryMicro;
 using Environment;
 using NUnit.Framework;
+using Persistence;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -15,18 +16,20 @@ namespace Tests.PlayMode.Environment
         [OneTimeSetUp]
         public void MySetup()
         {
-            SceneManager.LoadScene("Tests/PlayMode/Environment/CoalesceTestScene");
+            SceneManager.LoadScene("Tests/PlayMode/CellColonyTestScene");
         }
 
         public ChemicalSink ResetChemicalSink()
         {
-            var cellColony = GameObject.Find("CellColony").GetComponent<CellColony>();
-            cellColony.SaveDirectory = $"{Application.temporaryCachePath}/testing/CoalesceTest";
-            cellColony.OnSave();
-            File.WriteAllText($"{cellColony.SaveDirectory}/chemicalSink1.json",
-                Resources.Load<TextAsset>("CoalesceTest-chemicalSink").text);
+            var microCosmosPersistence = GameObject.Find("Environment").GetComponent<MicroCosmosPersistence>();
+            microCosmosPersistence.SaveDirectory = $"{Application.temporaryCachePath}/testing/{nameof(CoalesceTest)}";
+            microCosmosPersistence.OnSave();
+            EnvironmentInitializer.LoadMicroCosmosFromResources(new Dictionary<string, string>
+            {
+                {"Environment.ChemicalSink", "CoalesceTest-chemicalSink"}
+            }, out _);
             var chemicalSink = GameObject.Find("Environment").GetComponent<ChemicalSink>();
-            cellColony.OnLoad();
+            microCosmosPersistence.OnLoad();
             return chemicalSink;
         }
 

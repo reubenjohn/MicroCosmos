@@ -19,7 +19,8 @@ namespace Environment
         {
             flask = GetComponent<ChemicalBlob>();
             divineRecycling = DivineRecycling.Instance;
-            StartCoroutine(StartRecycling());
+            if (divineRecycling)
+                StartCoroutine(StartRecycling());
         }
 
         private void OnDestroy() => StopAllCoroutines();

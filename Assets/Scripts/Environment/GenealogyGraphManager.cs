@@ -1,5 +1,7 @@
 ﻿using System;
-using System.IO;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Brains;
 using Cinematics;
 using Genealogy.Graph;
@@ -7,6 +9,7 @@ using Genealogy.Layout.Asexual;
 using Genealogy.Persistence;
 using Genealogy.Visualization;
 using Newtonsoft.Json;
+using Persistence;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
@@ -14,7 +17,8 @@ using UnityEngine.Serialization;
 namespace Environment
 {
     [RequireComponent(typeof(CellColony), typeof(DivinePossession))]
-    public class GenealogyGraphManager : MonoBehaviour, IGraphViewerListener, ICellColonyListener
+    public class GenealogyGraphManager : MonoBehaviour, IGraphViewerListener,
+        ISavableSubsystem<GenealogyScrollEntryBase>
     {
         [FormerlySerializedAs("Choreographer")] [SerializeField]
         private Choreographer choreographer;
@@ -50,24 +54,11 @@ namespace Environment
                 Debug.LogWarning("No genealogy graph viewer is listening in on the genealogy graph");
             }
 
-            CellColony.AddListener(this);
-
             genealogyGraph.RegisterRootNode(
                 new CellNode(Guid.Parse("00000000-0000-0000-0000-000000000000"), new DateTime(1), "Cell"));
         }
 
         private void OnDestroy() => stenographer.CloseScroll();
-
-        public void OnSave(string saveDirectory) => stenographer.SaveCopy(PersistenceFilePath(saveDirectory));
-
-        public void OnLoad(string saveDirectory)
-        {
-            genealogyGraph.Clear();
-            using (var sw = new JsonTextReader(new StreamReader(PersistenceFilePath(saveDirectory))))
-            {
-                ScrollReader.Load(sw, genealogyGraph);
-            }
-        }
 
         public void OnSelectNode(ViewerNode viewerNode, PointerEventData eventData)
         {
@@ -95,6 +86,31 @@ namespace Environment
             }
         }
 
+        public string GetID() => typeof(GenealogyGraphManager).FullName;
+
+        public int GetPersistenceVersion() => 1;
+
+        public Type GetSavableType() => typeof(GenealogyScrollEntryBase);
+
+        IEnumerable ISavableSubsystem.Save() => Save();
+        public IEnumerable<GenealogyScrollEntryBase> Save() => stenographer.ReadAll();
+
+        public void Load(IEnumerable save) => Load(save.Cast<GenealogyScrollEntryBase>());
+
+        public JsonSerializer GetSerializer() =>
+            new JsonSerializer
+            {
+                Formatting = Formatting.Indented,
+                TypeNameHandling = TypeNameHandling.Auto,
+                ContractResolver = new NodeAsGuidContract()
+            };
+
+        public void Load(IEnumerable<GenealogyScrollEntryBase> save)
+        {
+            genealogyGraph.Clear();
+            new ScrollReader(genealogyGraph).Load(save);
+        }
+
         public CellNode RegisterAsexualCellBirth(Node[] parentGenealogyNodes)
         {
             var displayName = NamingSystem.GetChildName(genealogyGraph, (CellNode) parentGenealogyNodes[0]);
@@ -102,8 +118,6 @@ namespace Environment
             genealogyGraph.RegisterReproductionAndOffspring(parentGenealogyNodes, genealogyNode);
             return genealogyNode;
         }
-
-        public string PersistenceFilePath(string saveDirectory) => $"{saveDirectory}/{saveFile}.json";
 
         public void RegisterDeath(CellNode cellNode) =>
             genealogyGraph.RegisterDeath(cellNode, new CellDeath(Guid.NewGuid(), DateTime.Now));

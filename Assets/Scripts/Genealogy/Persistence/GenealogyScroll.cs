@@ -5,48 +5,50 @@ using Newtonsoft.Json;
 
 namespace Genealogy.Persistence
 {
-    public class GenealogyScroll
+    public abstract class GenealogyScroll
     {
-        public readonly IEnumerable<GenealogyScrollEntry> entries;
-        public readonly GenealogyScrollRootEntry rootEntry;
+        private readonly IEnumerable<GenealogyScrollEntry> entries;
+        private readonly GenealogyScrollRootEntry rootEntry;
 
-        public GenealogyScroll(GenealogyScrollRootEntry rootEntry, IEnumerable<GenealogyScrollEntry> entries)
+        [JsonConstructor]
+        protected GenealogyScroll(GenealogyScrollRootEntry rootEntry, IEnumerable<GenealogyScrollEntry> entries)
         {
             this.rootEntry = rootEntry;
             this.entries = entries;
         }
     }
 
-    public class GenealogyScrollRootEntry : IDisposable
+    public abstract class GenealogyScrollEntryBase : IDisposable
     {
-        [JsonConstructor]
-        public GenealogyScrollRootEntry(Node rootNode)
-        {
-            RootNode = rootNode;
-        }
-
-        public Node RootNode { get; private set; }
-
-        public void Dispose()
-        {
-            RootNode = null;
-        }
-    }
-
-    public class GenealogyScrollEntry : IDisposable
-    {
-        public GenealogyScrollEntry(Node node, List<Relation> relations)
+        protected GenealogyScrollEntryBase(Node node)
         {
             Node = node;
+        }
+
+        [JsonProperty(Order = -2)] public Node Node { get; private set; }
+
+        public virtual void Dispose() => Node = null;
+    }
+
+    public class GenealogyScrollRootEntry : GenealogyScrollEntryBase
+    {
+        [JsonConstructor]
+        public GenealogyScrollRootEntry(Node node) : base(node) { }
+    }
+
+    public class GenealogyScrollEntry : GenealogyScrollEntryBase
+    {
+        [JsonConstructor]
+        public GenealogyScrollEntry(Node node, List<Relation> relations) : base(node)
+        {
             Relations = relations;
         }
 
-        public Node Node { get; private set; }
         public List<Relation> Relations { get; private set; }
 
-        public void Dispose()
+        public override void Dispose()
         {
-            Node = null;
+            base.Dispose();
             Relations = null;
         }
     }
