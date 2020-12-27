@@ -1,16 +1,14 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
-using Genealogy;
+using Cell;
 using UnityEngine;
 
 namespace Cinematics
 {
-    public class Choreographer : MonoBehaviour
+    public class Choreographer : MonoBehaviour, ICellSelectionListener
     {
+        private readonly List<IChoreographerListener> listeners = new List<IChoreographerListener>();
         public Camera overviewCamera { get; private set; }
         public FocusCamera focusCamera { get; private set; }
-
-        private readonly List<IChoreographerListener> listeners = new List<IChoreographerListener>();
 
         private void Start()
         {
@@ -18,16 +16,16 @@ namespace Cinematics
             focusCamera = transform.Find("Focus Camera").GetComponent<FocusCamera>();
         }
 
-        public void SetFocus(GameObject cell)
+        public void OnCellSelectionChange(Cell.Cell cell, bool select)
         {
-            if (cell == null)
+            if (select)
             {
-                SwitchCamera(overviewCamera);
+                SwitchCamera(focusCamera.cam);
+                focusCamera.Focus = cell.gameObject;
             }
             else
             {
-                SwitchCamera(focusCamera.cam);
-                focusCamera.Focus = cell;
+                SwitchCamera(overviewCamera);
             }
         }
 

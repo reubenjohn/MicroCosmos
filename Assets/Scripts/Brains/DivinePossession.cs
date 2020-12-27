@@ -1,31 +1,39 @@
-﻿using UnityEngine;
+﻿using Cell;
+using UnityEngine;
 
 namespace Brains
 {
-    public class DivinePossession : MonoBehaviour
+    public class DivinePossession : MonoBehaviour, ICellSelectionListener
     {
-        private KeyboardBrain currentTarget;
+        private Cell.Cell currentPossession;
+        private Cell.Cell currentSelection;
+        private bool possessionEnabled;
 
-        public void SetPossessionTarget(Cell.Cell targetCell)
+        private void Update()
         {
-            if (currentTarget != null)
+            if (Input.GetKeyDown(KeyCode.C))
             {
-                SetPossession(currentTarget.gameObject, false);
-                Destroy(currentTarget);
-                currentTarget = null;
+                possessionEnabled = !possessionEnabled;
+                if (currentSelection != null)
+                    SetPossession(currentSelection.gameObject, possessionEnabled);
             }
+        }
 
-            if (targetCell != null)
-            {
-                SetPossession(targetCell.gameObject, true);
-                currentTarget = targetCell.gameObject.AddComponent<KeyboardBrain>();
-            }
+        public void OnCellSelectionChange(Cell.Cell cell, bool select)
+        {
+            SetPossession(cell.gameObject, select && possessionEnabled);
+            currentSelection = select ? cell : null;
         }
 
         private void SetPossession(GameObject target, bool possess)
         {
+            var keyboardBrain = target.GetComponentInChildren<KeyboardBrain>();
+            if (keyboardBrain == null && possess)
+                target.AddComponent<KeyboardBrain>();
             foreach (var abstractBrain in target.GetComponentsInChildren<AbstractBrain>())
                 abstractBrain.enabled = abstractBrain is KeyboardBrain ? possess : !possess;
+            if (keyboardBrain != null && !possess)
+                Destroy(keyboardBrain);
         }
     }
 }

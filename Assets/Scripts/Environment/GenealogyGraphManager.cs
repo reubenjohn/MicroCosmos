@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Brains;
+using Cell;
 using Cinematics;
 using Genealogy.Graph;
 using Genealogy.Layout.Asexual;
@@ -24,8 +25,8 @@ namespace Environment
         private Choreographer choreographer;
 
         [SerializeField] private GenealogyGraphViewer viewer;
-        public string saveFile = "genealogy1";
         public readonly GenealogyGraph genealogyGraph = new GenealogyGraph();
+        private readonly List<ICellSelectionListener> listeners = new List<ICellSelectionListener>();
         private DivinePossession divinePossession;
         private ScrollStenographer stenographer;
         private CellColony CellColony { get; set; }
@@ -48,6 +49,9 @@ namespace Environment
                 layoutManager.AddListener(viewer);
                 genealogyGraph.AddListener(layoutManager);
                 viewer.AddListener(this);
+
+                AddCellSelectionListener(divinePossession);
+                AddCellSelectionListener(choreographer);
             }
             else
             {
@@ -67,8 +71,8 @@ namespace Environment
                 var targetCell = CellColony.FindCell(viewerNode.GenealogyNode.Guid);
                 if (targetCell != null)
                 {
-                    if (choreographer) choreographer.SetFocus(targetCell.gameObject);
-                    divinePossession.SetPossessionTarget(targetCell);
+                    foreach (var listener in listeners)
+                        listener.OnCellSelectionChange(targetCell, true);
                     targetCell.IsInFocus = true;
                 }
             }
@@ -78,11 +82,13 @@ namespace Environment
         {
             if (viewerNode.GenealogyNode.NodeType == NodeType.Cell)
             {
-                if (choreographer) choreographer.SetFocus(null);
-                divinePossession.SetPossessionTarget(null);
                 var targetCell = CellColony.FindCell(viewerNode.GenealogyNode.Guid);
                 if (targetCell != null)
+                {
+                    foreach (var listener in listeners)
+                        listener.OnCellSelectionChange(targetCell, false);
                     targetCell.IsInFocus = false;
+                }
             }
         }
 
@@ -110,6 +116,8 @@ namespace Environment
             genealogyGraph.Clear();
             new ScrollReader(genealogyGraph).Load(save);
         }
+
+        private void AddCellSelectionListener(ICellSelectionListener listener) => listeners.Add(listener);
 
         public CellNode RegisterAsexualCellBirth(Node[] parentGenealogyNodes)
         {
