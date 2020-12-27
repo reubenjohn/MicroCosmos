@@ -14,7 +14,8 @@ namespace Environment
                 {
                     {"Environment.CellColony", $"Sample-{nameof(CellColony)}"},
                     {"Environment.ChemicalSink", $"Sample-{nameof(ChemicalSink)}"},
-                    {"Environment.GenealogyGraphManager", $"Sample-{nameof(GenealogyGraphManager)}"}
+                    {"Environment.GenealogyGraphManager", $"Sample-{nameof(GenealogyGraphManager)}"},
+                    {"Environment.ChemicalBlobPersistence", $"Sample-{nameof(ChemicalBlobPersistence)}"}
                 }, out _
             );
         }

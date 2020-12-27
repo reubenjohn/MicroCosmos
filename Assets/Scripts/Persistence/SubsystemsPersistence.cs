@@ -55,7 +55,7 @@ namespace Persistence
                 try
                 {
                     var savePath = GetSavePath(savable);
-                    Debug.Log($"Saving savable subsystem '{savable.GetID()}' to {savePath}");
+                    Debug.Log($"Loading savable subsystem '{savable.GetID()}' to {savePath}");
                     using (var sr = new StreamReader(savePath))
                     using (JsonReader reader = new JsonTextReader(sr))
                     {

@@ -11,10 +11,11 @@ namespace ChemistryMicro
 
         private void Awake() => rb = GetComponent<Rigidbody2D>();
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
             if (!Mathf.Approximately(TotalMass, 0))
-                Debug.LogWarning($"Attempting to destroy a flask of game object '{gameObject.name}' " +
+                Debug.LogWarning($"Attempting to destroy a flask of component '{GetType().Name}'" +
+                                 $" of game object '{gameObject.name}' " +
                                  $" with non-zero mass of {TotalMass} violates the conservation of mass!");
         }
 

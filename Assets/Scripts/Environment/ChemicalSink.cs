@@ -32,6 +32,8 @@ namespace Environment
             }
         }
 
+        protected override void OnDestroy() { } // Don't log mass conservation warning
+
         public string GetID() => typeof(ChemicalSink).FullName;
 
         public int GetPersistenceVersion() => 1;
@@ -66,6 +68,8 @@ namespace Environment
                 else
                     throw new InvalidDataException($"Cannot load item of type '{save.GetType().FullName}'");
         }
+
+        public void Recover(PhysicalFlask physicalFlask) => physicalFlask.TransferTo(this, physicalFlask.ToMixture());
 
         private void LoadFlask(Dictionary<Substance, float> newFlaskContents)
         {

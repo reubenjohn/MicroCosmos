@@ -103,6 +103,8 @@ namespace Cell
             Cauldron.OnDying();
             if (GenealogyGraphManager != null)
                 GenealogyGraphManager.RegisterDeath(genealogyNode);
+            if (Cauldron.TotalMass > 0)
+                Debug.LogError($"Cauldron should be empty on dying, but has mass of {Cauldron.TotalMass}!");
             Destroy(gameObject);
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Chemistry;
 using ChemistryMicro;
 using UnityEngine;
+using Util;
 
 namespace Environment
 {
@@ -35,5 +36,16 @@ namespace Environment
             source.TransferTo(blob, mix);
             return blob;
         }
+
+        public static ChemicalBlobSave Save(ChemicalBlob blob) =>
+            new ChemicalBlobSave(Serialization.ToSerializable(blob.transform.position),
+                EnumUtils.ToNamedDictionary(blob.flask.ToMixtureDictionary()));
+
+        public static void Load(PhysicalFlask source, ChemicalBlobSave save, Transform parent) =>
+            InstantiateBlob(source,
+                new Mixture<Substance>(EnumUtils.ParseNamedDictionary<Substance, float>(save.Mixture)),
+                Serialization.ToVector2(save.Position),
+                parent
+            );
     }
 }

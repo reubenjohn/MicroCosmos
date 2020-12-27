@@ -35,10 +35,23 @@ namespace Environment
 
         public void Load(IEnumerable<CellData> save)
         {
-            var chemicalSink = GetComponentInParent<ChemicalSink>();
+            var sink = GetComponentInParent<ChemicalSink>();
+            foreach (var cell in GetComponentsInChildren<Cell.Cell>())
+            {
+                sink.Recover(cell.Cauldron);
+                Destroy(cell.gameObject);
+            }
+
             foreach (var cellData in save)
-                SpawnCell(cellData, chemicalSink);
+                SpawnCell(cellData, sink);
         }
+
+        private CellData ToCellData(Cell.Cell cell) =>
+            new CellData
+            {
+                geneTree = GeneNode.Save(cell),
+                stateTree = StateNode.Save(cell)
+            };
 
         public GameObject SpawnCell(GeneNode geneTree, JObject cellState, PhysicalFlask sourceFlask)
         {
@@ -60,12 +73,5 @@ namespace Environment
             return LivingCells
                 .FirstOrDefault(c => genealogyNodeGuid == c.GenealogyNode.Guid);
         }
-
-        private CellData ToCellData(Cell.Cell cell) =>
-            new CellData
-            {
-                geneTree = GeneNode.Save(cell),
-                stateTree = StateNode.Save(cell)
-            };
     }
 }
