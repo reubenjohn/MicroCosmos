@@ -8,6 +8,6 @@ namespace Cell
     public class CellGene : ContainmentGene
     {
         //TODO Make Constructor
-        public ChemicalBagGene cauldron;
+        public CellCauldronGene cauldron;
     }
 }

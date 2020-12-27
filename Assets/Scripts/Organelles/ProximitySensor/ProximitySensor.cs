@@ -75,7 +75,7 @@ namespace Organelles.ProximitySensor
 
                 if (flask != default)
                 {
-                    var selfMass = GetComponentInParent<CellCauldron.CellCauldron>().TotalMass;
+                    var selfMass = cell.Cauldron.TotalMass;
                     foreach (var substance in Enum.GetValues(typeof(Substance)))
                     {
                         var relativeMass = Mathf.Clamp(flask[(Substance) substance] / selfMass, 0f, float.MaxValue);

@@ -45,9 +45,9 @@ namespace Cell
                 nSubOrganelles = SubOrganelleCountsMutator.Mutate(gene.nSubOrganelles)
             };
 
-        private ChemicalBagGene Mutate(ChemicalBagGene gene)
+        private CellCauldronGene Mutate(CellCauldronGene gene)
         {
-            return new ChemicalBagGene
+            return new CellCauldronGene
             {
                 initialCauldron = gene.initialCauldron.ToDictionary(
                     pair => pair.Key,

@@ -10,7 +10,7 @@ using Random = UnityEngine.Random;
 
 namespace Organelles.CellCauldron
 {
-    public class ChemicalBagGene
+    public class CellCauldronGene
     {
         public Dictionary<string, float> initialCauldron = new Dictionary<string, float>();
     }
@@ -21,7 +21,7 @@ namespace Organelles.CellCauldron
         private readonly RecipeBook recipeBook = RecipeBook.Singleton;
         private Cell.Cell cell;
 
-        private ChemicalBagGene gene;
+        private CellCauldronGene gene;
         private ChemicalSink sink;
         public PhysicalFlask SourceFlask { get; set; }
 
@@ -59,9 +59,9 @@ namespace Organelles.CellCauldron
             }
         }
 
-        public void OnInheritGene(ChemicalBagGene chemicalBagGene) => gene = chemicalBagGene;
+        public void OnInheritGene(CellCauldronGene cellCauldronGene) => gene = cellCauldronGene;
 
-        public ChemicalBagGene GetGene() => gene;
+        public CellCauldronGene GetGene() => gene;
 
         public void SetState(JObject jObject)
         {
@@ -98,7 +98,7 @@ namespace Organelles.CellCauldron
 
         public void OnDying() => sink.Dump(transform.position, this, ToMixture());
 
-        public static ChemicalBagGene SampleGene()
+        public static CellCauldronGene SampleGene()
         {
             var dic = new Dictionary<string, float>();
             foreach (var substanceName in Enum.GetNames(typeof(Substance)))
@@ -107,7 +107,7 @@ namespace Organelles.CellCauldron
             dic[Substance.Skin.ToString()] = Random.Range(.5f, .8f);
             dic[Substance.SkinGrowthFactor.ToString()] = Random.Range(.001f, .01f);
 
-            return new ChemicalBagGene
+            return new CellCauldronGene
             {
                 initialCauldron = dic
             };

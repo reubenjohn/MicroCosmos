@@ -18,7 +18,7 @@ namespace Organelles.BirthCanal
         public static readonly string ActuatorType = typeof(BirthCanal).FullName;
         public Control.BinaryControlVariable birthSignal = new Control.BinaryControlVariable(1);
 
-        private readonly Mixture<Substance> UnitFatMix = new MixtureDictionary<Substance>
+        private readonly Mixture<Substance> unitFatMix = new MixtureDictionary<Substance>
         {
             {Substance.Fat, 1f}
         }.ToMixture();
@@ -63,7 +63,7 @@ namespace Organelles.BirthCanal
             if (babyMass >= mamaFat)
                 DieMaternally();
             else if (babyMass > mamaFat * .5f)
-                Miscarriage(cauldron, UnitFatMix * (mamaFat * .5f));
+                Miscarriage(cauldron, unitFatMix * (mamaFat * .5f));
             else
                 SpawnBaby(geneTree);
         }
@@ -80,7 +80,7 @@ namespace Organelles.BirthCanal
 
         private void DieMaternally()
         {
-            Debug.Log("Cell is drying through child birth :(");
+            Debug.Log("Cell is dying through child birth :(");
             cell.Die();
         }
 
