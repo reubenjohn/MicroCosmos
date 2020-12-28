@@ -5,17 +5,17 @@ Fun little Unity evolution simulator.
 TODO
 ---
  - ~~Divine intervention to recycle fat~~
- - Include chemical blobs in save
+ - ~~Include chemical blobs in save~~
  - Flagella:
    - ~~Force scales with mass~~
    - ~~Display flagella as ring (color and spin speed indicates relative power)~~
  - Membrane:
    - Display membrane as disk inside cell (thickness indicates relative mass)
- - Chemical pump:
+ - Orifice:
+   - ~~Ability for cells to ingest substances from the environment using it's orifice~~
    - Flow rate is governed by mass of chemical pump substance and indicated by width of pump
    - Absolute membrane thickness limits pump speed
    - Maintaining relative mass of pump is an involuntary reaction
- - Ability for cells to ingest substances from the environment using it's orifice
  - Ability for cells to sense other cells
    - ~~Mass by substance~~
    - ~~Distance~~
@@ -27,7 +27,7 @@ TODO
    - ~~Mass by substance~~
    - Cost of sensor is proportional to range
    - Cost of sensor is proportional to number of substances
- - Ability for cells to sense obstacles
+ - Ability for cells to sense obstacles like walls
  - Bigger brains
  - Egg laying
  - Saprotrophs
