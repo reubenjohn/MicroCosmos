@@ -84,10 +84,12 @@ namespace Genealogy.Visualization
         private IEnumerator SetVisibility(bool visibility)
         {
             canvas.enabled = scrollRect.enabled = visibility;
+            var i = 0;
             foreach (Transform connection in ConnectionManager.instance.transform)
             {
                 SetVisibility(connection.GetComponent<Connection>(), visibility);
-                yield return null;
+                if (i++ % 500 == 0)
+                    yield return null;
             }
         }
 

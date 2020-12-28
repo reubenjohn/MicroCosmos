@@ -55,11 +55,11 @@ namespace Organelles.BirthCanal
 
             var geneTree = GeneNode.GetMutated(cell);
             var babyGene = (CellGene) geneTree.gene;
-            var babyMix = new Mixture<Substance>(
-                EnumUtils.ParseNamedDictionary<Substance, float>(babyGene.cauldron.initialCauldron));
             var cauldron = cell.Cauldron;
-            var babyMass = babyMix.TotalMass;
             var mamaFat = cauldron[Substance.Fat];
+            var babyMix = new Mixture<Substance>(
+                EnumUtils.ParseNamedDictionary<Substance, float>(babyGene.cauldron.initialCauldron)) * mamaFat;
+            var babyMass = babyMix.TotalMass;
             if (babyMass >= mamaFat)
                 DieMaternally();
             else if (babyMass > mamaFat * .5f)

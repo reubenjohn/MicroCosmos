@@ -9,7 +9,11 @@ namespace ChemistryMicro
         protected readonly Flask<Substance> flask = new Flask<Substance>();
         private Rigidbody2D rb;
 
-        private void Awake() => rb = GetComponent<Rigidbody2D>();
+        private void Awake()
+        {
+            rb = GetComponent<Rigidbody2D>();
+            OnReflectPhysicalProperties();
+        }
 
         protected virtual void OnDestroy()
         {
@@ -39,7 +43,7 @@ namespace ChemistryMicro
         protected virtual void OnReflectPhysicalProperties()
         {
             rb.mass = TotalMass;
-            transform.localScale = Vector3.one * Mathf.Sqrt(rb.mass / RecipeBook.Density);
+            transform.localScale = Vector3.one * (Mathf.Sqrt(rb.mass / RecipeBook.Density) / Mathf.PI);
         }
     }
 }

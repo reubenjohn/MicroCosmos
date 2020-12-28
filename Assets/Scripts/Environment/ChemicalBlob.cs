@@ -8,7 +8,7 @@ namespace Environment
     [RequireComponent(typeof(Rigidbody2D))]
     public class ChemicalBlob : PhysicalFlask
     {
-        public static readonly double MinBlobSize = .01f;
+        public static readonly float MinBlobSize = .01f;
 
         private void Start() => name = $"ChemicalBlob{GetInstanceID()}";
 

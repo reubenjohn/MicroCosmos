@@ -34,8 +34,8 @@ namespace Environment
         {
             foreach (var blob in GetComponentsInChildren<ChemicalBlob>())
             {
-                Destroy(blob.gameObject);
                 sink.Recover(blob);
+                Destroy(blob.gameObject);
             }
 
             foreach (var item in save)

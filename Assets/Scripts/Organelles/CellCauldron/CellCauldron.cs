@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Chemistry;
 using ChemistryMicro;
 using Environment;
@@ -53,7 +54,7 @@ namespace Organelles.CellCauldron
             if (Time.frameCount % 10 == 0)
             {
                 var waste = this[Substance.Waste];
-                if (waste > ChemicalBlob.MinBlobSize)
+                if (waste > Mathf.Max(ChemicalBlob.MinBlobSize, TotalMass * .01f))
                     sink.Dump(transform.position, this,
                         new MixtureDictionary<Substance> {{Substance.Waste, waste}}.ToMixture());
             }
@@ -107,10 +108,13 @@ namespace Organelles.CellCauldron
             dic[Substance.Skin.ToString()] = Random.Range(.5f, .8f);
             dic[Substance.SkinGrowthFactor.ToString()] = Random.Range(.001f, .01f);
 
-            return new CellCauldronGene
-            {
-                initialCauldron = dic
-            };
+            var babyRelativeBirthMass = Mathf.Pow(10, Random.Range(-1f, 0f));
+            var totalMass = dic.Sum(pair => pair.Value);
+            var scaleFactor = babyRelativeBirthMass / totalMass;
+            foreach (var pair in dic.ToArray())
+                dic[pair.Key] = pair.Value * scaleFactor;
+
+            return new CellCauldronGene {initialCauldron = dic};
         }
     }
 }
