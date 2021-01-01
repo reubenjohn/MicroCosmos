@@ -59,7 +59,6 @@ namespace Environment
 
             var genealogyNode =
                 genealogyGraphManager.RegisterAsexualCellBirth(new[] {genealogyGraphManager.RootNode});
-            Debug.Log($"Blob '{blob.name}' has spontaneously come to life as '{genealogyNode.displayName}'!");
             cellColony.SpawnCell(
                 geneTree,
                 Cell.Cell.GetState(

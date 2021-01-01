@@ -38,7 +38,7 @@ namespace Environment
             var sink = GetComponentInParent<ChemicalSink>();
             foreach (var cell in GetComponentsInChildren<Cell.Cell>())
             {
-                sink.Recover(cell.Cauldron);
+                cell.Cauldron.MergeInto(sink);
                 Destroy(cell.gameObject);
             }
 

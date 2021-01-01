@@ -14,7 +14,7 @@ namespace Organelles.Orifice
             new OrificeGene
             {
                 size = Random.Range(.1f, 1f),
-                transferRate = Mathf.Pow(10, Random.Range(-2, 0)),
+                transferRate = Mathf.Pow(10, Random.Range(-2f, -.3f)),
                 circularMembraneAttachment = new CircularAttachmentGene
                 {
                     preferredAngle = Random.Range(-180f, 180f),
@@ -28,7 +28,7 @@ namespace Organelles.Orifice
             new OrificeGene
             {
                 size = gene.size.MutateClamped(.05f, .1f, 1f),
-                transferRate = gene.size.MutateClamped(gene.transferRate * .05f, .1f, 1f),
+                transferRate = gene.size.MutateClamped(gene.transferRate * .05f, .01f, .5f),
                 circularMembraneAttachment = MutateMembraneAttachment(gene.circularMembraneAttachment)
             };
 

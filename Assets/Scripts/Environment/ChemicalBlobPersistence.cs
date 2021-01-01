@@ -32,11 +32,7 @@ namespace Environment
 
         public void Load(IEnumerable<ChemicalBlobSaveItem> save)
         {
-            foreach (var blob in GetComponentsInChildren<ChemicalBlob>())
-            {
-                sink.Recover(blob);
-                Destroy(blob.gameObject);
-            }
+            foreach (var blob in GetComponentsInChildren<ChemicalBlob>()) blob.MergeInto(sink);
 
             foreach (var item in save)
                 if (item is ChemicalBlobSave blobSave)

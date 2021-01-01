@@ -54,23 +54,34 @@ namespace Organelles.BirthCanal
             birthSignal.Value = 0;
 
             var geneTree = GeneNode.GetMutated(cell);
-            var babyGene = (CellGene) geneTree.gene;
+
             var cauldron = cell.Cauldron;
             var mamaFat = cauldron[Substance.Fat];
-            var babyMix = new Mixture<Substance>(
-                EnumUtils.ParseNamedDictionary<Substance, float>(babyGene.cauldron.initialCauldron)) * mamaFat;
-            var babyMass = babyMix.TotalMass;
-            if (babyMass >= mamaFat)
-                DieMaternally();
-            else if (babyMass > mamaFat * .5f)
-                Miscarriage(cauldron, unitFatMix * (mamaFat * .5f));
+            var maxSupportedBabyMass = mamaFat * .5f;
+            if (maxSupportedBabyMass >= Mathf.Max(Cell.Cell.MinMass, ChemicalBlob.MinBlobSize))
+            {
+                var babyGene = (CellGene) geneTree.gene;
+                var babyMix = new Mixture<Substance>(
+                    EnumUtils.ParseNamedDictionary<Substance, float>(babyGene.cauldron.initialCauldron)) * mamaFat;
+                var babyMass = babyMix.TotalMass;
+                if (babyMass <= maxSupportedBabyMass && babyMass >= Cell.Cell.MinMass)
+                {
+                    babyGene.cauldron.initialCauldron = EnumUtils.ToNamedDictionary(babyMix.ToMixtureDictionary());
+                    SpawnBaby(geneTree);
+                }
+                else if (maxSupportedBabyMass >= ChemicalBlob.MinBlobSize)
+                {
+                    Miscarriage(cauldron, unitFatMix * maxSupportedBabyMass);
+                }
+            }
             else
-                SpawnBaby(geneTree);
+            {
+                DieInChildBirth();
+            }
         }
 
         private void SpawnBaby(GeneNode geneTree)
         {
-            Debug.Log("A new cell is being born :)");
             var cellColony = GetComponentInParent<CellColony>();
             var genealogyGraphManager = GetComponentInParent<GenealogyGraphManager>();
             var childGenealogyNode = genealogyGraphManager.RegisterAsexualCellBirth(new Node[] {cell.GenealogyNode});
@@ -78,15 +89,13 @@ namespace Organelles.BirthCanal
             cellColony.SpawnCell(geneTree, cellState, cell.Cauldron);
         }
 
-        private void DieMaternally()
+        private void DieInChildBirth()
         {
-            Debug.Log("Cell is dying through child birth :(");
             cell.Die();
         }
 
         private void Miscarriage(CellCauldron.CellCauldron cauldron, Mixture<Substance> miscarriageMix)
         {
-            Debug.Log("Cell is having a miscarriage :(");
             GetComponentInParent<ChemicalSink>().Dump(SpawnPoint, cauldron, miscarriageMix);
         }
 

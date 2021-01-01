@@ -34,7 +34,7 @@ namespace Tests.PlayMode.Environment
         }
 
         [Test]
-        public void DensityAssumption() => Assert.AreEqual(1f, RecipeBook.Density);
+        public void DensityAssumption() => Assert.AreEqual(.1f, RecipeBook.Density);
 
         [UnityTest]
         public IEnumerator TestEmptyBlobInstantiation()

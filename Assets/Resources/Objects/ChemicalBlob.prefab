@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7195993554825696188}
   - component: {fileID: 1326599707693238428}
   - component: {fileID: -3775110473358118369}
+  - component: {fileID: 8486941972077473849}
   m_Layer: 10
   m_Name: ChemicalBlob
   m_TagString: ChemicalBlob
@@ -61,7 +62,7 @@ Rigidbody2D:
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 1
-  m_LinearDrag: 0
+  m_LinearDrag: 1
   m_AngularDrag: 0.05
   m_GravityScale: 1
   m_Material: {fileID: 0}
@@ -107,6 +108,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 857d94e85b83441993e183803070fb5c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &8486941972077473849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7195993554825696191}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d14619e6ad043919e191223d6fcabb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &7195993555482855984

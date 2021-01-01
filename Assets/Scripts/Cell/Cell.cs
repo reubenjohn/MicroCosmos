@@ -16,6 +16,7 @@ namespace Cell
     public class Cell : AbstractLivingComponent<CellGene>
     {
         public static readonly string ResourcePath = "Cells/Cell1";
+        public static readonly float MinMass = .01f;
 
         private CellNode genealogyNode;
         private Rigidbody2D rb;
@@ -99,8 +100,7 @@ namespace Cell
 
         public void Die()
         {
-            Debug.Log($"{name} dying!");
-            Cauldron.OnDying();
+            Cauldron.DestroyConservatively();
             if (GenealogyGraphManager != null)
                 GenealogyGraphManager.RegisterDeath(genealogyNode);
             if (Cauldron.TotalMass > 0)

@@ -34,5 +34,9 @@ TODO
  - Murder
    - Stab
    - Drop poison
- - Plot colony statistics in grapher.
+ - Plot colony statistics in grapher
+   - ~~Cell count~~
+   - ~~Chemical blob count~~
+   - ~~Total mass~~
+   - Number of births, deaths and miscarriages and deaths by child birth.
  - Ability to toggle Grapher plots.

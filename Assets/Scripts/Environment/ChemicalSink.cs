@@ -17,19 +17,10 @@ namespace Environment
     {
         private Transform inanimatesTransform;
 
-        private void Start() => inanimatesTransform = transform.Find("Inanimate");
-
-        private void Update()
+        private void Start()
         {
-            GrapherUtil.LogFlask(this, "ChemicalSink", 30);
-
-            if (Time.frameCount % 30 == 0)
-            {
-                var totalMass = TotalMass +
-                                transform.GetComponentsInChildren<IFlaskBehavior<Substance>>()
-                                    .Sum(flaskBehavior => flaskBehavior.TotalMass);
-                Grapher.Log(totalMass, "TotalMass");
-            }
+            inanimatesTransform = transform.Find("Inanimate");
+            StartCoroutine(StartStatsPlotting());
         }
 
         protected override void OnDestroy() { } // Don't log mass conservation warning
@@ -69,7 +60,23 @@ namespace Environment
                     throw new InvalidDataException($"Cannot load item of type '{save.GetType().FullName}'");
         }
 
-        public void Recover(PhysicalFlask physicalFlask) => physicalFlask.TransferTo(this, physicalFlask.ToMixture());
+        private IEnumerator StartStatsPlotting()
+        {
+            while (true)
+            {
+                // GrapherUtil.LogFlask(this, "ChemicalSink", 30);
+                var flasks = transform.GetComponentsInChildren<IFlaskBehavior<Substance>>();
+                var totalMass = TotalMass +
+                                flasks
+                                    .Sum(flaskBehavior => flaskBehavior.TotalMass);
+                Grapher.Log(totalMass, "TotalMass");
+                yield return new WaitForSeconds(3);
+            }
+
+            // ReSharper disable once IteratorNeverReturns
+        }
+
+        public void Recover(PhysicalFlask physicalFlask) => physicalFlask.MergeInto(this);
 
         private void LoadFlask(Dictionary<Substance, float> newFlaskContents)
         {
@@ -80,8 +87,32 @@ namespace Environment
                 Debug.LogWarning($"'{gameObject.name}' destroying {source.TotalMass}kg while loading");
         }
 
-        public void Dump(Vector3 dumpSite, PhysicalFlask source, Mixture<Substance> mix) =>
-            ChemicalBlob.InstantiateBlob(source, mix, dumpSite, inanimatesTransform);
+        public void Dump(Vector3 dumpSite, PhysicalFlask source, Mixture<Substance> mix)
+        {
+            var mass = mix.TotalMass;
+            if (mass != 0.0)
+            {
+                if (mass > ChemicalBlob.MinBlobSize)
+                    ChemicalBlob.InstantiateBlob(source, mix, dumpSite, inanimatesTransform);
+                else
+                    Debug.LogWarning(
+                        $"Dumping mix '{mix}' with mass ({mass}) < MinBlobSize ({ChemicalBlob.MinBlobSize})");
+            }
+        }
+
+        public void DumpAll(Vector3 dumpSite, PhysicalFlask source)
+        {
+            var mass = source.TotalMass;
+            if (mass != 0.0)
+            {
+                if (mass > ChemicalBlob.MinBlobSize)
+                    ChemicalBlob.InstantiateBlob(source, dumpSite, inanimatesTransform);
+                else
+                    Debug.LogWarning(
+                        $"Dumping mix '{source.ToMixture()}' with mass ({mass}) < MinBlobSize ({ChemicalBlob.MinBlobSize})");
+            }
+        }
+
 
         // TODO Instead of override, create a base class that does not reflect physical properties
         protected override void OnReflectPhysicalProperties() { }

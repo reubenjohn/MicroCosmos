@@ -14,8 +14,6 @@ namespace Brains
         protected virtual void Start()
         {
             actuators = GetComponentInParent<Cell.Cell>().GetComponentsInChildren<IActuator>();
-            Debug.Log(
-                $"Found {actuators.Length} actuators: {string.Join(", ", actuators.Select(actuator => $"{actuator.GetType()}"))}");
             actuatorLogits = actuators.Select(actuator =>
             {
                 var logits = actuator.Connect();
@@ -24,7 +22,6 @@ namespace Brains
             }).ToArray();
 
             sensors = GetComponentInParent<Cell.Cell>().GetComponentsInChildren<ISensor>();
-            Debug.Log($"Found {sensors.Length} sensors");
             sensorLogits = sensors.Select(sensor =>
             {
                 var logits = sensor.Connect();

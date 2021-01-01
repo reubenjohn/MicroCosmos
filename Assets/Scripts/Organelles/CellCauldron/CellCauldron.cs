@@ -51,7 +51,7 @@ namespace Organelles.CellCauldron
             foreach (var recipe in InvoluntaryRecipes)
                 Convert(recipeBook[recipe]);
 
-            if (Time.frameCount % 10 == 0)
+            if (Time.frameCount % 10 == GetInstanceID() % 10)
             {
                 var waste = this[Substance.Waste];
                 if (waste > Mathf.Max(ChemicalBlob.MinBlobSize, TotalMass * .01f))
@@ -97,7 +97,10 @@ namespace Organelles.CellCauldron
                 ["convertBabyFat"] = convertBabyFat
             };
 
-        public void OnDying() => sink.Dump(transform.position, this, ToMixture());
+        public void DestroyConservatively()
+        {
+            sink.DumpAll(transform.position, this);
+        }
 
         public static CellCauldronGene SampleGene()
         {

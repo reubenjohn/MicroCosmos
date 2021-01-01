@@ -37,7 +37,7 @@ namespace Organelles.Membrane
         {
             var ratio = ThicknessRatio;
             if (cell.IsInFocus) Grapher.Log(ratio, "Membrane.ThicknessRatio");
-            if (ratio < MinMembraneRatio)
+            if (ratio < MinMembraneRatio || cauldron.TotalMass < Cell.Cell.MinMass)
                 cell.Die();
         }
 

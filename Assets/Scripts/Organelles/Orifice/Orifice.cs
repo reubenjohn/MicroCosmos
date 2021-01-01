@@ -24,25 +24,18 @@ namespace Organelles.Orifice
 
         public void Actuate(float[] logits)
         {
-            var ingest = logits[0];
-            if (ingest > 0)
-                if (Physics2D.OverlapCollider(orificeCollider, contactFilter, collidersInRange) > 0)
-                    foreach (var coll in collidersInRange)
-                        if (coll.CompareTag("ChemicalBlob"))
-                        {
-                            var blob = coll.GetComponent<ChemicalBlob>();
-                            var blobMass = blob.TotalMass;
-                            if (blobMass > 0)
-                            {
-                                var maxTransfer = ingest * gene.transferRate;
-                                var transferRatio = Mathf.Min(blobMass, maxTransfer) / blobMass;
-                                blob.TransferTo(cauldron, blob.ToMixture() * transferRatio);
-                            }
-                            else
-                            {
-                                Destroy(coll.gameObject);
-                            }
-                        }
+            var transferMassRate = cauldron.TotalMass * gene.transferRate * logits[0];
+            if (transferMassRate > 0 && Physics2D.OverlapCollider(orificeCollider, contactFilter, collidersInRange) > 0)
+                foreach (var coll in collidersInRange)
+                    if (coll.CompareTag("ChemicalBlob"))
+                    {
+                        var blob = coll.GetComponent<ChemicalBlob>();
+                        var blobMass = blob.TotalMass;
+                        if (blobMass - transferMassRate < ChemicalBlob.MinBlobSize)
+                            blob.MergeInto(cauldron);
+                        else
+                            blob.TransferTo(cauldron, blob.ToMixture() * (transferMassRate / blobMass));
+                    }
         }
 
         public string GetActuatorType() => ActuatorType;

@@ -8,7 +8,7 @@ namespace Environment
     [RequireComponent(typeof(Rigidbody2D))]
     public class ChemicalBlob : PhysicalFlask
     {
-        public static readonly float MinBlobSize = .01f;
+        public static readonly float MinBlobSize = .001f;
 
         private void Start() => name = $"ChemicalBlob{GetInstanceID()}";
 
@@ -20,11 +20,14 @@ namespace Environment
                 if (TotalMass < otherBlob.TotalMass ||
                     Mathf.Approximately(TotalMass, otherBlob.TotalMass) &&
                     gameObject.GetInstanceID() < other.GetInstanceID())
-                {
-                    TransferTo(otherBlob, ToMixture());
-                    Destroy(gameObject);
-                }
+                    CoalesceInto(otherBlob);
             }
+        }
+
+        public void CoalesceInto(ChemicalBlob otherBlob)
+        {
+            MergeInto(otherBlob);
+            otherBlob.rb.velocity = Vector2.zero;
         }
 
         public static ChemicalBlob InstantiateBlob(PhysicalFlask source, Mixture<Substance> mix,
@@ -37,9 +40,17 @@ namespace Environment
             return blob;
         }
 
+        public static void InstantiateBlob(PhysicalFlask source, Vector3 dumpSite, Transform parent)
+        {
+            var obj = Instantiate(Resources.Load<GameObject>("Objects/ChemicalBlob"),
+                dumpSite, Quaternion.identity, parent);
+            var blob = obj.GetComponent<ChemicalBlob>();
+            source.MergeInto(blob);
+        }
+
         public static ChemicalBlobSave Save(ChemicalBlob blob) =>
             new ChemicalBlobSave(Serialization.ToSerializable(blob.transform.position),
-                EnumUtils.ToNamedDictionary(blob.flask.ToMixtureDictionary()));
+                EnumUtils.ToNamedDictionary(blob.ToMixtureDictionary()));
 
         public static void Load(PhysicalFlask source, ChemicalBlobSave save, Transform parent) =>
             InstantiateBlob(source,
