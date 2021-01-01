@@ -76,8 +76,6 @@ namespace Environment
             // ReSharper disable once IteratorNeverReturns
         }
 
-        public void Recover(PhysicalFlask physicalFlask) => physicalFlask.MergeInto(this);
-
         private void LoadFlask(Dictionary<Substance, float> newFlaskContents)
         {
             var source = new Flask<Substance>(newFlaskContents);
