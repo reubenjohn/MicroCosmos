@@ -62,6 +62,14 @@ namespace Environment
 
         private IEnumerator CoalesceSearch()
         {
+            var contactFilter = new ContactFilter2D
+            {
+                layerMask = microCosmosParameters.coalesceChemicalBlobs.layerMask,
+                useLayerMask = true,
+                useTriggers = true
+            };
+            var blobCollidersInRange = new Collider2D[2];
+            var selfCollider = GetComponent<Collider2D>();
             while (true)
             {
                 yield return new WaitForSeconds(microCosmosParameters.coalesceChemicalBlobs.attractionInterval);
@@ -72,14 +80,19 @@ namespace Environment
                 else
                 {
                     var pos = transform.position;
-                    var other = Physics2D.OverlapCircle(pos, microCosmosParameters.coalesceChemicalBlobs.cutOffRange,
-                        microCosmosParameters.coalesceChemicalBlobs.layerMask);
-
-                    if (other != null && other.TryGetComponent<ChemicalBlob>(out var otherBlob) &&
-                        otherBlob.TotalMass >= blob.TotalMass)
-                        target.SetTarget(otherBlob);
-                    else
-                        target.ClearTarget();
+                    var nInRange = Physics2D.OverlapCircle(pos, microCosmosParameters.coalesceChemicalBlobs.cutOffRange,
+                        contactFilter, blobCollidersInRange);
+                    if (nInRange > 1)
+                    {
+                        var other = blobCollidersInRange[0] != selfCollider
+                            ? blobCollidersInRange[0]
+                            : blobCollidersInRange[1];
+                        if (other != null && other.TryGetComponent<ChemicalBlob>(out var otherBlob) &&
+                            otherBlob.TotalMass >= blob.TotalMass)
+                            target.SetTarget(otherBlob);
+                        else
+                            target.ClearTarget();
+                    }
                 }
             }
 
@@ -108,10 +121,7 @@ namespace Environment
             {
                 if (AttractionFactor > 0)
                 {
-                    if (Blob != null)
-                    {
-                        return true;
-                    }
+                    if (Blob != null) return true;
 
                     ClearTarget();
                     return false;

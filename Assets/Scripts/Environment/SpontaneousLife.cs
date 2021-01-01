@@ -12,9 +12,10 @@ namespace Environment
 {
     public class SpontaneousLife : MonoBehaviour
     {
-        public float rollDiceInterval = 1;
+        public float rollDiceInterval = .1f;
+        public float coolDownInterval = 5;
         public float lifeProbability = .1f;
-        public float minMass = .1f;
+        public float minMassFactor = 2;
 
         private IEnumerator<ChemicalBlob> blobQueue;
         private CellColony cellColony;
@@ -38,8 +39,14 @@ namespace Environment
             {
                 var blob = NextBlob();
                 if (blob != null && Random.Range(0f, 1f) <= lifeProbability)
+                {
                     GiveLife(blob);
-                yield return new WaitForSeconds(rollDiceInterval);
+                    yield return new WaitForSeconds(rollDiceInterval);
+                }
+                else
+                {
+                    yield return new WaitForSeconds(coolDownInterval);
+                }
             }
 
             // ReSharper disable once IteratorNeverReturns
@@ -75,7 +82,10 @@ namespace Environment
         {
             if (blobQueue == null || !blobQueue.MoveNext())
                 blobQueue = transform.GetComponentsInChildren<ChemicalBlob>()
-                    .Where(blob => blob != null && blob.gameObject != null && blob[Substance.Fat] > minMass)
+                    .Where(blob =>
+                        blob != null &&
+                        blob[Substance.Fat] > Cell.Cell.MinMass * minMassFactor &&
+                        blob.gameObject != null)
                     .GetEnumerator();
             if (!blobQueue.MoveNext())
                 return null;
