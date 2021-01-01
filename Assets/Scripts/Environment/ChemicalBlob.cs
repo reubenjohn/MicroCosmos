@@ -9,6 +9,13 @@ namespace Environment
     public class ChemicalBlob : PhysicalFlask
     {
         public static readonly float MinBlobSize = .001f;
+        private SpriteRenderer spriteRenderer;
+
+        protected override void Awake()
+        {
+            spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+            base.Awake();
+        }
 
         private void Start() => name = $"ChemicalBlob{GetInstanceID()}";
 
@@ -28,6 +35,12 @@ namespace Environment
         {
             MergeInto(otherBlob);
             otherBlob.rb.velocity = Vector2.zero;
+        }
+
+        protected override void OnReflectPhysicalProperties()
+        {
+            base.OnReflectPhysicalProperties();
+            spriteRenderer.color = SubstanceColor.ColorOf(flask);
         }
 
         public static ChemicalBlob InstantiateBlob(PhysicalFlask source, Mixture<Substance> mix,

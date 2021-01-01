@@ -11,7 +11,7 @@ namespace ChemistryMicro
         private bool isFlaskFrozen;
         protected Rigidbody2D rb;
 
-        private void Awake()
+        protected virtual void Awake()
         {
             rb = GetComponent<Rigidbody2D>();
             OnReflectPhysicalProperties();
@@ -49,6 +49,7 @@ namespace ChemistryMicro
         {
             AssertNotFrozen();
             flask.Convert(reaction, conversionFactor);
+            OnReflectPhysicalProperties();
         }
 
         public void TransferTo(PhysicalFlask destination, Mixture<Substance> mix)
@@ -66,7 +67,10 @@ namespace ChemistryMicro
                 return;
             try
             {
-                TransferTo(destination, flask);
+                destination.AssertNotFrozen();
+                AssertNotFrozen();
+                Flask<Substance>.Transfer(destination.flask, flask, flask);
+                destination.OnReflectPhysicalProperties();
                 Freeze();
             }
             finally

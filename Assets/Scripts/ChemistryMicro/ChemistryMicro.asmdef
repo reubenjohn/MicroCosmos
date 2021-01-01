@@ -1,7 +1,8 @@
 {
   "name": "ChemistryMicro",
   "references": [
-    "GUID:5078c423b610444449795e740c8bcabd"
+    "GUID:5078c423b610444449795e740c8bcabd",
+    "GUID:19b4a43f709be3542896682a2a244ded"
   ],
   "includePlatforms": [],
   "excludePlatforms": [],

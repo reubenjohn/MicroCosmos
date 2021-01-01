@@ -39,5 +39,5 @@ TODO
    - ~~Chemical blob count~~
    - ~~Total mass~~
    - Number of births, deaths and miscarriages and deaths by child birth.
- - Color chemical blobs by contents 
+ - ~~Color chemical blobs by contents~~ 
  - Ability to toggle Grapher plots.
