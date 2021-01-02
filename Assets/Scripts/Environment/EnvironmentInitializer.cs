@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Persistence;
 using UnityEngine;
@@ -25,26 +26,35 @@ namespace Environment
             out Dictionary<string, string> resourceTexts
         )
         {
-            CreateSaveDirectoryFromResources(savableResources, out resourceTexts);
-            var microCosmos = GameObject.Find("Environment").GetComponent<MicroCosmosPersistence>();
-            microCosmos.OnLoad();
+            using (var disposableDir = FabricateSaveDirectoryFromResources(savableResources, out resourceTexts))
+            {
+                var microCosmos = GameObject.Find("Environment").GetComponent<MicroCosmosPersistence>();
+                var saveDirBackup = microCosmos.SaveDirectory;
+                microCosmos.SaveDirectory = disposableDir.path;
+                microCosmos.OnLoad();
+                microCosmos.SaveDirectory = saveDirBackup;
+            }
         }
 
-        private static void CreateSaveDirectoryFromResources(
+        private static DisposableDirectory FabricateSaveDirectoryFromResources(
             Dictionary<string, string> savableResources, out Dictionary<string, string> resourceTexts)
         {
             var microCosmos = GameObject.Find("Environment").GetComponent<MicroCosmosPersistence>();
             resourceTexts = new Dictionary<string, string>();
 
-            Directory.CreateDirectory(microCosmos.SaveDirectory);
+            var disposableDir =
+                new DisposableDirectory(
+                    $"{Application.temporaryCachePath}/{nameof(EnvironmentInitializer)}/{Guid.NewGuid()}");
             foreach (var savable in microCosmos.SavableSubsystems)
             {
                 var id = savable.GetID();
                 if (savableResources.ContainsKey(id))
                     resourceTexts[id] = WriteToFile(
-                        SubsystemsPersistence.GetSavePath(microCosmos.SaveDirectory, savable),
+                        SubsystemsPersistence.GetSavePath(disposableDir.path, savable),
                         savableResources[id]);
             }
+
+            return disposableDir;
         }
 
         private static string WriteToFile(string filePath, string resource)
@@ -56,6 +66,19 @@ namespace Environment
                 streamWriter.Write(saveResourceText);
                 return saveResourceText;
             }
+        }
+
+        private class DisposableDirectory : IDisposable
+        {
+            public readonly string path;
+
+            public DisposableDirectory(string path)
+            {
+                this.path = path;
+                Directory.CreateDirectory(path);
+            }
+
+            public void Dispose() => Directory.Delete(path, true);
         }
     }
 }
