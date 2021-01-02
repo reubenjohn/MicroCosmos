@@ -45,9 +45,9 @@ namespace Environment
             {
                 if (choreographer) choreographer.AddListener(viewer);
 
-                var layoutManager = new LayoutManager();
-                layoutManager.AddListener(viewer);
-                genealogyGraph.AddListener(layoutManager);
+                // var layoutManager = new LayoutManager();
+                // layoutManager.AddListener(viewer);
+                // genealogyGraph.AddListener(layoutManager);
                 viewer.AddListener(this);
 
                 AddCellSelectionListener(divinePossession);

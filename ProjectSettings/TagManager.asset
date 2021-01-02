@@ -15,11 +15,11 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - Inert Obstacle
   - Chemical
   - Living
   - 
-  - ChemicalBlob
+  - 
   - 
   - 
   - 
@@ -41,7 +41,4 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
-    locked: 0
-  - name: Cell Accessories
-    uniqueID: 3974871587
     locked: 0
