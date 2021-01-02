@@ -86,5 +86,77 @@
       "Fat": 0.5,
       "Waste": 0.5
     }
+  },
+  {
+    "$type": "Environment.ChemicalBlobSave, MicroCosmosScripts",
+    "Position": "-5 3",
+    "Mixture": {
+      "Fat": 0.5,
+      "Waste": 0.5
+    }
+  },
+  {
+    "$type": "Environment.ChemicalBlobSave, MicroCosmosScripts",
+    "Position": "-6 2",
+    "Mixture": {
+      "Fat": 0.5,
+      "Waste": 0.5
+    }
+  },
+  {
+    "$type": "Environment.ChemicalBlobSave, MicroCosmosScripts",
+    "Position": "-5 1",
+    "Mixture": {
+      "Fat": 0.5,
+      "Waste": 0.5
+    }
+  },
+  {
+    "$type": "Environment.ChemicalBlobSave, MicroCosmosScripts",
+    "Position": "-4 2",
+    "Mixture": {
+      "Fat": 0.5,
+      "Waste": 0.5
+    }
+  },
+  {
+    "$type": "Environment.ChemicalBlobSave, MicroCosmosScripts",
+    "Position": "-4 0",
+    "Mixture": {
+      "Fat": 0.5,
+      "Waste": 0.5
+    }
+  },
+  {
+    "$type": "Environment.ChemicalBlobSave, MicroCosmosScripts",
+    "Position": "-6 -2",
+    "Mixture": {
+      "Fat": 0.5,
+      "Waste": 0.5
+    }
+  },
+  {
+    "$type": "Environment.ChemicalBlobSave, MicroCosmosScripts",
+    "Position": "-5 -1",
+    "Mixture": {
+      "Fat": 0.5,
+      "Waste": 0.5
+    }
+  },
+  {
+    "$type": "Environment.ChemicalBlobSave, MicroCosmosScripts",
+    "Position": "-4 -1",
+    "Mixture": {
+      "Fat": 0.5,
+      "Waste": 0.5
+    }
+  },
+  {
+    "$type": "Environment.ChemicalBlobSave, MicroCosmosScripts",
+    "Position": "-4 -3",
+    "Mixture": {
+      "Fat": 0.5,
+      "Waste": 0.5
+    }
   }
 ]

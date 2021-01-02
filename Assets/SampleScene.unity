@@ -139,6 +139,7 @@ GameObject:
   - component: {fileID: 107888724}
   - component: {fileID: 107888727}
   - component: {fileID: 107888728}
+  - component: {fileID: 107888729}
   m_Layer: 0
   m_Name: Environment
   m_TagString: Untagged
@@ -207,7 +208,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c4c5f94f94444de85cf1d08ed037814, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  divineRecycleInterval: 5
+  divineRecycleInterval: 45
   popAnimationColor: {r: 1, g: 0, b: 1, a: 1}
 --- !u!114 &107888725
 MonoBehaviour:
@@ -264,6 +265,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f252031a5197475cb4820a400eb78bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &107888729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107888720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93c437fed4d24624bf2aae5ce3cca982, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rollDiceInterval: 0.1
+  coolDownInterval: 35
+  lifeProbability: 0.5
+  minMassFactor: 2
 --- !u!1 &123422777
 GameObject:
   m_ObjectHideFlags: 0
@@ -2265,7 +2282,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1081978915}
-  - component: {fileID: 1081978916}
   - component: {fileID: 1081978917}
   m_Layer: 0
   m_Name: Inanimate
@@ -2288,22 +2304,6 @@ Transform:
   m_Father: {fileID: 107888722}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1081978916
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1081978914}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93c437fed4d24624bf2aae5ce3cca982, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  rollDiceInterval: 0.1
-  coolDownInterval: 35
-  lifeProbability: 0.5
-  minMassFactor: 2
 --- !u!114 &1081978917
 MonoBehaviour:
   m_ObjectHideFlags: 0

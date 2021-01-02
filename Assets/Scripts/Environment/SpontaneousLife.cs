@@ -11,46 +11,69 @@ namespace Environment
 {
     public class SpontaneousLife : MonoBehaviour
     {
-        public float rollDiceInterval = .1f;
-        public float coolDownInterval = 5;
-        public float lifeProbability = .1f;
+        private static readonly Mixture<Substance> UnitFatMix =
+            new MixtureDictionary<Substance> {{Substance.Fat, 1f}}.ToMixture();
+
         public float minMassFactor = 2;
-
+        public int maxCellCount = 50;
         private CellColony cellColony;
-        private GenealogyGraphManager genealogyGraphManager;
 
-        private Coroutine spontaneousLifeCoroutine;
+        private Environment environment;
+        private GenealogyGraphManager genealogyGraphManager;
+        private float lifeProbability = .1f;
+
+        private float rollDiceInterval = .1f;
 
         private void Start()
         {
-            var cellColonyTransform = GameObject.Find("CellColony");
-            cellColony = cellColonyTransform.GetComponent<CellColony>();
-            genealogyGraphManager = cellColonyTransform.GetComponent<GenealogyGraphManager>();
-            spontaneousLifeCoroutine = StartCoroutine(SpontaneousLifeLoop());
+            environment = GetComponent<Environment>();
+            cellColony = GetComponentInChildren<CellColony>();
+            genealogyGraphManager = GetComponentInChildren<GenealogyGraphManager>();
+            StartCoroutine(SpontaneousLifeLoop());
         }
 
-        private void OnDestroy() => StopCoroutine(spontaneousLifeCoroutine);
+        private void OnDestroy() => StopAllCoroutines();
 
         private IEnumerator SpontaneousLifeLoop()
         {
             yield return null;
+
             while (true)
             {
-                var blobs = transform.GetComponentsInChildren<ChemicalBlob>()
-                    .Where(blob =>
-                        blob != null &&
-                        blob[Substance.Fat] > Cell.Cell.MinMass * minMassFactor &&
-                        blob.gameObject != null).ToArray();
-                if (!blobs.Any())
-                    yield return new WaitForSeconds(coolDownInterval);
+                var blobs = GetComponentsInChildren<ChemicalBlob>()
+                    .Where(blob => blob.TotalMass > Cell.Cell.MinMass * minMassFactor);
+                var foundBlobs = false;
+
                 foreach (var blob in blobs)
                 {
+                    while (environment.CellCount >= maxCellCount)
+                    {
+                        rollDiceInterval = Mathf.Min(rollDiceInterval * 2f, 15f);
+                        lifeProbability = lifeProbability * .9f;
+                        Grapher.Log(rollDiceInterval, "SpontaneousLife.rollDiceInterval");
+                        Grapher.Log(lifeProbability, "SpontaneousLife.lifeProbability");
+                        yield return new WaitForSeconds(rollDiceInterval);
+                    }
+
+                    rollDiceInterval = Mathf.Max(rollDiceInterval * .9f, .05f);
+                    Grapher.Log(rollDiceInterval, "SpontaneousLife.rollDiceInterval");
+                    Grapher.Log(lifeProbability, "SpontaneousLife.lifeProbability");
+
                     if (blob == null)
                         continue;
+                    foundBlobs = true;
                     if (Random.Range(0f, 1f) <= lifeProbability)
                         GiveLife(blob);
                     yield return new WaitForSeconds(rollDiceInterval);
                 }
+
+                if (environment.CellCount < maxCellCount)
+                    lifeProbability += (1f - lifeProbability) * .1f;
+
+                if (!foundBlobs)
+                    rollDiceInterval = Mathf.Min(rollDiceInterval * 2f, 15f);
+
+                yield return new WaitForSeconds(rollDiceInterval);
             }
 
             // ReSharper disable once IteratorNeverReturns
@@ -59,9 +82,7 @@ namespace Environment
         private void GiveLife(ChemicalBlob blob)
         {
             var blobMix = blob.ToMixture();
-            var fatMix = new MixtureDictionary<Substance> {{Substance.Fat, blobMix.TotalMass}}
-                .ToMixture();
-            var reaction = new Reaction<Substance>(blobMix, fatMix);
+            var reaction = new Reaction<Substance>(blobMix, UnitFatMix * blobMix.TotalMass);
             blob.Convert(reaction);
 
             var geneTree = CellGeneTranscriber.Singleton.GetTreeSampler()
