@@ -4,7 +4,6 @@ using ChemistryMicro;
 using Environment;
 using Genealogy.Graph;
 using Genetics;
-using Newtonsoft.Json.Linq;
 using Persistence;
 using Structural;
 using UnityEngine;
@@ -16,12 +15,13 @@ namespace Organelles.BirthCanal
     {
         public static readonly string ResourcePath = "Organelles/BirthCanal1";
         public static readonly string ActuatorType = typeof(BirthCanal).FullName;
-        public Control.BinaryControlVariable birthSignal = new Control.BinaryControlVariable(1);
 
-        private readonly Mixture<Substance> unitFatMix = new MixtureDictionary<Substance>
+        private static readonly Mixture<Substance> UnitFatMix = new MixtureDictionary<Substance>
         {
             {Substance.Fat, 1f}
         }.ToMixture();
+
+        public Control.BinaryControlVariable birthSignal = new Control.BinaryControlVariable(1);
 
         private CircularAttachment attachment;
         private Cell.Cell cell;
@@ -57,35 +57,42 @@ namespace Organelles.BirthCanal
 
             var cauldron = cell.Cauldron;
             var mamaFat = cauldron[Substance.Fat];
-            var maxSupportedBabyMass = mamaFat * .5f;
-            if (maxSupportedBabyMass >= Mathf.Max(Cell.Cell.MinMass, ChemicalBlob.MinBlobSize))
+            var mamaMass = cauldron.TotalMass;
+            var maxPossibleBabyMass = mamaMass * .4f;
+            var minPossibleBabyMass = mamaMass * .1f;
+            var maxCurrentBabyMass = mamaFat * .5f;
+            if (mamaFat > minPossibleBabyMass)
             {
                 var babyGene = (CellGene) geneTree.gene;
                 var babyMix = new Mixture<Substance>(
-                    EnumUtils.ParseNamedDictionary<Substance, float>(babyGene.cauldron.initialCauldron)) * mamaFat;
+                    EnumUtils.ParseNamedDictionary<Substance, float>(babyGene.cauldron.initialCauldron)) * mamaMass;
                 var babyMass = babyMix.TotalMass;
-                if (babyMass <= maxSupportedBabyMass && babyMass >= Cell.Cell.MinMass)
+
+                if (babyMass > maxPossibleBabyMass || babyMass < minPossibleBabyMass || babyMass < Cell.Cell.MinMass)
                 {
-                    babyGene.cauldron.initialCauldron = EnumUtils.ToNamedDictionary(babyMix.ToMixtureDictionary());
-                    SpawnBaby(geneTree);
+                    DieInChildBirth();
                 }
-                else if (maxSupportedBabyMass >= ChemicalBlob.MinBlobSize)
+                else if (babyMass > maxCurrentBabyMass)
                 {
-                    Miscarriage(cauldron, unitFatMix * maxSupportedBabyMass);
+                    birthSignal.inputSensitivity *= .99f;
                 }
-            }
-            else
-            {
-                DieInChildBirth();
+                else
+                {
+                    birthSignal.inputSensitivity += (1 - birthSignal.inputSensitivity) * .1f;
+                    SpawnBaby(geneTree, babyMix.TotalMass);
+                }
             }
         }
 
-        private void SpawnBaby(GeneNode geneTree)
+        private void SpawnBaby(GeneNode geneTree, float babyMass)
         {
             var cellColony = GetComponentInParent<CellColony>();
             var genealogyGraphManager = GetComponentInParent<GenealogyGraphManager>();
             var childGenealogyNode = genealogyGraphManager.RegisterAsexualCellBirth(new Node[] {cell.GenealogyNode});
-            var cellState = Cell.Cell.GetState(childGenealogyNode.Guid, SpawnPoint, transform.rotation, new JObject());
+            var cellState = Cell.Cell.GetState(
+                childGenealogyNode.Guid,
+                SpawnPoint, transform.rotation,
+                CellCauldron.CellCauldron.GetState(UnitFatMix * babyMass, true));
             cellColony.SpawnCell(geneTree, cellState, cell.Cauldron);
         }
 

@@ -19,7 +19,7 @@ namespace Organelles.Orifice
         private void Start()
         {
             cauldron = GetComponentInParent<CellCauldron.CellCauldron>();
-            orificeCollider = GetComponent<Collider2D>();
+            orificeCollider = GetComponentInChildren<Collider2D>();
         }
 
         public void Actuate(float[] logits)

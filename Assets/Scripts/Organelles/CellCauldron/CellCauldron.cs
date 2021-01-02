@@ -116,7 +116,7 @@ namespace Organelles.CellCauldron
             dic[Substance.Skin.ToString()] = Random.Range(.5f, .8f);
             dic[Substance.SkinGrowthFactor.ToString()] = Random.Range(.001f, .01f);
 
-            var babyRelativeBirthMass = Mathf.Pow(10, Random.Range(-1f, 0f));
+            var babyRelativeBirthMass = Mathf.Pow(10, Random.Range(-1f, -.35f));
             var totalMass = dic.Sum(pair => pair.Value);
             var scaleFactor = babyRelativeBirthMass / totalMass;
             foreach (var pair in dic.ToArray())
