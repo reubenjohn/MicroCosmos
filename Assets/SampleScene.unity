@@ -251,7 +251,7 @@ MonoBehaviour:
     layerMask:
       serializedVersion: 2
       m_Bits: 1024
-    strength: 0.05
+    strength: 1
 --- !u!114 &107888728
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2300,10 +2300,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93c437fed4d24624bf2aae5ce3cca982, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rollDiceInterval: 1
-  coolDownInterval: 1
-  lifeProbability: 1
-  minMassFactor: 5
+  rollDiceInterval: 0.1
+  coolDownInterval: 35
+  lifeProbability: 0.5
+  minMassFactor: 2
 --- !u!114 &1081978917
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -40,22 +40,23 @@ namespace ChemistryMicro
         public Mixture<Substance> ToMixture() => flask.Copy();
         protected MixtureDictionary<Substance> ToMixtureDictionary() => flask.ToMixtureDictionary();
 
-        private void AssertNotFrozen()
+        private bool FrozenCheck()
         {
-            if (isFlaskFrozen) throw new InvalidOperationException("Cannot modify a flask once the flask is frozen");
+            if (isFlaskFrozen)
+                Debug.LogWarning("Skipping requested flask modification since the flask is already frozen.");
+            return isFlaskFrozen;
         }
 
         public void Convert(Reaction<Substance> reaction, float conversionFactor = 1f)
         {
-            AssertNotFrozen();
+            if (FrozenCheck()) return;
             flask.Convert(reaction, conversionFactor);
             OnReflectPhysicalProperties();
         }
 
         public void TransferTo(PhysicalFlask destination, Mixture<Substance> mix)
         {
-            destination.AssertNotFrozen();
-            AssertNotFrozen();
+            if (destination.FrozenCheck() || FrozenCheck()) return;
             Flask<Substance>.Transfer(destination.flask, flask, mix);
             OnReflectPhysicalProperties();
             destination.OnReflectPhysicalProperties();
@@ -63,12 +64,9 @@ namespace ChemistryMicro
 
         public void MergeInto(PhysicalFlask destination)
         {
-            if (this == null)
-                return;
+            if (this == null || destination.FrozenCheck() || FrozenCheck()) return;
             try
             {
-                destination.AssertNotFrozen();
-                AssertNotFrozen();
                 Flask<Substance>.Transfer(destination.flask, flask, flask);
                 destination.OnReflectPhysicalProperties();
                 Freeze();

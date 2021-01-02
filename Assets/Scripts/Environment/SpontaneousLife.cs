@@ -1,5 +1,4 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using Cell;
 using Chemistry;
@@ -17,7 +16,6 @@ namespace Environment
         public float lifeProbability = .1f;
         public float minMassFactor = 2;
 
-        private IEnumerator<ChemicalBlob> blobQueue;
         private CellColony cellColony;
         private GenealogyGraphManager genealogyGraphManager;
 
@@ -35,17 +33,23 @@ namespace Environment
 
         private IEnumerator SpontaneousLifeLoop()
         {
+            yield return null;
             while (true)
             {
-                var blob = NextBlob();
-                if (blob != null && Random.Range(0f, 1f) <= lifeProbability)
-                {
-                    GiveLife(blob);
-                    yield return new WaitForSeconds(rollDiceInterval);
-                }
-                else
-                {
+                var blobs = transform.GetComponentsInChildren<ChemicalBlob>()
+                    .Where(blob =>
+                        blob != null &&
+                        blob[Substance.Fat] > Cell.Cell.MinMass * minMassFactor &&
+                        blob.gameObject != null).ToArray();
+                if (!blobs.Any())
                     yield return new WaitForSeconds(coolDownInterval);
+                foreach (var blob in blobs)
+                {
+                    if (blob == null)
+                        continue;
+                    if (Random.Range(0f, 1f) <= lifeProbability)
+                        GiveLife(blob);
+                    yield return new WaitForSeconds(rollDiceInterval);
                 }
             }
 
@@ -76,20 +80,6 @@ namespace Environment
                 ),
                 blob
             );
-        }
-
-        private ChemicalBlob NextBlob()
-        {
-            if (blobQueue == null || !blobQueue.MoveNext())
-                blobQueue = transform.GetComponentsInChildren<ChemicalBlob>()
-                    .Where(blob =>
-                        blob != null &&
-                        blob[Substance.Fat] > Cell.Cell.MinMass * minMassFactor &&
-                        blob.gameObject != null)
-                    .GetEnumerator();
-            if (!blobQueue.MoveNext())
-                return null;
-            return blobQueue.Current;
         }
     }
 }
