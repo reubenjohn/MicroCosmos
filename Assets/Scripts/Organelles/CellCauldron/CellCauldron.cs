@@ -23,6 +23,7 @@ namespace Organelles.CellCauldron
         private Cell.Cell cell;
 
         private CellCauldronGene gene;
+        private SpriteRenderer membraneRenderer;
         private ChemicalSink sink;
         public PhysicalFlask SourceFlask { get; set; }
 
@@ -30,6 +31,8 @@ namespace Organelles.CellCauldron
         {
             cell = GetComponent<Cell.Cell>();
             sink = GetComponentInParent<ChemicalSink>();
+            membraneRenderer = cell.GetComponentInChildren<Membrane.Membrane>()
+                .GetComponentInChildren<SpriteRenderer>();
         }
 
         private void Update() => GrapherUtil.LogFlask(this, "Cauldron", 15, cell.IsInFocus);
@@ -58,6 +61,8 @@ namespace Organelles.CellCauldron
                     sink.Dump(transform.position, this,
                         new MixtureDictionary<Substance> {{Substance.Waste, waste}}.ToMixture());
             }
+
+            membraneRenderer.color = Color.Lerp(Color.white, SubstanceColor.ColorOf(flask), .5f);
         }
 
         public void OnInheritGene(CellCauldronGene cellCauldronGene) => gene = cellCauldronGene;
