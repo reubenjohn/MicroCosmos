@@ -41,6 +41,10 @@ namespace Environment
                     blob.CoalesceInto(target.Blob);
                 }
             }
+            else
+            {
+                rb.velocity = Vector2.zero;
+            }
         }
 
         private void OnDestroy() => StopAllCoroutines();
@@ -50,7 +54,8 @@ namespace Environment
             if (microCosmosParameters != null)
             {
                 Gizmos.color = Color.red;
-                Gizmos.DrawWireSphere(transform.position, microCosmosParameters.coalesceChemicalBlobs.cutOffRange);
+                Gizmos.DrawWireSphere(transform.position,
+                    microCosmosParameters.coalesceChemicalBlobs.cutOffRange * .5f);
                 if (target.IsTargetSet)
                 {
                     Gizmos.color = Color.green;
