@@ -20,7 +20,7 @@ namespace Environment
 
         private Environment environment;
         private GenealogyGraphManager genealogyGraphManager;
-        private float lifeProbability = .1f;
+        private float lifeProbability = .5f;
 
         private float rollDiceInterval = .1f;
 
@@ -48,14 +48,14 @@ namespace Environment
                 {
                     while (environment.CellCount >= maxCellCount)
                     {
-                        rollDiceInterval = Mathf.Min(rollDiceInterval * 2f, 15f);
+                        rollDiceInterval = Mathf.Min(rollDiceInterval * 1.1f, 1f);
                         lifeProbability = lifeProbability * .9f;
                         Grapher.Log(rollDiceInterval, "SpontaneousLife.rollDiceInterval");
                         Grapher.Log(lifeProbability, "SpontaneousLife.lifeProbability");
                         yield return new WaitForSeconds(rollDiceInterval);
                     }
 
-                    rollDiceInterval = Mathf.Max(rollDiceInterval * .9f, .05f);
+                    rollDiceInterval = Mathf.Max(rollDiceInterval * .9f, .25f);
                     Grapher.Log(rollDiceInterval, "SpontaneousLife.rollDiceInterval");
                     Grapher.Log(lifeProbability, "SpontaneousLife.lifeProbability");
 
@@ -71,7 +71,7 @@ namespace Environment
                     lifeProbability += (1f - lifeProbability) * .1f;
 
                 if (!foundBlobs)
-                    rollDiceInterval = Mathf.Min(rollDiceInterval * 2f, 15f);
+                    rollDiceInterval = Mathf.Min(rollDiceInterval * 1.1f, 1f);
 
                 yield return new WaitForSeconds(rollDiceInterval);
             }
