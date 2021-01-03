@@ -16,6 +16,8 @@ TODO
    - Flow rate is governed by mass of chemical pump substance and indicated by width of pump
    - Absolute membrane thickness limits pump speed
    - Maintaining relative mass of pump is an involuntary reaction
+ - Ability for cells to sense nearby obstacles
+   - Separate logit for each target type (inert obstacle, cell, chemical blob)
  - Ability for cells to sense other cells
    - ~~Mass by substance~~
    - ~~Distance~~
@@ -38,6 +40,8 @@ TODO
    - ~~Cell count~~
    - ~~Chemical blob count~~
    - ~~Total mass~~
-   - Number of births, deaths and miscarriages and deaths by child birth.
+   - Global events system: Number of births, deaths and miscarriages and deaths by child birth.
  - ~~Color chemical blobs by contents~~ 
  - Ability to toggle Grapher plots.
+ - Save
+   - Stenographer streaming file compression
