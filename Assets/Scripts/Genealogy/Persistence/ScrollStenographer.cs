@@ -86,7 +86,8 @@ namespace Genealogy.Persistence
 
         public IEnumerable<GenealogyScrollEntryBase> ReadAll()
         {
-            var tmpPath = $"{Application.temporaryCachePath}/{typeof(ScrollStenographer).FullName}/{Guid.NewGuid()}";
+            var tmpPath =
+                $"{Application.temporaryCachePath}/{typeof(ScrollStenographer).FullName}/{Guid.NewGuid()}.json";
             SaveCopy(tmpPath);
             var jsonSerializer = new JsonSerializer {TypeNameHandling = TypeNameHandling.Auto};
             IEnumerable<GenealogyScrollEntryBase> entries;

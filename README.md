@@ -11,6 +11,7 @@ TODO
    - ~~Display flagella as ring (color and spin speed indicates relative power)~~
  - Membrane:
    - ~~Display membrane as ring around cell (thickness indicates relative mass)~~
+   - As a jumpstart, have cell thickness controlled by a static gene.
  - Orifice:
    - ~~Ability for cells to ingest substances from the environment using it's orifice~~
    - Flow rate is governed by mass of chemical pump substance and indicated by width of pump
@@ -44,4 +45,4 @@ TODO
  - ~~Color chemical blobs by contents~~ 
  - Ability to toggle Grapher plots.
  - Save
-   - Stenographer streaming file compression
+   - ~~Stenographer streaming file compression~~

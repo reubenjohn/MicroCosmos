@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -22,5 +24,15 @@ namespace Util
 
         public static string ToPrintable(this float[][] arr, int precision) =>
             $"[{string.Join(",", arr.Select(a => a.ToPrintable(precision)))}]";
+
+        public static string ReadAllCompressedText(string filePath)
+        {
+            using (var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+            using (var decompressedStream = new GZipStream(fs, CompressionMode.Decompress, false))
+            using (var sr = new StreamReader(decompressedStream))
+            {
+                return sr.ReadToEnd();
+            }
+        }
     }
 }

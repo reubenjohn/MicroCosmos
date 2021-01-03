@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using Persistence;
 using UnityEngine;
+using Util;
 using Assert = UnityEngine.Assertions.Assert;
 
 namespace Tests.EditMode.Persistence
@@ -56,7 +57,7 @@ namespace Tests.EditMode.Persistence
             Assert.IsTrue(Directory.Exists(saveDir));
             Assert.AreEqual(1, Directory.GetFiles(saveDir).Length);
             Assert.AreEqual($"{saveDir}\\abc-3.json", Directory.GetFiles(saveDir)[0]);
-            Assert.AreEqual(json, File.ReadAllText($"{saveDir}/abc-3.json"));
+            Assert.AreEqual(json, Serialization.ReadAllCompressedText($"{saveDir}/abc-3.json"));
 
             saver.Load();
             Assert.AreEqual(json, JsonConvert.SerializeObject(savable.loaded));

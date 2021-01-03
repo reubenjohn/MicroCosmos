@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Genealogy.Graph;
-using Newtonsoft.Json;
 using UnityEngine.Assertions;
 
 namespace Genealogy.Persistence
@@ -13,16 +12,6 @@ namespace Genealogy.Persistence
         public ScrollReader(GenealogyGraph graph)
         {
             this.graph = graph;
-        }
-
-        public static void Load(JsonReader sw, GenealogyGraph graph)
-        {
-            var jsonSerializer = new JsonSerializer
-            {
-                TypeNameHandling = TypeNameHandling.Auto,
-                ContractResolver = new GenealogyScrollContractResolver(graph)
-            };
-            jsonSerializer.Deserialize<GenealogyScroll>(sw);
         }
 
         public void Load(IEnumerable<GenealogyScrollEntryBase> save)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.IO;
+using System.IO.Compression;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -20,7 +21,7 @@ namespace Persistence
         public string SaveDirectory { get; set; }
 
         public static string GetSavePath(string saveDirectory, ISavableSubsystem savable) =>
-            $"{saveDirectory}/{savable.GetID()}-{savable.GetPersistenceVersion()}.json";
+            $"{saveDirectory}/{savable.GetID()}-{savable.GetPersistenceVersion()}.json.gz";
 
         private string GetSavePath(ISavableSubsystem savable) => GetSavePath(SaveDirectory, savable);
 
@@ -35,7 +36,9 @@ namespace Persistence
                 {
                     var savePath = GetSavePath(savable);
                     Debug.Log($"Saving savable subsystem '{savable.GetID()}' to {savePath}");
-                    using (var sw = new StreamWriter(savePath))
+                    using (var fs = new FileStream(savePath, FileMode.OpenOrCreate, FileAccess.Write, FileShare.Read))
+                    using (var compressor = new GZipStream(fs, CompressionMode.Compress))
+                    using (var sw = new StreamWriter(compressor))
                     using (JsonWriter writer = new JsonTextWriter(sw))
                     {
                         savable.GetSerializer().Serialize(writer, savable.Save());
@@ -56,7 +59,9 @@ namespace Persistence
                 {
                     var savePath = GetSavePath(savable);
                     Debug.Log($"Loading savable subsystem '{savable.GetID()}' to {savePath}");
-                    using (var sr = new StreamReader(savePath))
+                    using (var fs = new FileStream(savePath, FileMode.Open, FileAccess.Read, FileShare.Read))
+                    using (var decompressedStream = new GZipStream(fs, CompressionMode.Decompress, false))
+                    using (var sr = new StreamReader(decompressedStream))
                     using (JsonReader reader = new JsonTextReader(sr))
                     {
                         savable.Load(LoadEnumerable(reader, savable.GetSerializer(), savable.GetSavableType()));

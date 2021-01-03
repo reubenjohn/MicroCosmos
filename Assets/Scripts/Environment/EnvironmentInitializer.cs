@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using Persistence;
 using UnityEngine;
 
@@ -59,7 +60,9 @@ namespace Environment
 
         private static string WriteToFile(string filePath, string resource)
         {
-            using (var streamWriter = File.CreateText(filePath))
+            using (var fs = new FileStream(filePath, FileMode.Create, FileAccess.Write, FileShare.Read))
+            using (var compressor = new GZipStream(fs, CompressionMode.Compress, false))
+            using (var streamWriter = new StreamWriter(compressor))
             {
                 var saveResource = Resources.Load<TextAsset>(resource);
                 var saveResourceText = saveResource.text;

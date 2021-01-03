@@ -48,7 +48,8 @@ namespace Genealogy.Layout.Asexual
 
         public void Remove()
         {
-            if (!Parent.children.Remove(this)) throw new ArgumentException($"'{Node}' is not a child of {Parent.Node}");
+            if (Parent != null && !Parent.children.Remove(this))
+                throw new ArgumentException($"'{Node}' is not a child of {Parent.Node}");
             NotifyListenersOfRemove();
         }
 

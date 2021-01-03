@@ -203,7 +203,7 @@ namespace Tests.EditMode.Genealogy.Persistence
             try
             {
                 action(stenographer);
-                var tmpFile = $"{Application.temporaryCachePath}/testing/GenealogyStenographerTest/tmp.json";
+                var tmpFile = $"{Application.temporaryCachePath}/testing/GenealogyStenographerTest/tmp.json.gz";
                 stenographer.SaveCopy(tmpFile);
                 return File.ReadAllText(tmpFile);
             }

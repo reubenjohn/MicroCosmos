@@ -48,6 +48,7 @@ namespace Genealogy.Visualization
         public void OnRemoveNode(LayoutNode layout)
         {
             var viewerHandle = viewerHandles[layout.Node.Guid];
+            viewerHandles.Remove(layout.Node.Guid);
             if (viewerHandle.viewerNode == currentSelectedNode)
                 DeselectNode(viewerHandle.viewerNode, null);
             viewerHandle.OnDestroy();

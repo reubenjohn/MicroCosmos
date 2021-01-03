@@ -24,12 +24,6 @@ namespace Organelles.Flagella
 
         public void Actuate(float[] logits)
         {
-            if (cell.IsInFocus)
-            {
-                Grapher.Log(logits[0], "Flagella[0]", Color.blue);
-                Grapher.Log(logits[1], "Flagella[1]", Color.cyan);
-            }
-
             rb.AddRelativeForce(CalculateRelativeForce(gene, logits, rb.mass, Time.deltaTime));
             rb.AddTorque(CalculateTorque(gene, logits, rb.inertia, Time.deltaTime));
         }

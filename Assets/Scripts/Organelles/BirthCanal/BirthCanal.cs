@@ -42,11 +42,7 @@ namespace Organelles.BirthCanal
             var giveBirthSignal = birthSignal.FeedInput(logits[0] > 0, logits[0] < 0, Time.deltaTime);
             if (Mathf.Approximately(giveBirthSignal, 1))
                 TryGiveBirth();
-            if (cell.IsInFocus)
-            {
-                Grapher.Log(logits[0], "GiveBirth?", Color.magenta);
-                Grapher.Log(giveBirthSignal, "GiveBirth!", Color.red);
-            }
+            if (cell.IsInFocus) Grapher.Log(giveBirthSignal, "GiveBirth!", Color.red);
         }
 
         private void TryGiveBirth()
