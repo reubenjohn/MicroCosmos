@@ -45,7 +45,7 @@ namespace Environment
             {
                 new ChemicalSinkChemicals
                 {
-                    mixture = EnumUtils.ToNamedDictionary(flask.ToMixtureDictionary())
+                    mixture = EnumUtils.ToNamedDictionary((TotalMixture() + flask).ToMixtureDictionary())
                 }
             };
 
@@ -58,6 +58,15 @@ namespace Environment
                     LoadFlask(EnumUtils.ParseNamedDictionary<Substance, float>(chemicalsItem.mixture));
                 else
                     throw new InvalidDataException($"Cannot load item of type '{save.GetType().FullName}'");
+        }
+
+        private Mixture<Substance> TotalMixture()
+        {
+            var sum = new Mixture<Substance>();
+            foreach (var flask in transform.GetComponentsInChildren<IFlaskBehavior<Substance>>())
+                sum += flask.ToMixture();
+
+            return sum;
         }
 
         private IEnumerator StartStatsPlotting()

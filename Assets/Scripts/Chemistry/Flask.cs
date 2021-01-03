@@ -26,6 +26,7 @@ namespace Chemistry
         }
 
         public override float TotalMass => cacheable.Value;
+        public Mixture<T> ToMixture() => this;
 
         private bool Take(Mixture<T> b)
         {
