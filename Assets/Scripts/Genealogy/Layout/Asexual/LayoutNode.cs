@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Genealogy.Graph;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -11,7 +10,6 @@ namespace Genealogy.Layout.Asexual
     {
         private readonly List<LayoutNode> children;
         private readonly List<ILayoutChangeListener<LayoutNode>> listeners;
-        private Rect bounds;
 
         public LayoutNode(List<ILayoutChangeListener<LayoutNode>> layoutChangeListeners,
             Node node, [CanBeNull] LayoutNode parent)
@@ -22,12 +20,12 @@ namespace Genealogy.Layout.Asexual
             children = new List<LayoutNode>();
             if (parent != null)
             {
-                bounds = parent.NextChildBounds();
+                Generation = parent.Generation + 1;
                 parent.AddChild(this);
             }
             else
             {
-                bounds = new Rect(0, 0, 1, 1);
+                Generation = 0;
                 NotifyListenersOfCreate();
             }
         }
@@ -35,83 +33,30 @@ namespace Genealogy.Layout.Asexual
         public Node Node { get; }
         public LayoutNode Parent { get; }
 
-        public int Generation => Mathf.RoundToInt(-bounds.yMin);
-
-        public float XMax
-        {
-            get => bounds.xMax;
-            private set
-            {
-                if (Mathf.Approximately(bounds.xMax, value)) return;
-
-                if (Parent != null)
-                {
-                    var siblingIndex = SiblingIndex;
-                    if (siblingIndex + 1 == Parent.children.Count)
-                        Parent.XMax = Mathf.Max(Parent.XMax, value);
-                    else
-                        Parent.children[siblingIndex + 1].X = value;
-                }
-
-                bounds.xMax = value;
-                NotifyListenersOfUpdate();
-            }
-        }
+        public int Generation { get; }
 
         public int SiblingIndex => Parent?.children.IndexOf(this) ?? 0;
 
-        public float X
-        {
-            get => bounds.x;
-            private set
-            {
-                var diff = value - X;
-                if (Mathf.Approximately(diff, 0)) return;
-
-                XMax = value + bounds.width;
-                NotifyListenersOfUpdate();
-
-                var minX = value;
-                foreach (var child in children)
-                {
-                    child.NaivelyUpdateTreeX(minX);
-                    minX = child.XMax;
-                }
-
-                bounds.xMin = value;
-                NotifyListenersOfUpdate();
-            }
-        }
-
-        public Vector2 Center => bounds.center;
+        public Vector2 Center { get; private set; } = Vector2.zero;
 
         public void AddChild(LayoutNode child)
         {
             children.Add(child);
             child.NotifyListenersOfCreate();
-            XMax = Mathf.Max(bounds.xMax, child.bounds.xMax);
         }
 
-        private void NaivelyUpdateTreeX(float x)
+        public void RecalculateLayout() => RecalculateLayout(Vector2.zero);
+
+        private Vector2 RecalculateLayout(Vector2 topLeft)
         {
-            bounds.xMax = x + bounds.width;
-            NotifyListenersOfUpdate();
-            var minX = x;
+            var nextChildTopRight = topLeft + Vector2.down;
             foreach (var child in children)
-            {
-                child.NaivelyUpdateTreeX(minX);
-                minX = child.XMax;
-            }
+                nextChildTopRight = child.RecalculateLayout(nextChildTopRight);
 
-            bounds.xMin = x;
-        }
-
-        private Rect NextChildBounds()
-        {
-            var lastChild = children.LastOrDefault();
-            if (lastChild != null)
-                return new Rect(lastChild.bounds.xMax, lastChild.bounds.yMin, 1, 1);
-            return new Rect(bounds.xMin, bounds.yMin - 1, 1, 1);
+            var topRight = new Vector2(Mathf.Max(topLeft.x + 1, nextChildTopRight.x), topLeft.y);
+            Center = new Vector2((topLeft.x + topRight.x) / 2f, topLeft.y - .5f);
+            NotifyListenersOfUpdate();
+            return topRight;
         }
 
         public IEnumerable<LayoutNode> NodesOfGeneration(int n)

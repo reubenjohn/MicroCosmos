@@ -28,6 +28,7 @@ namespace Environment
         public readonly GenealogyGraph genealogyGraph = new GenealogyGraph();
         private readonly List<ICellSelectionListener> listeners = new List<ICellSelectionListener>();
         private DivinePossession divinePossession;
+        private LayoutManager layoutManager;
         private ScrollStenographer stenographer;
         private CellColony CellColony { get; set; }
 
@@ -45,9 +46,9 @@ namespace Environment
             {
                 if (choreographer) choreographer.AddListener(viewer);
 
-                // var layoutManager = new LayoutManager();
-                // layoutManager.AddListener(viewer);
-                // genealogyGraph.AddListener(layoutManager);
+                layoutManager = new LayoutManager();
+                layoutManager.AddListener(viewer);
+                genealogyGraph.AddListener(layoutManager);
                 viewer.AddListener(this);
 
                 AddCellSelectionListener(divinePossession);
@@ -60,6 +61,15 @@ namespace Environment
 
             genealogyGraph.RegisterRootNode(
                 new CellNode(Guid.Parse("00000000-0000-0000-0000-000000000000"), new DateTime(1), "Cell"));
+        }
+
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                var visibility = viewer.ToggleVisibility();
+                layoutManager.LiveLayoutEnabled = visibility;
+            }
         }
 
         private void OnDestroy() => stenographer.CloseScroll();

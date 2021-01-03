@@ -34,12 +34,6 @@ namespace Genealogy.Visualization
             scrollRect = GameObject.Find("_Family Tree").GetComponent<ScrollRect>();
         }
 
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.T))
-                StartCoroutine(SetVisibility(!canvas.enabled));
-        }
-
         public void OnSwitchCamera(Camera cam)
         {
             canvas.worldCamera = cam;
@@ -162,6 +156,13 @@ namespace Genealogy.Visualization
         public void AddListener(IGraphViewerListener graphViewerListener)
         {
             listeners.Add(graphViewerListener);
+        }
+
+        public bool ToggleVisibility()
+        {
+            var visibility = !canvas.enabled;
+            StartCoroutine(SetVisibility(visibility));
+            return visibility;
         }
     }
 }

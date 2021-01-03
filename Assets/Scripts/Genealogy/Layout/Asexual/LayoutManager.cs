@@ -11,20 +11,22 @@ namespace Genealogy.Layout.Asexual
         private readonly List<ILayoutChangeListener<LayoutNode>> listeners =
             new List<ILayoutChangeListener<LayoutNode>>();
 
-        public LayoutManager() : this(new Dictionary<Guid, LayoutNode>())
-        {
-        }
+        private LayoutNode rootNode;
+
+        public LayoutManager() : this(new Dictionary<Guid, LayoutNode>()) { }
 
         public LayoutManager(Dictionary<Guid, LayoutNode> layoutInfo)
         {
             this.layoutInfo = layoutInfo;
         }
 
+        public bool LiveLayoutEnabled { get; set; }
+
         public void OnTransactionComplete(GenealogyGraph genealogyGraph, Node node, List<Relation> relations)
         {
             if (relations.Count == 0) // Root node registration
             {
-                RegisterNode(new LayoutNode(listeners, node, null));
+                rootNode = RegisterNode(new LayoutNode(listeners, node, null));
             }
             else
             {
@@ -36,6 +38,9 @@ namespace Genealogy.Layout.Asexual
                     foreach (var listener in listeners) listener.OnAddConnections(relations);
                 }
             }
+
+            if (LiveLayoutEnabled)
+                rootNode.RecalculateLayout();
         }
 
         public void OnClear()
@@ -49,10 +54,7 @@ namespace Genealogy.Layout.Asexual
             return layoutInfo[node.Node.Guid] = node;
         }
 
-        public LayoutNode GetNode(Guid guid)
-        {
-            return layoutInfo[guid];
-        }
+        public LayoutNode GetNode(Guid guid) => layoutInfo[guid];
 
         public void AddListener(ILayoutChangeListener<LayoutNode> layoutListener)
         {
