@@ -36,7 +36,14 @@ namespace Organelles.CellCauldron
                 .GetComponentInChildren<SpriteRenderer>();
         }
 
-        private void Update() => GrapherUtil.LogFlask(this, "Cauldron", 15, cell.IsInFocus);
+        private void Update()
+        {
+            if (!cell.IsInFocus || Time.frameCount % 10 != Mathf.Abs(GetInstanceID()) % 10) return;
+
+            Grapher.Log(flask.TotalMass, "Cauldron.TotalMass");
+            foreach (var nameColor in SubstanceColor.NamedColors)
+                Grapher.Log(flask.contents[nameColor.index], $"Cauldron.{nameColor.name}", nameColor.color);
+        }
 
         public string GetActuatorType() => typeof(CellCauldron).FullName;
 
@@ -49,13 +56,14 @@ namespace Organelles.CellCauldron
                 var recipe = VoluntaryRecipes[i];
                 if (recipe == Recipe.Nop) continue;
 
-                Convert(recipeBook[recipe], Mathf.Max(0, logits[i]));
+                if (logits[i] > 0)
+                    Convert(recipeBook[recipe], logits[i]);
             }
 
             foreach (var recipe in InvoluntaryRecipes)
                 Convert(recipeBook[recipe]);
 
-            if (Time.frameCount % 10 == GetInstanceID() % 10)
+            if (Time.frameCount % 10 == Mathf.Abs(GetInstanceID()) % 10)
             {
                 var waste = this[Substance.Waste];
                 if (waste > Mathf.Max(ChemicalBlob.MinBlobSize, TotalMass * .01f))
