@@ -22,6 +22,7 @@ namespace Genealogy.Visualization
         public void OnDestroy()
         {
             Object.DestroyImmediate(viewerNode.gameObject);
+            ConnectionManager.CleanConnections();
         }
     }
 }

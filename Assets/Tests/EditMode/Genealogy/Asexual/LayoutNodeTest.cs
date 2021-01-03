@@ -59,39 +59,13 @@ Assertion message:
         }
 
         [Test]
-        public void TestListenerCallback()
-        {
-            AssertListenerCounts(0, 0, 0, 0);
-
-            var l0 = NewLayoutNode(Root, null);
-            AssertListenerCounts(1, 0, 0, 0);
-
-            l0.RecalculateLayout();
-            AssertListenerCounts(1, 1, 0, 0);
-
-            var l00 = NewLayoutNode(Root, l0);
-            AssertListenerCounts(2, 1, 0, 0);
-            l0.RecalculateLayout();
-            AssertListenerCounts(2, 3, 0, 0);
-        }
-
-        private void AssertListenerCounts(int addedNodeCount, int updatedNodeCount, int addedRelationsCount,
-            int nClears)
-        {
-            Assert.AreEqual(addedNodeCount, listener.addedNodes.Count, "addedNodeCount");
-            Assert.AreEqual(updatedNodeCount, listener.updatedNodes.Count, "updatedNodeCount");
-            Assert.AreEqual(addedRelationsCount, listener.addedRelations.Count, "addedRelationsCount");
-            Assert.AreEqual(nClears, listener.NClears);
-        }
-
-        [Test]
         public void TestRootNode()
         {
             var l0 = NewLayoutNode(Root, null);
             l0.RecalculateLayout();
 
             Assert.AreEqual(
-                @"{""Node"":{""NodeType"":0,""Guid"":""00000000-0000-0000-0000-000000000000"",""CreatedAt"":""2020-01-01T00:00:00""},""Parent"":null,""Generation"":0,""SiblingIndex"":0,""Center"":{""x"":0.5,""y"":-0.5}}",
+                @"{""Node"":{""NodeType"":0,""Guid"":""00000000-0000-0000-0000-000000000000"",""CreatedAt"":""2020-01-01T00:00:00""},""Parent"":null,""Generation"":0,""Center"":{""x"":0.5,""y"":-0.5}}",
                 JsonConvert.SerializeObject(l0));
             Assert.AreSame(Root, l0.Node);
 
@@ -261,16 +235,50 @@ Assertion message:
                 l0);
         }
 
+        [Test]
+        public void TestListenerCallback()
+        {
+            AssertListenerCounts(0, 0, 0, 0, 0);
+
+            var l0 = NewLayoutNode(Root, null);
+            AssertListenerCounts(1, 0, 0, 0, 0);
+
+            l0.RecalculateLayout();
+            AssertListenerCounts(1, 0, 1, 0, 0);
+
+            var l00 = NewLayoutNode(Root, l0);
+            AssertListenerCounts(2, 0, 1, 0, 0);
+            l0.RecalculateLayout();
+            AssertListenerCounts(2, 0, 3, 0, 0);
+        }
+
+        private void AssertListenerCounts(int addedNodeCount, int removedNodeCount, int updatedNodeCount,
+            int addedRelationsCount,
+            int nClears)
+        {
+            Assert.AreEqual(addedNodeCount, listener.addedNodes.Count, "addedNodeCount");
+            Assert.AreEqual(removedNodeCount, listener.removedNodes.Count, "removedNodeCount");
+            Assert.AreEqual(updatedNodeCount, listener.updatedNodes.Count, "updatedNodeCount");
+            Assert.AreEqual(addedRelationsCount, listener.addedRelations.Count, "addedRelationsCount");
+            Assert.AreEqual(nClears, listener.NClears);
+        }
+
         private class TestLayoutChangeListener : ILayoutChangeListener<LayoutNode>
         {
             public readonly List<LayoutNode> addedNodes = new List<LayoutNode>();
             public readonly List<List<Relation>> addedRelations = new List<List<Relation>>();
+            public readonly List<LayoutNode> removedNodes = new List<LayoutNode>();
             public readonly List<LayoutNode> updatedNodes = new List<LayoutNode>();
             public int NClears { get; private set; }
 
             public void OnUpdateNode(LayoutNode layout) => updatedNodes.Add(layout);
 
             public void OnAddNode(LayoutNode layout) => addedNodes.Add(layout);
+
+            public void OnRemoveNode(LayoutNode layout)
+            {
+                removedNodes.Add(layout);
+            }
 
             public void OnAddConnections(List<Relation> relations) => addedRelations.Add(relations);
 

@@ -45,6 +45,14 @@ namespace Genealogy.Visualization
             RegisterViewerNode(new GenealogyGraphViewerHandle(layout, viewerNode));
         }
 
+        public void OnRemoveNode(LayoutNode layout)
+        {
+            var viewerHandle = viewerHandles[layout.Node.Guid];
+            if (viewerHandle.viewerNode == currentSelectedNode)
+                DeselectNode(viewerHandle.viewerNode, null);
+            viewerHandle.OnDestroy();
+        }
+
         public void OnAddConnections(List<Relation> relations)
         {
             foreach (var relation in relations)
@@ -54,8 +62,6 @@ namespace Genealogy.Visualization
                 var to = viewerHandles[relation.To.Guid].viewerNode.GetComponent<RectTransform>();
                 var connection = ConnectionManager.CreateConnection(from, to);
                 SetVisibility(connection, canvas.enabled);
-                if (relation.RelationType == RelationType.Death && viewerNode == currentSelectedNode)
-                    DeselectNode(viewerNode, null);
             }
         }
 

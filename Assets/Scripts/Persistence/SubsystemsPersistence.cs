@@ -64,7 +64,7 @@ namespace Persistence
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError($"Could not save subsystem '{savable.GetID()}': {e.Message}\n{e.StackTrace}");
+                    Debug.LogWarning($"Could not save subsystem '{savable.GetID()}': {e.Message}\n{e.StackTrace}");
                 }
         }
 

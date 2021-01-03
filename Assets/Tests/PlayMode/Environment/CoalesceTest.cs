@@ -29,7 +29,6 @@ namespace Tests.PlayMode.Environment
                 {"Environment.ChemicalSink", "CoalesceTest-chemicalSink"}
             }, out _);
             var chemicalSink = GameObject.Find("Environment").GetComponent<ChemicalSink>();
-            microCosmosPersistence.OnLoad();
             return chemicalSink;
         }
 

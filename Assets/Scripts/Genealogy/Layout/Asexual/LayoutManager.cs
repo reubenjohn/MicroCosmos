@@ -30,12 +30,19 @@ namespace Genealogy.Layout.Asexual
             }
             else
             {
-                if (node != null)
-                {
-                    var parent = layoutInfo[relations[0].From.Guid]; // Assume single asexual parent
-                    RegisterNode(new LayoutNode(listeners, node, parent));
+                if (node == null) throw new ArgumentException(); // Why is this needed?
 
+                if (relations.Count > 1) throw new InvalidOperationException("Currently unsupported");
+                var parent = layoutInfo[relations[0].From.Guid]; // Assume single asexual parent
+                if (node.NodeType != NodeType.Death)
+                {
+                    RegisterNode(new LayoutNode(listeners, node, parent));
                     foreach (var listener in listeners) listener.OnAddConnections(relations);
+                }
+                else
+                {
+                    parent.Remove();
+                    parent.Parent.Remove();
                 }
             }
 
@@ -64,6 +71,11 @@ namespace Genealogy.Layout.Asexual
         public void RemoveListener(ILayoutChangeListener<LayoutNode> layoutListener)
         {
             listeners.Remove(layoutListener);
+        }
+
+        public void RecalculateLayout()
+        {
+            rootNode.RecalculateLayout();
         }
     }
 }

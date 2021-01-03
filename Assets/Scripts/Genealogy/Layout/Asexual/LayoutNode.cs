@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Genealogy.Graph;
 using JetBrains.Annotations;
@@ -35,14 +36,20 @@ namespace Genealogy.Layout.Asexual
 
         public int Generation { get; }
 
-        public int SiblingIndex => Parent?.children.IndexOf(this) ?? 0;
+        private int SiblingIndex => Parent?.children.IndexOf(this) ?? 0;
 
         public Vector2 Center { get; private set; } = Vector2.zero;
 
-        public void AddChild(LayoutNode child)
+        private void AddChild(LayoutNode child)
         {
             children.Add(child);
             child.NotifyListenersOfCreate();
+        }
+
+        public void Remove()
+        {
+            if (!Parent.children.Remove(this)) throw new ArgumentException($"'{Node}' is not a child of {Parent.Node}");
+            NotifyListenersOfRemove();
         }
 
         public void RecalculateLayout() => RecalculateLayout(Vector2.zero);
@@ -123,6 +130,12 @@ namespace Genealogy.Layout.Asexual
         {
             foreach (var listener in listeners)
                 listener.OnAddNode(this);
+        }
+
+        private void NotifyListenersOfRemove()
+        {
+            foreach (var listener in listeners)
+                listener.OnRemoveNode(this);
         }
     }
 }
