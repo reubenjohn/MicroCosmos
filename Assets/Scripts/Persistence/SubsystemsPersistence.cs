@@ -2,6 +2,7 @@
 using System.Collections;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using JetBrains.Annotations;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -31,7 +32,7 @@ namespace Persistence
 
             Directory.CreateDirectory(SaveDirectory);
 
-            foreach (var savable in savableSubsystems)
+            foreach (var savable in savableSubsystems.Reverse())
                 try
                 {
                     var savePath = GetSavePath(savable);
