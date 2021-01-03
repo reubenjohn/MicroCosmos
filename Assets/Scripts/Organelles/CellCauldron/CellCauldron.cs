@@ -32,6 +32,7 @@ namespace Organelles.CellCauldron
             cell = GetComponent<Cell.Cell>();
             sink = GetComponentInParent<ChemicalSink>();
             membraneRenderer = cell.GetComponentInChildren<Membrane.Membrane>()
+                .transform.Find("Body")
                 .GetComponentInChildren<SpriteRenderer>();
         }
 

@@ -14,9 +14,7 @@ namespace Organelles.Membrane
         private readonly CircularAttachmentRing attachmentAdapter = new CircularAttachmentRing();
         private CellCauldron.CellCauldron cauldron;
         private Cell.Cell cell;
-
-        private float Thickness => Radius - InnerRadius;
-        private float ThicknessRatio => Thickness / Radius;
+        private SpriteMask ringInnerMask;
 
         private float Radius
         {
@@ -31,15 +29,20 @@ namespace Organelles.Membrane
         {
             cell = GetComponentInParent<Cell.Cell>();
             cauldron = GetComponentInParent<CellCauldron.CellCauldron>();
+            ringInnerMask = transform.Find("Ring").GetComponentInChildren<SpriteMask>();
         }
 
         private void Update()
         {
-            var ratio = ThicknessRatio;
+            var innerRadius = InnerRadius;
+            ringInnerMask.transform.localScale = Vector3.one * innerRadius;
+            var ratio = ThicknessRatio(innerRadius);
             if (cell.IsInFocus) Grapher.Log(ratio, "Membrane.ThicknessRatio");
             if (ratio < MinMembraneRatio || cauldron.TotalMass < Cell.Cell.MinMass)
                 cell.Die();
         }
+
+        private float ThicknessRatio(float innerRadius) => (Radius - innerRadius) / Radius;
 
         public override GeneTranscriber<MembraneGene> GetGeneTranscriber() => MembraneGeneTranscriber.Singleton;
 

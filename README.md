@@ -10,7 +10,7 @@ TODO
    - ~~Force scales with mass~~
    - ~~Display flagella as ring (color and spin speed indicates relative power)~~
  - Membrane:
-   - Display membrane as disk inside cell (thickness indicates relative mass)
+   - ~~Display membrane as ring around cell (thickness indicates relative mass)~~
  - Orifice:
    - ~~Ability for cells to ingest substances from the environment using it's orifice~~
    - Flow rate is governed by mass of chemical pump substance and indicated by width of pump
