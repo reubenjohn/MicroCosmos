@@ -14,6 +14,7 @@ namespace Organelles.Membrane
         private readonly CircularAttachmentRing attachmentAdapter = new CircularAttachmentRing();
         private CellCauldron.CellCauldron cauldron;
         private Cell.Cell cell;
+        private readonly Control.BinaryControlVariable growSkin = new Control.BinaryControlVariable(1f);
         private SpriteMask ringInnerMask;
 
         private float Radius
@@ -22,8 +23,14 @@ namespace Organelles.Membrane
             set => transform.localScale = Vector3.one * value * 2f;
         }
 
-        private float InnerRadius =>
-            Mathf.Pow(Mathf.Max(0, Mathf.Pow(Radius, 3) - cauldron[Substance.Skin] / (4f / 3f * Mathf.PI)), 1f / 3);
+        private float RelativeInnerRadius
+        {
+            get
+            {
+                var totalMass = cauldron.TotalMass;
+                return (totalMass - cauldron[Substance.Skin]) / totalMass;
+            }
+        }
 
         private void Start()
         {
@@ -34,15 +41,24 @@ namespace Organelles.Membrane
 
         private void Update()
         {
-            var innerRadius = InnerRadius;
-            ringInnerMask.transform.localScale = Vector3.one * innerRadius;
-            var ratio = ThicknessRatio(innerRadius);
+            var relativeInnerRadius = RelativeInnerRadius;
+            ringInnerMask.transform.localScale = Vector3.one * relativeInnerRadius;
+            var ratio = ThicknessRatio(relativeInnerRadius);
+            var belowTarget = ratio < gene.relativeThickness;
+            growSkin.FeedInput(belowTarget, !belowTarget, Time.deltaTime);
+            if (cell.IsInFocus) Grapher.Log(growSkin.Value, "GrowSkinDesire");
+            if (belowTarget && cauldron[Substance.Fat] > 0 && growSkin.Value > 0)
+            {
+                cauldron.Convert(RecipeBook.Singleton[Recipe.GrowSkin], growSkin.Value);
+                ratio = ThicknessRatio(RelativeInnerRadius);
+            }
+
             if (cell.IsInFocus) Grapher.Log(ratio, "Membrane.ThicknessRatio");
             if (ratio < MinMembraneRatio || cauldron.TotalMass < Cell.Cell.MinMass)
                 cell.Die();
         }
 
-        private float ThicknessRatio(float innerRadius) => (Radius - innerRadius) / Radius;
+        private float ThicknessRatio(float relativeInnerRadius) => 1 - relativeInnerRadius;
 
         public override GeneTranscriber<MembraneGene> GetGeneTranscriber() => MembraneGeneTranscriber.Singleton;
 

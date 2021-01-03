@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Genetics;
 using Newtonsoft.Json.Linq;
 using Organelles.SimpleContainment;
+using UnityEngine;
 
 namespace Organelles.Membrane
 {
@@ -22,6 +23,7 @@ namespace Organelles.Membrane
             new MembraneGene
             {
                 radius = .25f,
+                relativeThickness = Random.Range(.1f, .5f),
                 nSubOrganelles = SubOrganelleCountsMutator.Mutate(new SubOrganelleCounts())
             };
 
@@ -31,6 +33,7 @@ namespace Organelles.Membrane
             new MembraneGene
             {
                 radius = gene.radius,
+                relativeThickness = gene.relativeThickness.MutateClamped(gene.relativeThickness * .01f, .05f, .9f),
                 nSubOrganelles = SubOrganelleCountsMutator.Mutate(gene.nSubOrganelles)
             };
     }

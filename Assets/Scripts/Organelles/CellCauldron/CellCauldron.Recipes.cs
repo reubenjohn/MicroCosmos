@@ -11,7 +11,7 @@ namespace Organelles.CellCauldron
 
         private static readonly Recipe[] VoluntaryRecipes =
         {
-            Recipe.GrowSkin,
+            Recipe.Nop,
             Recipe.Nop,
             Recipe.Nop,
             Recipe.Nop,

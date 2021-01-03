@@ -7,5 +7,6 @@ namespace Organelles.Membrane
     public class MembraneGene : ContainmentGene
     {
         public float radius = .125f;
+        public float relativeThickness = .25f;
     }
 }
