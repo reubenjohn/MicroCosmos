@@ -1,6 +1,18 @@
 # MicroCosmos
 Fun little Unity evolution simulator.
 
+Preview
+---
+Macro view sub-colonies:
+![Macro view sub-colonies](Assets/Captures/Macro%20view%20sub-colonies.gif "Macro view sub-colonies")
+Manual controls:
+![Manual controls](Assets/Captures/Manual%20controls.gif "Manual controls")
+Cell eats and bursts:
+![Cell eats and bursts](Assets/Captures/Cell%20eats%20and%20bursts.gif "Cell eats and bursts")
+Basic plotting:
+![Basic plotting](Assets/Captures/Basic%20plotting.gif "Basic plotting")
+Detailed plotting:
+![Detailed plotting](Assets/Captures/Detailed%20plotting.gif "Detailed plotting")
 
 TODO
 ---
