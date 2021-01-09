@@ -278,7 +278,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minMassFactor: 2
-  maxCellCount: 100
+  maxCellCount: 150
 --- !u!1 &123422777
 GameObject:
   m_ObjectHideFlags: 0
