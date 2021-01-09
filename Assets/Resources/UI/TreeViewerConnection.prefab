@@ -42,10 +42,10 @@ LineRenderer:
   m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_MotionVectors: 0
+  m_DynamicOccludee: 0
+  m_MotionVectors: 2
   m_LightProbeUsage: 0
-  m_ReflectionProbeUsage: 1
+  m_ReflectionProbeUsage: 0
   m_RayTracingMode: 0
   m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
@@ -72,49 +72,16 @@ LineRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Positions:
-  - {x: 20, y: -3, z: 13.5}
-  - {x: 19.972466, y: -3.01652, z: 13.125216}
-  - {x: 19.893156, y: -3.064108, z: 12.781501}
-  - {x: 19.766994, y: -3.1398044, z: 12.465893}
-  - {x: 19.598913, y: -3.2406507, z: 12.175433}
-  - {x: 19.393852, y: -3.3636885, z: 11.9071665}
-  - {x: 19.156736, y: -3.5059583, z: 11.658133}
-  - {x: 18.892496, y: -3.6645021, z: 11.425372}
-  - {x: 18.606066, y: -3.8363602, z: 11.205925}
-  - {x: 18.302374, y: -4.0185747, z: 10.996835}
-  - {x: 17.986357, y: -4.208186, z: 10.795142}
-  - {x: 17.662941, y: -4.4022355, z: 10.597889}
-  - {x: 17.337059, y: -4.5977645, z: 10.402113}
-  - {x: 17.013643, y: -4.791814, z: 10.204858}
-  - {x: 16.697626, y: -4.9814253, z: 10.003165}
-  - {x: 16.393936, y: -5.1636395, z: 9.794075}
-  - {x: 16.107504, y: -5.335498, z: 9.574628}
-  - {x: 15.843265, y: -5.4940414, z: 9.341867}
-  - {x: 15.606148, y: -5.6363115, z: 9.0928335}
-  - {x: 15.401085, y: -5.759349, z: 8.824566}
-  - {x: 15.233007, y: -5.8601956, z: 8.534109}
-  - {x: 15.106846, y: -5.935892, z: 8.2185}
-  - {x: 15.027533, y: -5.9834805, z: 7.874784}
-  - {x: 15, y: -6, z: 7.5}
+  m_Positions: []
   m_Parameters:
     serializedVersion: 3
-    widthMultiplier: 1
+    widthMultiplier: 0.09787665
     widthCurve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0.05
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0.33333334
-        outWeight: 0.33333334
-      - serializedVersion: 3
-        time: 1
-        value: 0.05
+        value: 0.1
         inSlope: 0
         outSlope: 0
         tangentMode: 0
@@ -185,5 +152,5 @@ MonoBehaviour:
     direction: 0
     position: 0
     weight: 0
-  resolution: 20
+  resolution: 2
   _line: {fileID: 12022754}
