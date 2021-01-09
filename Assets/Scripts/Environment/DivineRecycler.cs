@@ -2,6 +2,7 @@
 using System.Collections;
 using Chemistry;
 using ChemistryMicro;
+using Cinematics;
 using UnityEngine;
 
 namespace Environment
@@ -34,12 +35,12 @@ namespace Environment
         {
             try
             {
+                if (!Mathf.Approximately(flask[Substance.Fat], flask.TotalMass)) return;
+
                 var pos = transform.position;
                 var start = pos + Left;
                 var end = pos + Right;
-                Gizmos.color = Mathf.Approximately(flask[Substance.Fat], flask.TotalMass)
-                    ? Color.white
-                    : Color.green;
+                Gizmos.color = Color.white;
                 Gizmos.DrawLine(start, end);
                 Gizmos.color = Color.magenta;
                 Gizmos.DrawLine(start,
@@ -56,8 +57,7 @@ namespace Environment
                 yield return new WaitForSeconds(divineRecycling.divineRecycleInterval);
                 if (flask != null && !Mathf.Approximately(flask[Substance.Fat], flask.TotalMass))
                 {
-                    Instantiate(Resources.Load<GameObject>("Objects/HaloPop"), transform)
-                        .GetComponent<Light>().color = divineRecycling.popAnimationColor;
+                    HaloPopQueue.Instance.PlacePopOrder(transform, divineRecycling.popAnimationColor);
                     var blobMix = flask.ToMixture();
                     var reaction = new Reaction<Substance>(blobMix, UnitFatMix * blobMix.TotalMass);
                     flask.Convert(reaction);
