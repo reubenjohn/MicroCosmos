@@ -14,7 +14,10 @@ namespace Organelles.Orifice
 
         private CellCauldron.CellCauldron cauldron;
         private Collider2D orificeCollider;
+        private SpriteRenderer orificeSprite;
 
+
+        private void Awake() => orificeSprite = GetComponentInChildren<SpriteRenderer>();
 
         private void Start()
         {
@@ -45,6 +48,8 @@ namespace Organelles.Orifice
         public override Transform OnInheritGene(OrificeGene inheritedGene)
         {
             transform.localScale = inheritedGene.size * Vector2.one;
+            orificeSprite.color = Color.Lerp(Color.gray, orificeSprite.color,
+                OrificeGeneTranscriber.NormalizedTransferRate(inheritedGene.transferRate));
             return base.OnInheritGene(inheritedGene);
         }
 
