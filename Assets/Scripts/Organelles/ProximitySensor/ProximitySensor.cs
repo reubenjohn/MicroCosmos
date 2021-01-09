@@ -4,7 +4,6 @@ using ChemistryMicro;
 using Environment;
 using Genetics;
 using UnityEngine;
-using Util;
 
 namespace Organelles.ProximitySensor
 {
@@ -41,7 +40,7 @@ namespace Organelles.ProximitySensor
 
         public void OnTriggerExit2D(Collider2D other) => collidersInRange.Remove(other);
 
-        public float[] Connect() => new float[3 + EnumUtils.EnumCount(typeof(Substance))];
+        public float[] Connect() => new float[3 + SubstanceHelper.NSubstances];
 
         public void Sense(float[] logits)
         {
@@ -106,9 +105,9 @@ namespace Organelles.ProximitySensor
         private void ActivateChemicalLogits(float[] logits, PhysicalFlask flask, ref int nUsedLogits)
         {
             var selfMass = cell.Cauldron.TotalMass;
-            foreach (var substance in Enum.GetValues(typeof(Substance)))
+            foreach (var substance in SubstanceHelper.Substances)
             {
-                var relativeMass = Mathf.Clamp(flask[(Substance) substance] / selfMass, 0f, float.MaxValue);
+                var relativeMass = Mathf.Clamp(flask[substance] / selfMass, 0f, float.MaxValue);
                 relativeMass = float.IsNaN(relativeMass) ? 0f : relativeMass;
                 var logRelativeMass = Mathf.Log10(relativeMass);
                 logits[nUsedLogits++] = Mathf.Clamp((logRelativeMass + 1) / 2, 0f, 1f);

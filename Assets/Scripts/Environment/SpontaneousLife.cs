@@ -30,6 +30,7 @@ namespace Environment
             cellColony = GetComponentInChildren<CellColony>();
             genealogyGraphManager = GetComponentInChildren<GenealogyGraphManager>();
             StartCoroutine(SpontaneousLifeLoop());
+            StartCoroutine(GrapherLoop());
         }
 
         private void OnDestroy() => StopAllCoroutines();
@@ -49,16 +50,12 @@ namespace Environment
                     while (environment.CellCount >= maxCellCount)
                     {
                         rollDiceInterval.CreepTo(1f, .1f);
-                        Grapher.Log(rollDiceInterval, "SpontaneousLife.rollDiceInterval");
-                        Grapher.Log(lifeProbability, "SpontaneousLife.lifeProbability");
                         yield return new WaitForSeconds(rollDiceInterval);
                     }
 
                     rollDiceInterval.CreepTo(.05f, .1f);
                     lifeProbability =
                         Mathf.Clamp01((maxCellCount - environment.CellCount) / (float) environment.ChemicalBlobCount);
-                    Grapher.Log(rollDiceInterval, "SpontaneousLife.rollDiceInterval");
-                    Grapher.Log(lifeProbability, "SpontaneousLife.lifeProbability");
 
                     if (blob == null)
                         continue;
@@ -102,9 +99,23 @@ namespace Environment
                 blob
             );
         }
+
+        private IEnumerator GrapherLoop()
+        {
+            yield return null;
+
+            while (true)
+            {
+                Grapher.Log(rollDiceInterval, "SpontaneousLife.rollDiceInterval");
+                Grapher.Log(lifeProbability, "SpontaneousLife.lifeProbability");
+                yield return new WaitForSeconds(.5f);
+            }
+
+            // ReSharper disable once IteratorNeverReturns
+        }
     }
 
-    public static class CreepHelper
+    internal static class CreepHelper
     {
         public static void CreepTo(this ref float val, float target, float ratio)
         {

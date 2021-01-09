@@ -1,22 +1,17 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Chemistry;
 using UnityEngine;
-using Util;
-using Random = UnityEngine.Random;
 
 namespace ChemistryMicro
 {
     public class SubstanceColor
     {
-        private static readonly int NSubstances;
         private static readonly Color[] SubstanceColors;
         public static readonly NamedColor[] NamedColors;
 
         static SubstanceColor()
         {
-            NSubstances = EnumUtils.EnumCount(typeof(Substance));
-            SubstanceColors = new Color[NSubstances];
+            SubstanceColors = new Color[SubstanceHelper.NSubstances];
             for (var i = 0; i < SubstanceColors.Length; i++)
                 SubstanceColors[i] = Color.HSVToRGB(Random.Range(0f, 1f), 1, .5f);
             SubstanceColors[(int) Substance.Fat] = Color.magenta;
@@ -24,7 +19,7 @@ namespace ChemistryMicro
             SubstanceColors[(int) Substance.Skin] = Color.blue;
             SubstanceColors[(int) Substance.SkinGrowthFactor] = Color.gray;
             SubstanceColors[(int) Substance.SkinAgeFactor] = Color.black;
-            NamedColors = Enum.GetValues(typeof(Substance)).Cast<Substance>()
+            NamedColors = SubstanceHelper.Substances
                 .Select((substance, index) =>
                     new NamedColor(index, substance, substance.ToString(), SubstanceColors[index]))
                 .ToArray();
@@ -37,7 +32,7 @@ namespace ChemistryMicro
             var initMass = mix.contents[0];
             var sum = initMass;
             var color = initMass * SubstanceColors[0];
-            for (var i = 1; i < NSubstances; i++)
+            for (var i = 1; i < SubstanceHelper.NSubstances; i++)
             {
                 var mass = mix.contents[i];
                 color += mass * SubstanceColors[i];

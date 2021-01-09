@@ -1,8 +1,6 @@
-﻿using System;
-using ChemistryMicro;
+﻿using ChemistryMicro;
 using Genetics;
 using UnityEngine;
-using Util;
 
 namespace Organelles.CauldronSensor
 {
@@ -17,7 +15,7 @@ namespace Organelles.CauldronSensor
             cauldron = GetComponentInParent<Cell.Cell>().Cauldron;
         }
 
-        public float[] Connect() => new float[1 + EnumUtils.EnumCount(typeof(Substance))];
+        public float[] Connect() => new float[1 + SubstanceHelper.NSubstances];
 
         public void Sense(float[] logits)
         {
@@ -29,9 +27,9 @@ namespace Organelles.CauldronSensor
             var nUsedLogits = 0;
             logits[nUsedLogits++] = Mathf.Clamp((Mathf.Log10(totalMass) + 1) / 2, -1, 1);
 
-            foreach (var substance in Enum.GetValues(typeof(Substance)))
+            foreach (var substance in SubstanceHelper.Substances)
             {
-                var relativeMass = Mathf.Clamp(cauldron[(Substance) substance] / totalMass, 0f, float.MaxValue);
+                var relativeMass = Mathf.Clamp(cauldron[substance] / totalMass, 0f, float.MaxValue);
                 relativeMass = float.IsNaN(relativeMass) ? 0f : relativeMass;
                 var logRelativeMass = Mathf.Log10(relativeMass);
                 logits[nUsedLogits++] = Mathf.Clamp(logRelativeMass, -1f, 1f);

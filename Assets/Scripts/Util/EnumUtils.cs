@@ -6,6 +6,8 @@ namespace Util
 {
     public static class EnumUtils
     {
+        private static readonly Dictionary<Type, int> Cache = new Dictionary<Type, int>();
+
         public static Dictionary<TK, TV> ParseNamedDictionary<TK, TV>(Dictionary<string, TV> namedDict)
             where TK : struct
         {
@@ -28,6 +30,9 @@ namespace Util
                 pair => pair.Value
             );
         }
+
+        public static int Count(Type type) =>
+            Cache.TryGetValue(type, out var cachedVal) ? cachedVal : Cache[type] = EnumCount(type);
 
         public static int EnumCount(Type t) => Enum.GetValues(t).Length;
     }

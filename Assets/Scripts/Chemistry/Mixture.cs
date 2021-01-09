@@ -13,7 +13,7 @@ namespace Chemistry
 
         public Mixture()
         {
-            contents = new float[EnumUtils.EnumCount(typeof(T))];
+            contents = new float[EnumUtils.Count(typeof(T))];
             cachedTotalMass = new Lazy<float>(Mass);
         }
 

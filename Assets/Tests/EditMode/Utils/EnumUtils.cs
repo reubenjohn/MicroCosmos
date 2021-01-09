@@ -38,6 +38,7 @@ namespace Tests.EditMode.Utils
         public void TestEnumCount()
         {
             Assert.AreEqual(2, EnumUtils.EnumCount(typeof(TestEnum)));
+            Assert.AreEqual(2, EnumUtils.Count(typeof(TestEnum)));
         }
     }
 }
