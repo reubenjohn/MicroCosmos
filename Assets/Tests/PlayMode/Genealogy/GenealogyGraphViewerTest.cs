@@ -34,15 +34,15 @@ namespace Tests.PlayMode.Genealogy
             tree.RegisterReproductionAndOffspring(new Node[] {rootNode}, cell1Node);
             layoutManager.RecalculateLayout();
 
-            Assert.AreEqual(new Vector3(60, -10, 0), LocalPositionOf(rootNode));
+            Assert.AreEqual(new Vector3(30, -5, 0), LocalPositionOf(rootNode));
 
             var rep0 = AsexualReproductionNodeOf(tree, cell0Node);
-            Assert.AreEqual(new Vector3(30, -30, 0), LocalPositionOf(rep0));
-            Assert.AreEqual(new Vector3(30, -50, 0), LocalPositionOf(cell0Node));
+            Assert.AreEqual(new Vector3(15, -15, 0), LocalPositionOf(rep0));
+            Assert.AreEqual(new Vector3(15, -25, 0), LocalPositionOf(cell0Node));
 
             var rep1 = AsexualReproductionNodeOf(tree, cell1Node);
-            Assert.AreEqual(new Vector3(90, -30, 0), LocalPositionOf(rep1));
-            Assert.AreEqual(new Vector3(90, -50, 0), LocalPositionOf(cell1Node));
+            Assert.AreEqual(new Vector3(45, -15, 0), LocalPositionOf(rep1));
+            Assert.AreEqual(new Vector3(45, -25, 0), LocalPositionOf(cell1Node));
 
             yield return null;
         }

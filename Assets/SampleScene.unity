@@ -247,7 +247,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   coalesceChemicalBlobs:
-    attractionInterval: 15
+    attractionInterval: 3
     cutOffRange: 0.5
     layerMask:
       serializedVersion: 2

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Brains
+﻿namespace Brains
 {
     public class DenseLayer
     {
@@ -22,9 +20,9 @@ namespace Brains
             var inputLength = inputs.Length;
             var outputLength = outputs.Length;
             if (inputLength > maxInputs)
-                throw new ArgumentException($"Input size {inputLength} exceeds limit of {maxInputs}");
+                throw new InputSizeMismatchException($"Input size {inputLength} exceeds limit of {maxInputs}");
             if (outputLength > maxOutputs)
-                throw new ArgumentException($"Output size {outputLength} exceeds limit of  {maxOutputs}");
+                throw new InputSizeMismatchException($"Output size {outputLength} exceeds limit of  {maxOutputs}");
             for (var outI = 0; outI < outputLength; outI++)
             {
                 outputs[outI] = biases[outI];

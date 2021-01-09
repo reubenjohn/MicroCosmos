@@ -15,14 +15,7 @@ namespace Brains.SimpleGeneticBrain1
         protected override void Start()
         {
             base.Start();
-            var livingDescription = new SimpleGeneticBrain1Description(
-                sensorLogits.Select(logits => logits.Length).Sum(),
-                actuatorLogits.Select(logits => logits.Length).Sum()
-            );
-            if (gene is IRepairableGene<SimpleGeneticBrain1Gene, SimpleGeneticBrain1Description> repairableGene)
-                gene = repairableGene.RepairGene(livingDescription);
-
-            neuralInterface = new NeuralInterface(sensorLogits, actuatorLogits, new SimpleNeuralNetwork1(gene));
+            ResetBrain();
         }
 
         public string GetNodeName() => gameObject.name;
@@ -53,6 +46,29 @@ namespace Brains.SimpleGeneticBrain1
 
         public ILivingComponent[] GetSubLivingComponents() => new ILivingComponent[] { };
 
-        protected override void React() => neuralInterface.React();
+        private void ResetBrain()
+        {
+            var livingDescription = new SimpleGeneticBrain1Description(
+                sensorLogits.Select(logits => logits.Length).Sum(),
+                actuatorLogits.Select(logits => logits.Length).Sum()
+            );
+            if (gene is IRepairableGene<SimpleGeneticBrain1Gene, SimpleGeneticBrain1Description> repairableGene)
+                gene = repairableGene.RepairGene(livingDescription);
+
+            neuralInterface = new NeuralInterface(sensorLogits, actuatorLogits, new SimpleNeuralNetwork1(gene));
+        }
+
+        protected override void React()
+        {
+            try
+            {
+                neuralInterface.React();
+            }
+            catch (InputSizeMismatchException)
+            {
+                ResetBrain();
+                neuralInterface.React();
+            }
+        }
     }
 }

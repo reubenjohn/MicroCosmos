@@ -1,5 +1,4 @@
-﻿using System;
-using Brains;
+﻿using Brains;
 using NUnit.Framework;
 using Util;
 
@@ -30,8 +29,8 @@ namespace Tests.EditMode.Brains
                 new[,] {{.8f, -.8f, .1f}, {.1f, .2f, .3f}},
                 new[] {-.4f, .2f}
             );
-            Assert.Throws<ArgumentException>(() => dense.Calculate(new[] {.4f, .2f, .1f, .1f}, new float[2]));
-            Assert.Throws<ArgumentException>(() => dense.Calculate(new[] {.4f, .2f, -.3f}, new float[3]));
+            Assert.Throws<InputSizeMismatchException>(() => dense.Calculate(new[] {.4f, .2f, .1f, .1f}, new float[2]));
+            Assert.Throws<InputSizeMismatchException>(() => dense.Calculate(new[] {.4f, .2f, -.3f}, new float[3]));
         }
     }
 }
