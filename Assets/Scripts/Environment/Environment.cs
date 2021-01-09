@@ -5,7 +5,7 @@ namespace Environment
 {
     public class Environment : MonoBehaviour
     {
-        private int ChemicalBlobCount { get; set; }
+        public int ChemicalBlobCount { get; set; }
         public int CellCount { get; private set; }
 
 

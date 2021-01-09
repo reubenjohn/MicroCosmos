@@ -48,14 +48,15 @@ namespace Environment
                 {
                     while (environment.CellCount >= maxCellCount)
                     {
-                        rollDiceInterval = Mathf.Min(rollDiceInterval * 1.1f, 1f);
-                        lifeProbability = lifeProbability * .9f;
+                        rollDiceInterval.CreepTo(1f, .1f);
                         Grapher.Log(rollDiceInterval, "SpontaneousLife.rollDiceInterval");
                         Grapher.Log(lifeProbability, "SpontaneousLife.lifeProbability");
                         yield return new WaitForSeconds(rollDiceInterval);
                     }
 
-                    rollDiceInterval = Mathf.Max(rollDiceInterval * .9f, .25f);
+                    rollDiceInterval.CreepTo(.05f, .1f);
+                    lifeProbability =
+                        Mathf.Clamp01((maxCellCount - environment.CellCount) / (float) environment.ChemicalBlobCount);
                     Grapher.Log(rollDiceInterval, "SpontaneousLife.rollDiceInterval");
                     Grapher.Log(lifeProbability, "SpontaneousLife.lifeProbability");
 
@@ -63,15 +64,14 @@ namespace Environment
                         continue;
                     foundBlobs = true;
                     if (Random.Range(0f, 1f) <= lifeProbability)
+                    {
                         GiveLife(blob);
-                    yield return new WaitForSeconds(rollDiceInterval);
+                        yield return new WaitForSeconds(rollDiceInterval);
+                    }
                 }
 
-                if (environment.CellCount < maxCellCount)
-                    lifeProbability += (1f - lifeProbability) * .1f;
-
                 if (!foundBlobs)
-                    rollDiceInterval = Mathf.Min(rollDiceInterval * 1.1f, 1f);
+                    rollDiceInterval.CreepTo(1f, .1f);
 
                 yield return new WaitForSeconds(rollDiceInterval);
             }
@@ -101,6 +101,14 @@ namespace Environment
                 ),
                 blob
             );
+        }
+    }
+
+    public static class CreepHelper
+    {
+        public static void CreepTo(this ref float val, float target, float ratio)
+        {
+            val += (target - val) * ratio;
         }
     }
 }
