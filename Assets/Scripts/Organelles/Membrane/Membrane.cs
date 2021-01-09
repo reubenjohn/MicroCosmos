@@ -14,7 +14,6 @@ namespace Organelles.Membrane
         private readonly CircularAttachmentRing attachmentAdapter = new CircularAttachmentRing();
         private CellCauldron.CellCauldron cauldron;
         private Cell.Cell cell;
-        private readonly Control.BinaryControlVariable growSkin = new Control.BinaryControlVariable(1f);
         private SpriteMask ringInnerMask;
 
         private float Radius
@@ -45,11 +44,9 @@ namespace Organelles.Membrane
             ringInnerMask.transform.localScale = Vector3.one * relativeInnerRadius;
             var ratio = ThicknessRatio(relativeInnerRadius);
             var belowTarget = ratio < gene.relativeThickness;
-            growSkin.FeedInput(belowTarget, !belowTarget, Time.deltaTime);
-            if (cell.IsInFocus) Grapher.Log(growSkin.Value, "GrowSkinDesire");
-            if (belowTarget && cauldron[Substance.Fat] > 0 && growSkin.Value > 0)
+            if (belowTarget && cauldron[Substance.Fat] > 0)
             {
-                cauldron.Convert(RecipeBook.Singleton[Recipe.GrowSkin], growSkin.Value);
+                cauldron.Convert(RecipeBook.Singleton[Recipe.GrowSkin]);
                 ratio = ThicknessRatio(RelativeInnerRadius);
             }
 

@@ -124,6 +124,7 @@ namespace Organelles.CellCauldron
             dic[Substance.Fat.ToString()] = Random.Range(.5f, .8f);
             dic[Substance.Skin.ToString()] = Random.Range(.5f, .8f);
             dic[Substance.SkinGrowthFactor.ToString()] = Random.Range(.001f, .01f);
+            dic[Substance.SkinAgeFactor.ToString()] = .001f;
 
             var babyRelativeBirthMass = Mathf.Pow(10, Random.Range(-1f, -.35f));
             var totalMass = dic.Sum(pair => pair.Value);

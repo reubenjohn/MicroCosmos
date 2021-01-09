@@ -5,6 +5,7 @@ namespace ChemistryMicro
         Fat,
         Waste,
         SkinGrowthFactor,
-        Skin
+        Skin,
+        SkinAgeFactor
     }
 }

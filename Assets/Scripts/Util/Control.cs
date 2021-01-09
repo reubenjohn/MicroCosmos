@@ -18,6 +18,14 @@ namespace Util
 
         private static float ToLogit(bool boolean) => boolean ? 1 : 0;
 
+        public static float ExponentialDecayControlStep(float currentValue,
+            bool positiveInput, bool negativeInput, float inputSensitivity, float deltaTime)
+        {
+            var linearTarget = ToLogit(positiveInput) - ToLogit(negativeInput);
+            currentValue += Mathf.Clamp((linearTarget - currentValue) * inputSensitivity * deltaTime, -1f, 1f);
+            return currentValue;
+        }
+
         [Serializable]
         public class BinaryControlVariable
         {
@@ -30,10 +38,24 @@ namespace Util
 
             public float Value { get; set; }
 
-            public float FeedInput(bool positive, bool negative, float deltaTime)
+            public float FeedInput(bool positive, bool negative, float deltaTime) =>
+                Value = BinaryControlStep(Value, positive, negative, inputSensitivity, deltaTime);
+        }
+
+        [Serializable]
+        public class ExponentialDecayControlVariable
+        {
+            public float inputSensitivity;
+
+            public ExponentialDecayControlVariable(float inputSensitivity)
             {
-                return Value = BinaryControlStep(Value, positive, negative, inputSensitivity, deltaTime);
+                this.inputSensitivity = inputSensitivity;
             }
+
+            public float Value { get; set; }
+
+            public float FeedInput(bool positive, bool negative, float deltaTime) =>
+                Value = ExponentialDecayControlStep(Value, positive, negative, inputSensitivity, deltaTime);
         }
     }
 }

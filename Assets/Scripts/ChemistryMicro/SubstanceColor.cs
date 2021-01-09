@@ -21,8 +21,9 @@ namespace ChemistryMicro
                 SubstanceColors[i] = Color.HSVToRGB(Random.Range(0f, 1f), 1, .5f);
             SubstanceColors[(int) Substance.Fat] = Color.magenta;
             SubstanceColors[(int) Substance.Waste] = Color.HSVToRGB(.1f, .5f, .35f);
-            SubstanceColors[(int) Substance.SkinGrowthFactor] = Color.gray;
             SubstanceColors[(int) Substance.Skin] = Color.blue;
+            SubstanceColors[(int) Substance.SkinGrowthFactor] = Color.gray;
+            SubstanceColors[(int) Substance.SkinAgeFactor] = Color.black;
             NamedColors = Enum.GetValues(typeof(Substance)).Cast<Substance>()
                 .Select((substance, index) =>
                     new NamedColor(index, substance, substance.ToString(), SubstanceColors[index]))

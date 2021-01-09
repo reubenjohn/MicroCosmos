@@ -38,5 +38,29 @@ namespace Tests.EditMode.Utils
                 controlVar.FeedInput(true, false, .2f),
                 "BinaryControlVariable performs an exact BinaryControlStep");
         }
+
+        [Test]
+        public void TestExponentialDecayControlStep()
+        {
+            Assert.AreEqual(0f,
+                Control.ExponentialDecayControlStep(0f, false, false, 1f, 1f));
+            Assert.AreEqual(0f,
+                Control.ExponentialDecayControlStep(0f, true, true, 1f, 1f));
+
+            Assert.IsTrue(Mathf.Approximately(.82f,
+                    Control.ExponentialDecayControlStep(.1f, true, false, 4f, .2f)),
+                "Positive input increases by step limit");
+            Assert.IsTrue(Mathf.Approximately(-.78f,
+                    Control.ExponentialDecayControlStep(.1f, false, true, 4f, .2f)),
+                "Negative input increases by step limit");
+
+
+            Assert.IsTrue(Mathf.Approximately(1f,
+                    Control.ExponentialDecayControlStep(1f, true, false, 4f, .2f)),
+                "Does not cross upper limit");
+            Assert.IsTrue(Mathf.Approximately(-1f,
+                    Control.ExponentialDecayControlStep(-1f, false, true, 4f, .2f)),
+                "Does not cross lower limit");
+        }
     }
 }
