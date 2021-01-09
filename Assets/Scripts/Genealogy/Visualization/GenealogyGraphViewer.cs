@@ -14,7 +14,7 @@ namespace Genealogy.Visualization
     [RequireComponent(typeof(Canvas))]
     public class GenealogyGraphViewer : MonoBehaviour, ILayoutChangeListener<LayoutNode>, IChoreographerListener
     {
-        public static readonly Vector2 DisplayScale = new Vector2(60, 20);
+        public static readonly Vector2 DisplayScale = new Vector2(30, 10);
 
         private readonly List<IGraphViewerListener> listeners = new List<IGraphViewerListener>();
 
