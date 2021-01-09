@@ -41,7 +41,7 @@ namespace Organelles.Orifice
         private CircularAttachmentGene MutateMembraneAttachment(CircularAttachmentGene attachment) =>
             new CircularAttachmentGene
             {
-                preferredAngle = attachment.preferredAngle.Mutate(5f), // TODO Handle overflow
+                preferredAngle = 0,
                 angularDisplacement = attachment.angularDisplacement.MutateClamped(
                     attachment.angularDisplacement * .1f, .1f, 90f)
             };

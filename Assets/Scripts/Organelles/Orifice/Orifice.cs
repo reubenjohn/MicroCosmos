@@ -1,5 +1,6 @@
 ﻿using Environment;
 using Genetics;
+using Structural;
 using UnityEngine;
 
 namespace Organelles.Orifice
@@ -50,6 +51,12 @@ namespace Organelles.Orifice
             transform.localScale = inheritedGene.size * Vector2.one;
             orificeSprite.color = Color.Lerp(Color.gray, orificeSprite.color,
                 OrificeGeneTranscriber.NormalizedTransferRate(inheritedGene.transferRate));
+
+            GetComponentInParent<Membrane.Membrane>()
+                .Attach(new CircularAttachment(
+                    transform,
+                    inheritedGene.circularMembraneAttachment
+                ));
             return base.OnInheritGene(inheritedGene);
         }
 

@@ -23,7 +23,6 @@ namespace Organelles.BirthCanal
 
         public Control.BinaryControlVariable birthSignal = new Control.BinaryControlVariable(1);
 
-        private CircularAttachment attachment;
         private Cell.Cell cell;
 
         private Vector3 SpawnPoint => transform.Find("SpawnPoint").position;
@@ -108,12 +107,11 @@ namespace Organelles.BirthCanal
 
         public override Transform OnInheritGene(BirthCanalGene inheritedGene)
         {
-            attachment = new CircularAttachment(
-                transform,
-                inheritedGene.circularMembraneAttachment
-            );
-            var membrane = GetComponentInParent<Membrane.Membrane>();
-            membrane.Attach(attachment);
+            GetComponentInParent<Membrane.Membrane>()
+                .Attach(new CircularAttachment(
+                    transform,
+                    inheritedGene.circularMembraneAttachment
+                ));
             return base.OnInheritGene(inheritedGene);
         }
 

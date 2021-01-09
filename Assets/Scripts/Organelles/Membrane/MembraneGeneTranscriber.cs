@@ -14,7 +14,7 @@ namespace Organelles.Membrane
             new SubOrganelleCountsSimpleMutator(new Dictionary<string, GeneMutator<float>>
             {
                 {BirthCanal.BirthCanal.ResourcePath, x => x.MutateClamped(.01f, .6f, .99f)},
-                {Orifice.Orifice.ResourcePath, x => x.MutateClamped(.01f, .6f, .99f)}
+                {Orifice.Orifice.ResourcePath, x => .6f}
             });
 
         private MembraneGeneTranscriber() { }
