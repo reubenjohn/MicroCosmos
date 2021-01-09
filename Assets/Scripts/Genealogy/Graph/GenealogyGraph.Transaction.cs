@@ -31,16 +31,13 @@ namespace Genealogy.Graph
             {
                 if (DateTime.Compare(transactionNode.CreatedAt, lastTransactionTime) <= 0)
                     throw new InvalidOperationException(
-                        "Cannot start a transaction with a node who's CreatedAt " +
-                        $"({transactionNode.CreatedAt}) <= " +
-                        $"lastTransactionTime ({lastTransactionTime})");
+                        $"Cannot start a transaction with a node who's CreatedAt ({transactionNode.CreatedAt}) <= lastTransactionTime ({lastTransactionTime})");
                 if (node != null)
-                    throw new InvalidOperationException("Cannot start new transaction until " +
-                                                        $"existing transaction for node {node} is complete");
+                    throw new InvalidOperationException(
+                        $"Cannot start new transaction until existing transaction for node {node} is complete");
                 if (relations.Count > 0)
                     throw new InvalidOperationException(
-                        "Cannot start new transaction until " +
-                        $"existing transaction of {relations.Count} relations including '{relations[0]}' is complete");
+                        $"Cannot start new transaction until existing transaction of {relations.Count} relations including '{relations[0]}' is complete");
 
                 node = transactionNode;
             }
@@ -50,20 +47,16 @@ namespace Genealogy.Graph
                 if (node != null)
                 {
                     if (relation.To.Guid != node.Guid)
-                        throw new InvalidOperationException($"Cannot add relations to node '{relation.To}' " +
-                                                            $"while in a transaction for node '{node}'");
+                        throw new InvalidOperationException(
+                            $"Cannot add relations to node '{relation.To}' while in a transaction for node '{node}'");
                     if (!DateTime.Equals(relation.DateTime, node.CreatedAt))
                         throw new InvalidOperationException(
-                            "Cannot add relation to transaction. " +
-                            $"Relation's creation time '{relation.DateTime}' " +
-                            $"must equal transaction node's creation time {node.CreatedAt}");
+                            $"Cannot add relation to transaction. Relation's creation time '{relation.DateTime}' must equal transaction node's creation time {node.CreatedAt}");
                 }
                 else if (relations.Count > 0)
                 {
                     throw new InvalidOperationException(
-                        "Cannot add relation. Non node transactions can only consist of a single relation. " +
-                        $"Current transaction already contains relation '{relations[0]}' " +
-                        $"and thus relation '{relation}' cannot be added");
+                        $"Cannot add relation. Non node transactions can only consist of a single relation. Current transaction already contains relation '{relations[0]}' and thus relation '{relation}' cannot be added");
                 }
 
                 relations.Add(relation);
@@ -78,8 +71,8 @@ namespace Genealogy.Graph
                 if (node != null)
                 {
                     if (genealogyGraph.nodes.ContainsKey(node.Guid))
-                        throw new InvalidOperationException("Cannot complete transaction. " +
-                                                            $"Node {node} already exists in the tree");
+                        throw new InvalidOperationException(
+                            $"Cannot complete transaction. Node {node} already exists in the tree");
                     genealogyGraph.nodes.Add(node.Guid, node);
                 }
 

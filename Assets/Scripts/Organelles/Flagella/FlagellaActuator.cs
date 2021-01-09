@@ -6,7 +6,7 @@ namespace Organelles.Flagella
 {
     public class FlagellaActuator : AbstractLivingComponent<FlagellaGene>, IActuator
     {
-        public static readonly string ResourcePath = "Organelles/Flagella1";
+        public const string ResourcePath = "Organelles/Flagella1";
         public static readonly string ActuatorType = typeof(FlagellaActuator).FullName;
         private static readonly int Speed = Animator.StringToHash("Speed");
         private Cell.Cell cell;

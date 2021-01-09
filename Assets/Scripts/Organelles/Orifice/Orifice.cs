@@ -7,8 +7,8 @@ namespace Organelles.Orifice
 {
     public class Orifice : AbstractLivingComponent<OrificeGene>, IActuator
     {
+        public const string ResourcePath = "Organelles/Orifice1";
         public static readonly string ActuatorType = typeof(Orifice).FullName;
-        public static readonly string ResourcePath = "Organelles/Orifice1";
 
         public ContactFilter2D contactFilter;
         private readonly Collider2D[] collidersInRange = new Collider2D[1];

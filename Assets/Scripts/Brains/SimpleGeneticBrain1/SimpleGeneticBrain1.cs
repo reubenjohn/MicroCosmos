@@ -7,7 +7,7 @@ namespace Brains.SimpleGeneticBrain1
 {
     public class SimpleGeneticBrain1 : AbstractBrain, ILivingComponent<SimpleGeneticBrain1Gene>
     {
-        public static readonly string ResourcePath = "Organelles/GeneticBrain1";
+        public const string ResourcePath = "Organelles/GeneticBrain1";
         private SimpleGeneticBrain1Gene gene;
 
         private NeuralInterface neuralInterface;

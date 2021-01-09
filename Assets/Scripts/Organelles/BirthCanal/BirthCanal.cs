@@ -13,7 +13,7 @@ namespace Organelles.BirthCanal
 {
     public class BirthCanal : AbstractLivingComponent<BirthCanalGene>, IActuator
     {
-        public static readonly string ResourcePath = "Organelles/BirthCanal1";
+        public const string ResourcePath = "Organelles/BirthCanal1";
         public static readonly string ActuatorType = typeof(BirthCanal).FullName;
 
         private static readonly Mixture<Substance> UnitFatMix = new MixtureDictionary<Substance>

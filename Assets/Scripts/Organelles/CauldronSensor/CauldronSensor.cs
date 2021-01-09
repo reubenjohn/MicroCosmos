@@ -6,7 +6,7 @@ namespace Organelles.CauldronSensor
 {
     public class CauldronSensor : AbstractLivingComponent<CauldronSensorGene>, ISensor
     {
-        public static readonly string ResourcePath = "Organelles/CauldronSensor1";
+        public const string ResourcePath = "Organelles/CauldronSensor1";
 
         private CellCauldron.CellCauldron cauldron;
 

@@ -9,7 +9,7 @@ namespace Organelles.ProximitySensor
 {
     public class ProximitySensor : AbstractLivingComponent<ProximitySensorGene>, ISensor
     {
-        public static readonly string ResourcePath = "Organelles/ProximitySensor";
+        public const string ResourcePath = "Organelles/ProximitySensor";
 
         public LayerMask cellLayerMask;
         public LayerMask chemicalBlobLayerMask;

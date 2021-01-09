@@ -9,8 +9,8 @@ namespace Organelles.Membrane
 {
     public class Membrane : AbstractLivingComponent<MembraneGene>
     {
-        public static readonly string ResourcePath = "Organelles/Membrane1";
-        private static readonly float MinMembraneRatio = .05f;
+        public const string ResourcePath = "Organelles/Membrane1";
+        private const float MinMembraneRatio = .05f;
         private readonly CircularAttachmentRing attachmentAdapter = new CircularAttachmentRing();
         private CellCauldron.CellCauldron cauldron;
         private Cell.Cell cell;

@@ -16,8 +16,8 @@ namespace Cell
     [RequireComponent(typeof(Rigidbody2D), typeof(CellCauldron))]
     public class Cell : AbstractLivingComponent<CellGene>
     {
-        public static readonly string ResourcePath = "Cells/Cell1";
-        public static readonly float MinMass = .01f;
+        public const string ResourcePath = "Cells/Cell1";
+        public const float MinMass = .01f;
 
         private CellNode genealogyNode;
         private Rigidbody2D rb;
