@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Genealogy.Graph;
 
 namespace Genealogy.Layout.Asexual
@@ -30,20 +31,11 @@ namespace Genealogy.Layout.Asexual
             }
             else
             {
-                if (node == null) throw new ArgumentException(); // Why is this needed?
-
                 if (relations.Count > 1) throw new InvalidOperationException("Currently unsupported");
                 var parent = layoutInfo[relations[0].From.Guid]; // Assume single asexual parent
-                if (node.NodeType != NodeType.Death)
-                {
-                    RegisterNode(new LayoutNode(listeners, node, parent));
-                    foreach (var listener in listeners) listener.OnAddConnections(relations);
-                }
-                else
-                {
-                    parent.Remove();
-                    parent.Parent.Remove();
-                }
+                var newNode = RegisterNode(new LayoutNode(listeners, node, parent));
+                foreach (var listener in listeners) listener.OnAddConnections(relations);
+                if (node.NodeType == NodeType.Death) PruneAncestry(newNode.Parent);
             }
 
             if (LiveLayoutEnabled)
@@ -54,6 +46,25 @@ namespace Genealogy.Layout.Asexual
         {
             foreach (var listener in listeners) listener.OnClear();
             layoutInfo.Clear();
+        }
+
+        private void PruneAncestry(LayoutNode cellNode)
+        {
+            var myDeathNode = cellNode.children.Find(child => child.Node.NodeType == NodeType.Death);
+            if (myDeathNode != null)
+            {
+                var iAnyLivingChildren = cellNode.children.Any(child => child.Node.NodeType == NodeType.Reproduction);
+                if (!iAnyLivingChildren)
+                {
+                    var reproductionNode = cellNode.Parent;
+                    var parentNode = reproductionNode.Parent;
+
+                    myDeathNode.Remove();
+                    cellNode.Remove();
+                    reproductionNode.Remove();
+                    PruneAncestry(parentNode);
+                }
+            }
         }
 
         private LayoutNode RegisterNode(LayoutNode node)

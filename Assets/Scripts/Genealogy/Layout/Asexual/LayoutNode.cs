@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.IO;
 using Genealogy.Graph;
 using JetBrains.Annotations;
+using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Genealogy.Layout.Asexual
 {
     public class LayoutNode
     {
-        private readonly List<LayoutNode> children;
+        [JsonIgnore] public readonly List<LayoutNode> children;
+
         private readonly List<ILayoutChangeListener<LayoutNode>> listeners;
 
         public LayoutNode(List<ILayoutChangeListener<LayoutNode>> layoutChangeListeners,
