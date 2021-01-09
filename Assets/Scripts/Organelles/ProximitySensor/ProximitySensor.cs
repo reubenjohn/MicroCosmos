@@ -41,14 +41,15 @@ namespace Organelles.ProximitySensor
 
         public void OnTriggerExit2D(Collider2D other) => collidersInRange.Remove(other);
 
-        public float[] Connect() => new float[2 + EnumUtils.EnumCount(typeof(Substance))];
+        public float[] Connect() => new float[3 + EnumUtils.EnumCount(typeof(Substance))];
 
         public void Sense(float[] logits)
         {
             for (var i = 0; i < logits.Length; i++)
                 logits[i] = -1;
-            logits[0] = 1;
-            var nUsedLogits = 0;
+            logits[0] = -1;
+            logits[1] = -1;
+            logits[2] = -1;
 
             collidersInRange.RemoveAll(coll => coll == null);
 
@@ -56,23 +57,40 @@ namespace Organelles.ProximitySensor
 
             if (collidersInRange.Count > 0)
             {
-                var closestColliderArgMin = ArgMin(collidersInRange, DistanceToCollider);
-                var closestCollider = closestColliderArgMin.Item1;
+                var (closestCollider, closestDist) = ArgMin(collidersInRange, DistanceToCollider);
 
-                var closestDistance = Mathf.Min(closestColliderArgMin.Item2, 1);
-                spriteRenderer.color = Color.Lerp(Color.HSVToRGB(0, 1f, 1f), spriteRenderer.color, closestDistance);
-                var distanceLogit = 1 - 2 * closestDistance;
+                var normalizedDist = Mathf.Min(closestDist, 1);
+                spriteRenderer.color = Color.Lerp(Color.HSVToRGB(0, 1f, 1f), spriteRenderer.color, normalizedDist);
+                var distanceLogit = 1 - normalizedDist;
                 if (cell.IsInFocus)
-                    // TODO Handle multiple proximity sensors
-                    Grapher.Log(distanceLogit, "Proximity.Closeness", Color.green);
-                logits[nUsedLogits++] = distanceLogit;
+                    Grapher.Log(distanceLogit, "Proximity.Closeness",
+                        Color.green); // TODO Handle multiple proximity sensors
+
 
                 var layerFlag = 1 << closestCollider.gameObject.layer;
 
-                if ((layerFlag & chemicalBlobLayerMask) != 0)
+                string targetType = null;
+                if ((layerFlag & cellLayerMask) != 0)
+                {
+                    targetType = "CELL";
+                    logits[0] = distanceLogit;
+                }
+                else if ((layerFlag & chemicalBlobLayerMask) != 0)
+                {
+                    targetType = "CHEMICAL_BLOB";
+                    logits[1] = distanceLogit;
+                }
+                else if ((layerFlag & inertObstacleLayerMask) != 0)
+                {
+                    targetType = "INERT";
+                    logits[2] = distanceLogit;
+                }
+
+                var nUsedLogits = 3;
+
+                if (targetType == "CHEMICAL_BLOB")
                 {
                     var flask = closestCollider.GetComponent<ChemicalBlob>();
-                    logits[nUsedLogits++] = -.25f;
                     ActivateChemicalLogits(logits, flask, ref nUsedLogits);
                 }
 
