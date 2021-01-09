@@ -43,7 +43,7 @@ namespace Brains.SimpleGeneticBrain1
             var oldBiasesLength = gene.Biases.Length;
             var newBiasesLength = Mathf.Max(gene.Biases.Length, interfaceDescription.OutputLength);
 
-            if (interfaceDescription.InputLength <= oldWeightsLength1 &&
+            if (interfaceDescription.InputLength <= oldWeightsLength2 &&
                 interfaceDescription.OutputLength <= oldBiasesLength)
                 return gene;
 

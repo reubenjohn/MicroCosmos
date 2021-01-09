@@ -57,7 +57,7 @@ namespace Environment
                 yield return new WaitForSeconds(divineRecycling.divineRecycleInterval);
                 if (flask != null && !Mathf.Approximately(flask[Substance.Fat], flask.TotalMass))
                 {
-                    HaloPopQueue.Instance.PlacePopOrder(transform, divineRecycling.popAnimationColor);
+                    HaloPopQueue.Instance.Enqueue(transform, divineRecycling.popAnimationColor);
                     var blobMix = flask.ToMixture();
                     var reaction = new Reaction<Substance>(blobMix, UnitFatMix * blobMix.TotalMass);
                     flask.Convert(reaction);

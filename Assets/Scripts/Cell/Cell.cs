@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Cinematics;
 using Environment;
 using Genealogy.Graph;
 using Genetics;
@@ -42,6 +43,8 @@ namespace Cell
             Cauldron = GetComponent<CellCauldron>();
             GenealogyGraphManager = GetComponentInParent<GenealogyGraphManager>();
         }
+
+        private void Start() => HaloPopQueue.Instance.Enqueue(transform, Color.green, 1.5f);
 
         public override CellGene GetGene()
         {
@@ -100,6 +103,7 @@ namespace Cell
 
         public void Die()
         {
+            HaloPopQueue.Instance.Enqueue(transform, Color.red, 2f);
             Cauldron.DestroyConservatively();
             if (GenealogyGraphManager != null)
                 GenealogyGraphManager.RegisterDeath(genealogyNode);

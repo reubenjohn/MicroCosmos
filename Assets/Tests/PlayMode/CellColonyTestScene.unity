@@ -237,7 +237,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c88f535da5783e458ec6c65442b9ec1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  saveFile: save2
 --- !u!4 &1609388056
 Transform:
   m_ObjectHideFlags: 0
@@ -266,7 +265,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   choreographer: {fileID: 0}
   viewer: {fileID: 0}
-  saveFile: genealogy1
 --- !u!50 &1609388059
 Rigidbody2D:
   serializedVersion: 4
@@ -300,6 +298,7 @@ GameObject:
   - component: {fileID: 1643067452}
   - component: {fileID: 1643067449}
   - component: {fileID: 1643067451}
+  - component: {fileID: 1643067453}
   m_Layer: 0
   m_Name: Environment
   m_TagString: Untagged
@@ -319,7 +318,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c2356c8df2854f0a97fcfa97d1710873, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  saveFile: chemicalSink1
 --- !u!4 &1643067450
 Transform:
   m_ObjectHideFlags: 0
@@ -366,5 +364,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4e879ea396634df8b70a331265e1bbe3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1643067453
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1643067448}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1af75d5d27d42b1a319a304e79f4745, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
