@@ -28,6 +28,7 @@
           "resource": "Organelles/Membrane1",
           "gene": {
             "radius": 0.25,
+            "relativeThickness": 0.1,
             "nSubOrganelles": {
               "Organelles/BirthCanal1": 0.365015328
             }
@@ -78,6 +79,7 @@
           "resource": "Organelles/Membrane1",
           "gene": {
             "radius": 0.25,
+            "relativeThickness": 0.1,
             "nSubOrganelles": {
               "Organelles/BirthCanal1": 0.0
             }

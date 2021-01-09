@@ -73,14 +73,14 @@ namespace Tests.PlayMode.Persistence
 
             microCosmos.OnSave();
 
-            // Debug.Log(File.ReadAllText(SubsystemsPersistence.GetSavePath(saveDir, cellColony)));
+            // Debug.Log(Serialization.ReadAllCompressedText(SubsystemsPersistence.GetSavePath(saveDir, chemicalSink)));
             Assert.AreEqual(
                 Resources.Load<TextAsset>($"{nameof(MicroCosmosPersistenceTest)}-{nameof(ChemicalSink)}-after").text,
-                File.ReadAllText(SubsystemsPersistence.GetSavePath(saveDir, chemicalSink)));
+                Serialization.ReadAllCompressedText(SubsystemsPersistence.GetSavePath(saveDir, chemicalSink)));
             Assert.AreEqual(resourceTexts["Environment.GenealogyGraphManager"],
-                File.ReadAllText(SubsystemsPersistence.GetSavePath(saveDir, graphManager)));
+                Serialization.ReadAllCompressedText(SubsystemsPersistence.GetSavePath(saveDir, graphManager)));
             Assert.AreEqual(resourceTexts["Environment.CellColony"],
-                File.ReadAllText(SubsystemsPersistence.GetSavePath(saveDir, cellColony)));
+                Serialization.ReadAllCompressedText(SubsystemsPersistence.GetSavePath(saveDir, cellColony)));
         }
     }
 }
