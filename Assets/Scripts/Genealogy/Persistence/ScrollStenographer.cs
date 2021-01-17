@@ -25,11 +25,11 @@ namespace Genealogy.Persistence
             StartScroll();
         }
 
-        public void OnTransactionComplete(GenealogyGraph genealogyGraph, Node node, List<Relation> relations)
+        public void OnTransactionComplete(GenealogyGraph genealogyGraph, Node node, Relation[] relations)
         {
             lock (writer)
             {
-                if (relations.Count == 0)
+                if (relations.Length == 0)
                     serializer.Serialize(writer, new GenealogyScrollRootEntry(node), typeof(GenealogyScrollEntryBase));
                 else
                     serializer.Serialize(writer, new GenealogyScrollEntry(node, relations),

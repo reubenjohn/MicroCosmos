@@ -1,10 +1,8 @@
-﻿using System.Collections.Generic;
-
-namespace Genealogy.Graph
+﻿namespace Genealogy.Graph
 {
     public interface IGenealogyGraphListener
     {
-        void OnTransactionComplete(GenealogyGraph genealogyGraph, Node node, List<Relation> relations);
+        void OnTransactionComplete(GenealogyGraph genealogyGraph, Node node, Relation[] relations);
         void OnClear();
     }
 }

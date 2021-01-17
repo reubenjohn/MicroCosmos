@@ -266,7 +266,7 @@ Assertion message:
         private class TestLayoutChangeListener : ILayoutChangeListener<LayoutNode>
         {
             public readonly List<LayoutNode> addedNodes = new List<LayoutNode>();
-            public readonly List<List<Relation>> addedRelations = new List<List<Relation>>();
+            public readonly List<Relation[]> addedRelations = new List<Relation[]>();
             public readonly List<LayoutNode> removedNodes = new List<LayoutNode>();
             public readonly List<LayoutNode> updatedNodes = new List<LayoutNode>();
             public int NClears { get; private set; }
@@ -280,7 +280,7 @@ Assertion message:
                 removedNodes.Add(layout);
             }
 
-            public void OnAddConnections(List<Relation> relations) => addedRelations.Add(relations);
+            public void OnAddConnections(Relation[] relations) => addedRelations.Add(relations);
 
             public void OnClear() => NClears = NClears + 1;
         }

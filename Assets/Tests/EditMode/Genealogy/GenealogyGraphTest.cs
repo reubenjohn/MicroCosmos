@@ -64,13 +64,11 @@ namespace Tests.EditMode.Genealogy
             StringAssert.Contains($"Please first register the 'from' side node: '{node1.Guid}'", invalidOp.Message);
             Assert.AreEqual(0, nodes.Count);
             Assert.AreEqual(0, relations.Count);
-            tree.AbortTransaction();
 
             nodes.Add(node1.Guid, node1);
             invalidOp = Assert.Throws<InvalidOperationException>(() =>
                 tree.RegisterRelation(new Relation(node1, RelationType.Reproduction, node2)));
             StringAssert.Contains($"Please first register the 'to' side node: '{node2.Guid}'", invalidOp.Message);
-            tree.AbortTransaction();
             Assert.AreEqual(1, nodes.Count);
             Assert.AreEqual(0, relations.Count);
 

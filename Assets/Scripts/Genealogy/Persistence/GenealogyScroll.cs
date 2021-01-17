@@ -39,12 +39,12 @@ namespace Genealogy.Persistence
     public class GenealogyScrollEntry : GenealogyScrollEntryBase
     {
         [JsonConstructor]
-        public GenealogyScrollEntry(Node node, List<Relation> relations) : base(node)
+        public GenealogyScrollEntry(Node node, Relation[] relations) : base(node)
         {
             Relations = relations;
         }
 
-        public List<Relation> Relations { get; private set; }
+        public Relation[] Relations { get; private set; }
 
         public override void Dispose()
         {

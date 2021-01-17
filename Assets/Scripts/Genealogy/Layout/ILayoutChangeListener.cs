@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Genealogy.Graph;
+﻿using Genealogy.Graph;
 
 namespace Genealogy.Layout
 {
@@ -8,7 +7,7 @@ namespace Genealogy.Layout
         void OnUpdateNode(T layout);
         void OnAddNode(T layout);
         void OnRemoveNode(T layout);
-        void OnAddConnections(List<Relation> relations);
+        void OnAddConnections(Relation[] relations);
         void OnClear();
     }
 }

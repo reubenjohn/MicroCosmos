@@ -13,6 +13,8 @@ namespace Genealogy.Graph
         private readonly Dictionary<Guid, List<Relation>> relationsByTo;
 
         private readonly Transaction transaction;
+
+        private readonly Relation[] unitRelation = new Relation[1];
         public Node rootNode;
 
         public GenealogyGraph(Dictionary<Guid, Node> nodes, Dictionary<Tuple<Guid, Guid>, Relation> relations)
@@ -78,15 +80,12 @@ namespace Genealogy.Graph
             var reproductionTime = new DateTime(child.CreatedAt.Ticks - 1);
             var reproduction = new Reproduction(Guid.NewGuid(), reproductionTime);
 
-            transaction.StartNew(reproduction);
-            foreach (var parent in parents)
-                transaction.AddRelation(new Relation(parent, RelationType.Reproduction, reproduction,
-                    reproductionTime));
-            transaction.Complete();
+            transaction.ExecuteAddTransaction(reproduction, parents.Select(
+                    parent => new Relation(parent, RelationType.Reproduction, reproduction, reproductionTime))
+                .ToArray());
 
-            transaction.StartNew(child);
-            transaction.AddRelation(new Relation(reproduction, RelationType.Offspring, child, child.CreatedAt));
-            transaction.Complete();
+            unitRelation[0] = new Relation(reproduction, RelationType.Offspring, child, child.CreatedAt);
+            transaction.ExecuteAddTransaction(child, unitRelation);
 
             return reproduction;
         }
@@ -101,12 +100,9 @@ namespace Genealogy.Graph
                 throw new InvalidOperationException(
                     $"A reproduction can only be registered once. Reproduction '{reproduction.Guid}' was already first registered at {existingReproduction.CreatedAt}");
 
-            transaction.StartNew(reproduction);
-            foreach (var parent in parents)
-                transaction.AddRelation(new Relation(parent, RelationType.Reproduction, reproduction,
-                    reproduction.CreatedAt));
-            transaction.Complete();
-
+            transaction.ExecuteAddTransaction(reproduction, parents.Select(
+                    parent => new Relation(parent, RelationType.Reproduction, reproduction, reproduction.CreatedAt))
+                .ToArray());
             return reproduction;
         }
 
@@ -119,9 +115,8 @@ namespace Genealogy.Graph
                 throw new InvalidOperationException(
                     $"A reproduction can only be registered once. Reproduction '{reproduction.Guid}' was already first registered at {existingChild.CreatedAt}");
 
-            transaction.StartNew(child);
-            transaction.AddRelation(new Relation(reproduction, RelationType.Offspring, child, child.CreatedAt));
-            transaction.Complete();
+            unitRelation[0] = new Relation(reproduction, RelationType.Offspring, child, child.CreatedAt);
+            transaction.ExecuteAddTransaction(child, unitRelation);
 
             return reproduction;
         }
@@ -138,73 +133,27 @@ namespace Genealogy.Graph
                 throw new InvalidOperationException(
                     $"A death can only be registered once. CellDeath '{cellDeath.Guid}' was already first registered at {existingDeath.CreatedAt}");
 
-            transaction.StartNew(cellDeath);
-            transaction.AddRelation(new Relation(cellNode, RelationType.Death, cellDeath, cellDeath.CreatedAt));
-            transaction.Complete();
+            unitRelation[0] = new Relation(cellNode, RelationType.Death, cellDeath, cellDeath.CreatedAt);
+            transaction.ExecuteAddTransaction(cellDeath, unitRelation);
 
             return cellDeath;
         }
 
         public Relation RegisterRelation(Relation relation)
         {
-            transaction.AddRelation(relation);
-            transaction.Complete();
+            unitRelation[0] = relation;
+            transaction.ExecuteAddRelationTransaction(unitRelation);
             return relation;
         }
 
-        private Relation[] RegisterRelationsWithoutNotify(params Relation[] relationsToAdd)
-        {
-            foreach (var relation in relationsToAdd)
-            {
-                if (!nodes.ContainsKey(relation.From.Guid))
-                    throw new InvalidOperationException(
-                        $"Participating nodes must first themselves be registered before a relationship between them can be registered. Please first register the 'from' side node: '{relation.From.Guid}'");
-                if (!nodes.ContainsKey(relation.To.Guid))
-                    throw new InvalidOperationException(
-                        $"Participating nodes must first themselves be registered before a relationship between them can be registered. Please first register the 'to' side node: '{relation.To.Guid}'");
+        public void AddListener(IGenealogyGraphListener listener) => listeners.Add(listener);
 
-                if (relations.TryGetValue(relation.Key, out var existingRelation))
-                    throw new InvalidOperationException(
-                        $"There can only exist a single relation between two nodes. Existing relation: '{existingRelation}'");
-            }
-
-            foreach (var relation in relationsToAdd)
-            {
-                relations.Add(relation.Key, relation);
-
-                {
-                    if (relationsByFrom.TryGetValue(relation.From.Guid, out var fromRelations))
-                        fromRelations.Add(relation);
-                    else
-                        relationsByFrom.Add(relation.From.Guid, new List<Relation> {relation});
-                }
-
-                {
-                    if (relationsByTo.TryGetValue(relation.To.Guid, out var toRelations))
-                        toRelations.Add(relation);
-                    else
-                        relationsByTo.Add(relation.To.Guid, new List<Relation> {relation});
-                }
-            }
-
-            return relationsToAdd;
-        }
-
-        public void AddListener(IGenealogyGraphListener listener)
-        {
-            listeners.Add(listener);
-        }
-
-        public void RemoveListener(IGenealogyGraphListener listener)
-        {
-            listeners.Remove(listener);
-        }
+        public void RemoveListener(IGenealogyGraphListener listener) => listeners.Remove(listener);
 
         public void RegisterRootNode(Node root)
         {
             if (NodeCount > 0) throw new InvalidOperationException("The root node must be the first node registered");
-            transaction.StartNew(root);
-            transaction.Complete();
+            transaction.ExecuteRootNodeTransaction(root);
             rootNode = root;
         }
     }

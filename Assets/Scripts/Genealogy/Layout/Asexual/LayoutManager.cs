@@ -23,15 +23,15 @@ namespace Genealogy.Layout.Asexual
 
         public bool LiveLayoutEnabled { get; set; }
 
-        public void OnTransactionComplete(GenealogyGraph genealogyGraph, Node node, List<Relation> relations)
+        public void OnTransactionComplete(GenealogyGraph genealogyGraph, Node node, Relation[] relations)
         {
-            if (relations.Count == 0) // Root node registration
+            if (relations.Length == 0) // Root node registration
             {
                 rootNode = RegisterNode(new LayoutNode(listeners, node, null));
             }
             else
             {
-                if (relations.Count > 1) throw new InvalidOperationException("Currently unsupported");
+                if (relations.Length > 1) throw new InvalidOperationException("Currently unsupported");
                 var parent = layoutInfo[relations[0].From.Guid]; // Assume single asexual parent
                 var newNode = RegisterNode(new LayoutNode(listeners, node, parent));
                 foreach (var listener in listeners) listener.OnAddConnections(relations);

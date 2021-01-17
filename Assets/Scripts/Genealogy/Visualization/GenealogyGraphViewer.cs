@@ -54,7 +54,7 @@ namespace Genealogy.Visualization
             viewerHandle.OnDestroy();
         }
 
-        public void OnAddConnections(List<Relation> relations)
+        public void OnAddConnections(Relation[] relations)
         {
             foreach (var relation in relations)
             {
