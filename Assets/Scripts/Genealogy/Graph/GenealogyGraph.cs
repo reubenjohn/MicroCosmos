@@ -146,6 +146,12 @@ namespace Genealogy.Graph
             return relation;
         }
 
+        public Node RemoveNodeAndRelations(Node node)
+        {
+            transaction.ExecuteRemoveNodeAndRelations(node);
+            return node;
+        }
+
         public void AddListener(IGenealogyGraphListener listener) => listeners.Add(listener);
 
         public void RemoveListener(IGenealogyGraphListener listener) => listeners.Remove(listener);

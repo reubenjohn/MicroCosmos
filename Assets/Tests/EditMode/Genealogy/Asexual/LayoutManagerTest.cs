@@ -65,8 +65,8 @@ namespace Tests.EditMode.Genealogy.Asexual
             tree.AddListener(layout);
 
             tree.RegisterRootNode(Root);
-            var node11 = new Node(Guid1, NodeType.Cell);
-            var node12 = new Node(Guid2, NodeType.Cell);
+            var node11 = new Node(Guid1, NodeType.Cell, Root.CreatedAt + TimeSpan.FromTicks(2));
+            var node12 = new Node(Guid2, NodeType.Cell, Root.CreatedAt + TimeSpan.FromTicks(4));
             tree.RegisterReproductionAndOffspring(new[] {Root}, node11);
             tree.RegisterReproductionAndOffspring(new[] {Root}, node12);
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 
 namespace Genealogy.Graph
@@ -8,6 +9,7 @@ namespace Genealogy.Graph
     {
         private class Transaction
         {
+            private static readonly Relation[] EmptyRelations = new Relation[0];
             private readonly GenealogyGraph genealogyGraph;
 
             private DateTime lastTransactionTime = DateTime.MinValue;
@@ -24,8 +26,7 @@ namespace Genealogy.Graph
                         $"Cannot register root node, the graph already has {genealogyGraph.NodeCount} nodes");
                 genealogyGraph.nodes.Add(node.Guid, node);
 
-                foreach (var listener in genealogyGraph.listeners)
-                    listener.OnTransactionComplete(genealogyGraph, node, new Relation[0]);
+                CompleteTransactionAndNotifyListeners(node, EmptyRelations);
             }
 
             public void ExecuteAddTransaction([NotNull] Node node,
@@ -33,7 +34,7 @@ namespace Genealogy.Graph
             {
                 if (DateTime.Compare(node.CreatedAt, lastTransactionTime) <= 0)
                     throw new InvalidOperationException(
-                        $"Cannot start a transaction with a node who's CreatedAt ({node.CreatedAt}) <= lastTransactionTime ({lastTransactionTime})");
+                        $"Cannot start a transaction with a node '{node.Guid}' who's CreatedAt ({node.CreatedAt}) <= lastTransactionTime ({lastTransactionTime})");
                 if (genealogyGraph.nodes.ContainsKey(node.Guid))
                     throw new InvalidOperationException(
                         $"Cannot complete transaction. Node {node} already exists in the tree");
@@ -63,12 +64,12 @@ namespace Genealogy.Graph
                         }
                     }
 
-                foreach (var listener in genealogyGraph.listeners)
-                    listener.OnTransactionComplete(genealogyGraph, node, toRelations);
+                CompleteTransactionAndNotifyListeners(node, toRelations);
             }
 
             private void AssertRelations([NotNull] IEnumerable<Relation> relations, [CanBeNull] Node toNode)
             {
+                //TODO Check chronology
                 var checkToNode = toNode != null;
                 foreach (var relation in relations)
                 {
@@ -86,9 +87,17 @@ namespace Genealogy.Graph
                             $"There can only exist a single relation between two nodes. Existing relation: '{existingRelation}'");
 
 
-                    if (checkToNode && !DateTime.Equals(relation.DateTime, toNode.CreatedAt))
+                    if (checkToNode)
+                    {
+                        if (!DateTime.Equals(relation.DateTime, toNode.CreatedAt))
+                            throw new InvalidOperationException(
+                                $"Cannot add relation to transaction. Relation's creation time '{relation.DateTime}' must equal transaction node's creation time {toNode.CreatedAt}");
+                    }
+                    else if (relation.DateTime < lastTransactionTime)
+                    {
                         throw new InvalidOperationException(
-                            $"Cannot add relation to transaction. Relation's creation time '{relation.DateTime}' must equal transaction node's creation time {toNode.CreatedAt}");
+                            $"Cannot add relation to transaction. Relation's creation time '{relation.DateTime}' must be greater than or equal to that of the last transaction {lastTransactionTime}");
+                    }
                 }
             }
 
@@ -113,9 +122,37 @@ namespace Genealogy.Graph
                             genealogyGraph.relationsByTo.Add(relation.To.Guid, new List<Relation> {relation});
                     }
 
-                    foreach (var listener in genealogyGraph.listeners)
-                        listener.OnTransactionComplete(genealogyGraph, null, relations);
+                    CompleteTransactionAndNotifyListeners(null, relations);
                 }
+            }
+
+            public void ExecuteRemoveNodeAndRelations([NotNull] Node transactionNode)
+            {
+                var guid = transactionNode.Guid;
+                var relationsFrom = genealogyGraph.GetRelationsFrom(guid);
+                if (relationsFrom != null && relationsFrom.Any())
+                    throw new InvalidOperationException(
+                        $"Child nodes must be removed before removal of node '{transactionNode.Guid}'");
+                if (!genealogyGraph.nodes.ContainsKey(guid))
+                    throw new InvalidOperationException(
+                        $"Could not remove node '{guid}' as it does not exist in the graph");
+
+                genealogyGraph.nodes.Remove(guid);
+                foreach (var relation in genealogyGraph.GetRelationsTo(guid))
+                {
+                    var from = genealogyGraph.GetRelationsFrom(relation.From.Guid);
+                    from.Remove(relation);
+                    if (from.Count == 0) genealogyGraph.relationsByFrom.Remove(relation.From.Guid);
+                    genealogyGraph.relationsByTo.Remove(relation.To.Guid);
+                    genealogyGraph.relations.Remove(relation.Key);
+                }
+            }
+
+            private void CompleteTransactionAndNotifyListeners([CanBeNull] Node node, Relation[] relations)
+            {
+                lastTransactionTime = node?.CreatedAt ?? relations.Select(relation => relation.DateTime).Max();
+                foreach (var listener in genealogyGraph.listeners)
+                    listener.OnTransactionComplete(genealogyGraph, node, relations);
             }
 
             public void Reset() => lastTransactionTime = DateTime.MinValue;
