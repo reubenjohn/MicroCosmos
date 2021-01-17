@@ -25,7 +25,7 @@ namespace Genealogy.Persistence
             StartScroll();
         }
 
-        public void OnTransactionComplete(GenealogyGraph genealogyGraph, Node node, Relation[] relations)
+        public void OnAddTransactionComplete(GenealogyGraph genealogyGraph, Node node, Relation[] relations)
         {
             lock (writer)
             {
@@ -36,6 +36,8 @@ namespace Genealogy.Persistence
                         typeof(GenealogyScrollEntryBase));
             }
         }
+
+        public void OnRemoveTransactionComplete(GenealogyGraph genealogyGraph, Node node, Relation[] relations) { }
 
         public void OnClear()
         {

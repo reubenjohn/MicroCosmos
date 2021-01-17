@@ -5,6 +5,7 @@ using System.Linq;
 using Brains;
 using Cell;
 using Cinematics;
+using Genealogy;
 using Genealogy.Graph;
 using Genealogy.Layout.Asexual;
 using Genealogy.Persistence;
@@ -49,6 +50,7 @@ namespace Environment
                 layoutManager = new LayoutManager();
                 layoutManager.AddListener(viewer);
                 genealogyGraph.AddListener(layoutManager);
+                genealogyGraph.AddListener(new DeadNodePruner());
                 viewer.AddListener(this);
 
                 AddCellSelectionListener(divinePossession);

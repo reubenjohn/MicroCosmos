@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Genealogy.Graph;
 
 namespace Genealogy.Layout.Asexual
@@ -23,7 +22,7 @@ namespace Genealogy.Layout.Asexual
 
         public bool LiveLayoutEnabled { get; set; }
 
-        public void OnTransactionComplete(GenealogyGraph genealogyGraph, Node node, Relation[] relations)
+        public void OnAddTransactionComplete(GenealogyGraph genealogyGraph, Node node, Relation[] relations)
         {
             if (relations.Length == 0) // Root node registration
             {
@@ -33,38 +32,21 @@ namespace Genealogy.Layout.Asexual
             {
                 if (relations.Length > 1) throw new InvalidOperationException("Currently unsupported");
                 var parent = layoutInfo[relations[0].From.Guid]; // Assume single asexual parent
-                var newNode = RegisterNode(new LayoutNode(listeners, node, parent));
+                RegisterNode(new LayoutNode(listeners, node, parent));
                 foreach (var listener in listeners) listener.OnAddConnections(relations);
-                if (node.NodeType == NodeType.Death) PruneAncestry(newNode.Parent);
             }
 
             if (LiveLayoutEnabled)
                 rootNode.RecalculateLayout();
         }
 
+        public void OnRemoveTransactionComplete(GenealogyGraph genealogyGraph, Node node, Relation[] relations) =>
+            layoutInfo[node.Guid].Remove();
+
         public void OnClear()
         {
             foreach (var listener in listeners) listener.OnClear();
             layoutInfo.Clear();
-        }
-
-        private void PruneAncestry(LayoutNode cellNode)
-        {
-            var myDeathNode = cellNode.children.Find(child => child.Node.NodeType == NodeType.Death);
-            if (myDeathNode != null)
-            {
-                var iAnyLivingChildren = cellNode.children.Any(child => child.Node.NodeType == NodeType.Reproduction);
-                if (!iAnyLivingChildren)
-                {
-                    var reproductionNode = cellNode.Parent;
-                    var parentNode = reproductionNode.Parent;
-
-                    myDeathNode.Remove();
-                    cellNode.Remove();
-                    reproductionNode.Remove();
-                    PruneAncestry(parentNode);
-                }
-            }
         }
 
         private LayoutNode RegisterNode(LayoutNode node)

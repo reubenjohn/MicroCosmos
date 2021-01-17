@@ -170,14 +170,20 @@ namespace Tests.EditMode.Genealogy
             Assert.AreEqual(0, relations.Count);
 
             tree.RegisterRootNode(Root);
+
+            invalidOp = Assert.Throws<InvalidOperationException>(() =>
+                tree.RemoveNodeAndRelations(Root));
+            Assert.AreEqual("Cannot remove the root node '00000000-0000-0000-0000-000000000000'",
+                invalidOp.Message);
+
             tree.RegisterReproduction(new[] {Root}, reproduction);
             tree.RegisterOffspring(reproduction, cellNode);
             tree.RegisterReproduction(new[] {Root}, reproduction2);
 
 
             invalidOp = Assert.Throws<InvalidOperationException>(() =>
-                tree.RemoveNodeAndRelations(Root));
-            Assert.AreEqual("Child nodes must be removed before removal of node '00000000-0000-0000-0000-000000000000'",
+                tree.RemoveNodeAndRelations(reproduction));
+            Assert.AreEqual($"Child nodes must be removed before removal of node '{Guid1}'",
                 invalidOp.Message);
 
             Assert.AreEqual(4, nodes.Count);
