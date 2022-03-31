@@ -294,7 +294,8 @@
           "gene": {
             "radius": 0.125,
             "nSubOrganelles": {
-              "Organelles/BirthCanal1": 0.6
+              "Organelles/BirthCanal1": 0.6,
+              "Organelles/Orifice1": 0.6
             }
           },
           "children": [
@@ -302,6 +303,19 @@
               "resource": "Organelles/BirthCanal1",
               "name": "BirthCanal1-0",
               "gene": {
+                "circularMembraneAttachment": {
+                  "preferredAngle": 180.0,
+                  "angularDisplacement": 30.0
+                }
+              },
+              "children": []
+            },
+            {
+              "resource": "Organelles/Orifice1",
+              "name": "Orifice1-0",
+              "gene": {
+                "size": 0.25,
+                "transferRate": 0.01,
                 "circularMembraneAttachment": {
                   "preferredAngle": 180.0,
                   "angularDisplacement": 30.0
@@ -339,6 +353,10 @@
         {
           "state": {},
           "children": [
+            {
+              "state": {},
+              "children": []
+            },
             {
               "state": {},
               "children": []
@@ -643,7 +661,8 @@
           "gene": {
             "radius": 0.125,
             "nSubOrganelles": {
-              "Organelles/BirthCanal1": 0.6
+              "Organelles/BirthCanal1": 0.6,
+              "Organelles/Orifice1": 0.6
             }
           },
           "children": [
@@ -651,6 +670,19 @@
               "resource": "Organelles/BirthCanal1",
               "name": "BirthCanal1-0",
               "gene": {
+                "circularMembraneAttachment": {
+                  "preferredAngle": 180.0,
+                  "angularDisplacement": 30.0
+                }
+              },
+              "children": []
+            },
+            {
+              "resource": "Organelles/Orifice1",
+              "name": "Orifice1-0",
+              "gene": {
+                "size": 0.25,
+                "transferRate": 0.01,
                 "circularMembraneAttachment": {
                   "preferredAngle": 180.0,
                   "angularDisplacement": 30.0
@@ -688,6 +720,10 @@
         {
           "state": {},
           "children": [
+            {
+              "state": {},
+              "children": []
+            },
             {
               "state": {},
               "children": []

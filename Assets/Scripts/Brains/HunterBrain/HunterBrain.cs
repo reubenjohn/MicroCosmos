@@ -81,6 +81,7 @@ namespace Brains.HunterBrain
         {
             actuatorLogits[SimParams.Singleton.flagellaIndex][0] = 1f; // Force
             actuatorLogits[SimParams.Singleton.flagellaIndex][1] = -0.03f; // Torque
+            actuatorLogits[SimParams.Singleton.orificeIndex][0] = 1f; // Eat
         }
 
         private bool IsHomeBase() => cell.GenealogyNode.Guid == hunterAGuid || cell.GenealogyNode.Guid == hunterBGuid;
