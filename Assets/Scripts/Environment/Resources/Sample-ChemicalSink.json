@@ -2,9 +2,9 @@
   {
     "$type": "Environment.ChemicalSinkChemicals, MicroCosmosScripts",
     "mixture": {
-      "Fat": 50,
+      "Fat": 150,
       "SkinGrowthFactor": 1,
-      "Skin": 1,
+      "Skin": 15,
       "Waste": 50
     }
   }

@@ -6,15 +6,14 @@
       "gene": {
         "nSubOrganelles": {
           "Organelles/GeneticBrain1": 0.6,
-          "Organelles/Flagella1": 0.6,
           "Organelles/Membrane1": 0.6,
           "Organelles/ProximitySensor": 0.6
         },
         "cauldron": {
           "initialCauldron": {
-            "Fat": 0.01,
+            "Fat": 0.25,
             "SkinGrowthFactor": 0.001,
-            "Skin": 0.01
+            "Skin": 0.25
           }
         }
       },
@@ -41,7 +40,7 @@
                 -0.452984154,
                 -0.292823523,
                 -0.5641332,
-                -0.931748867,
+                0.931748867,
                 0.6889453,
                 -0.774167955
               ],
@@ -280,15 +279,6 @@
           "children": []
         },
         {
-          "resource": "Organelles/Flagella1",
-          "name": "Flagella1-0",
-          "gene": {
-            "linearPower": 100,
-            "angularPower": 1000
-          },
-          "children": []
-        },
-        {
           "resource": "Organelles/Membrane1",
           "name": "Membrane1-0",
           "gene": {
@@ -308,40 +298,21 @@
                 }
               },
               "children": []
-            },
-            {
-              "resource": "Organelles/Orifice1",
-              "name": "BirthCanal1-0",
-              "gene": {
-                "size": 0.25,
-                "transferRate": 0.01,
-                "circularMembraneAttachment": {
-                  "preferredAngle": 180.0,
-                  "angularDisplacement": 30.0
-                }
-              },
-              "children": []
             }
           ]
-        },
-        {
-          "resource": "Organelles/ProximitySensor",
-          "name": "ProximitySensor",
-          "gene": {},
-          "children": []
         }
       ]
     },
     "stateTree": {
       "state": {
         "guid": "7f146de4-9367-4bf8-bef0-82b08b5c10c6",
-        "position": "1.112765 1.865312",
-        "rotation": 60.497437,
+        "position": "6.0 2.5",
+        "rotation": 0,
         "cauldron": {
           "chemicals": {
-            "Fat": 0.5,
+            "Fat": 25,
             "SkinGrowthFactor": 0.01,
-            "Skin": 0.5
+            "Skin": 5
           },
           "convertBabyFat": false
         }
@@ -353,24 +324,12 @@
         },
         {
           "state": {},
-          "children": []
-        },
-        {
-          "state": {},
           "children": [
-            {
-              "state": {},
-              "children": []
-            },
             {
               "state": {},
               "children": []
             }
           ]
-        },
-        {
-          "state": {},
-          "children": []
         }
       ]
     }
