@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Environment;
 using Genetics;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
@@ -11,11 +12,8 @@ namespace Brains.HunterBrain
         public const string ResourcePath = "Organelles/HunterBrain";
         private HunterBrainGene gene;
         private Cell.Cell cell;
-        private readonly Guid hunterAGuid = Guid.Parse("7f146de4-9367-4bf8-bef0-82b08b5c10c6");
-        private readonly Guid hunterBGuid = Guid.Parse("7f146de4-9367-4bf8-bef0-82b08b5c10c7");
-
-        private const int FlagellaIndex = 1;
-        private const int BirthCanalIndex = 2;
+        private readonly Guid hunterAGuid = Guid.Parse(SimParams.Singleton.hunterBaseAGuid);
+        private readonly Guid hunterBGuid = Guid.Parse(SimParams.Singleton.hunterBaseBGuid);
 
         protected override void Start()
         {
@@ -76,13 +74,13 @@ namespace Brains.HunterBrain
 
         private void ReactLikeHomeBase()
         {
-            actuatorLogits[BirthCanalIndex][0] = 1f; // Birth
+            actuatorLogits[SimParams.Singleton.birthCanalIndex][0] = 1f; // Birth
         }
 
         private void ReactLikeHunter()
         {
-            actuatorLogits[FlagellaIndex][0] = 1f; // Force
-            actuatorLogits[FlagellaIndex][1] = -0.03f; // Torque
+            actuatorLogits[SimParams.Singleton.flagellaIndex][0] = 1f; // Force
+            actuatorLogits[SimParams.Singleton.flagellaIndex][1] = -0.03f; // Torque
         }
 
         private bool IsHomeBase() => cell.GenealogyNode.Guid == hunterAGuid || cell.GenealogyNode.Guid == hunterBGuid;
