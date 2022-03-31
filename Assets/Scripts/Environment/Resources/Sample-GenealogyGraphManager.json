@@ -51,5 +51,48 @@
         "DateTime": "2020-12-20T16:03:48.5896156"
       }
     ]
+  },
+  {
+    "$type": "Genealogy.Persistence.GenealogyScrollEntry, MicroCosmosScripts",
+    "Node": {
+      "$type": "Genealogy.Graph.Reproduction, MicroCosmosScripts",
+      "NodeType": 1,
+      "Guid": "7992c678-0dba-4f3e-9b0e-b446e6b59d8c",
+      "CreatedAt": "2020-12-20T16:03:49.5896156"
+    },
+    "Relations": [
+      {
+        "From": {
+          "GUID": "00000000-0000-0000-0000-000000000000"
+        },
+        "RelationType": 0,
+        "To": {
+          "GUID": "7992c678-0dba-4f3e-9b0e-b446e6b59d8c"
+        },
+        "DateTime": "2020-12-20T16:03:47.5896156"
+      }
+    ]
+  },
+  {
+    "$type": "Genealogy.Persistence.GenealogyScrollEntry, MicroCosmosScripts",
+    "Node": {
+      "$type": "Genealogy.Graph.CellNode, MicroCosmosScripts",
+      "displayName": "Cell.1",
+      "NodeType": 0,
+      "Guid": "7f146de4-9367-4bf8-bef0-82b08b5c10c7",
+      "CreatedAt": "2020-12-20T16:03:49.6896156"
+    },
+    "Relations": [
+      {
+        "From": {
+          "GUID": "7992c678-0dba-4f3e-9b0e-b446e6b59d8c"
+        },
+        "RelationType": 1,
+        "To": {
+          "GUID": "7f146de4-9367-4bf8-bef0-82b08b5c10c7"
+        },
+        "DateTime": "2020-12-20T16:03:48.5896156"
+      }
+    ]
   }
 ]

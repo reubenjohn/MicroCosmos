@@ -5,7 +5,7 @@
       "name": "HunterA",
       "gene": {
         "nSubOrganelles": {
-          "Organelles/GeneticBrain1": 0.6,
+          "Organelles/HunterBrain": 0.6,
           "Organelles/Membrane1": 0.6,
           "Organelles/ProximitySensor": 0.6
         },
@@ -19,7 +19,7 @@
       },
       "children": [
         {
-          "resource": "Organelles/GeneticBrain1",
+          "resource": "Organelles/HunterBrain",
           "name": "GeneticBrain1-0",
           "gene": {
             "denseLayer1": {
@@ -340,7 +340,7 @@
       "name": "HunterB",
       "gene": {
         "nSubOrganelles": {
-          "Organelles/GeneticBrain1": 0.6,
+          "Organelles/HunterBrain": 0.6,
           "Organelles/Membrane1": 0.6,
           "Organelles/ProximitySensor": 0.6
         },
@@ -354,7 +354,7 @@
       },
       "children": [
         {
-          "resource": "Organelles/GeneticBrain1",
+          "resource": "Organelles/HunterBrain",
           "name": "GeneticBrain1-0",
           "gene": {
             "denseLayer1": {
