@@ -14,8 +14,8 @@ namespace Brains.HunterBrain
         private readonly Guid hunterAGuid = Guid.Parse("7f146de4-9367-4bf8-bef0-82b08b5c10c6");
         private readonly Guid hunterBGuid = Guid.Parse("7f146de4-9367-4bf8-bef0-82b08b5c10c7");
 
-        private const int FLAGELLA_INDEX = 1;
-        private const int BIRTH_CANAL_INDEX = 2;
+        private const int FlagellaIndex = 1;
+        private const int BirthCanalIndex = 2;
 
         protected override void Start()
         {
@@ -76,13 +76,13 @@ namespace Brains.HunterBrain
 
         private void ReactLikeHomeBase()
         {
-            actuatorLogits[BIRTH_CANAL_INDEX][0] = 1f; // Birth
+            actuatorLogits[BirthCanalIndex][0] = 1f; // Birth
         }
 
         private void ReactLikeHunter()
         {
-            actuatorLogits[FLAGELLA_INDEX][0] = 1f; // Force
-            actuatorLogits[FLAGELLA_INDEX][1] = -0.03f; // Torque
+            actuatorLogits[FlagellaIndex][0] = 1f; // Force
+            actuatorLogits[FlagellaIndex][1] = -0.03f; // Torque
         }
 
         private bool IsHomeBase() => cell.GenealogyNode.Guid == hunterAGuid || cell.GenealogyNode.Guid == hunterBGuid;
