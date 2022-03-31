@@ -6,6 +6,7 @@
       "gene": {
         "nSubOrganelles": {
           "Organelles/HunterBrain": 0.6,
+          "Organelles/Flagella1": 0.6,
           "Organelles/Membrane1": 0.6,
           "Organelles/ProximitySensor": 0.6
         },
@@ -275,6 +276,15 @@
                 ]
               ]
             }
+          },
+          "children": []
+        },
+        {
+          "resource": "Organelles/Flagella1",
+          "name": "Flagella1-0",
+          "gene": {
+            "linearPower": 100,
+            "angularPower": 1000
           },
           "children": []
         },
@@ -324,6 +334,10 @@
         },
         {
           "state": {},
+          "children": []
+        },
+        {
+          "state": {},
           "children": [
             {
               "state": {},
@@ -341,6 +355,7 @@
       "gene": {
         "nSubOrganelles": {
           "Organelles/HunterBrain": 0.6,
+          "Organelles/Flagella1": 0.6,
           "Organelles/Membrane1": 0.6,
           "Organelles/ProximitySensor": 0.6
         },
@@ -614,6 +629,15 @@
           "children": []
         },
         {
+          "resource": "Organelles/Flagella1",
+          "name": "Flagella1-0",
+          "gene": {
+            "linearPower": 100,
+            "angularPower": 1000
+          },
+          "children": []
+        },
+        {
           "resource": "Organelles/Membrane1",
           "name": "Membrane1-0",
           "gene": {
@@ -653,6 +677,10 @@
         }
       },
       "children": [
+        {
+          "state": {},
+          "children": []
+        },
         {
           "state": {},
           "children": []
