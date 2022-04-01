@@ -10,6 +10,11 @@ namespace Environment
         public int flagellaIndex = 1;
         public int birthCanalIndex = 2;
         public int orificeIndex = 3;
+        public float cellVisibilityRangeRatio = 5f;
+
+        public LayerMask cellLayerMask;
+        public LayerMask chemicalBlobLayerMask;
+        public LayerMask inertObstacleLayerMask;
 
         public static SimParams Singleton { get; private set; }
 

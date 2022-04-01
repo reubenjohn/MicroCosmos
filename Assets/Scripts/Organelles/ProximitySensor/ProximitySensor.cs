@@ -4,6 +4,7 @@ using ChemistryMicro;
 using Environment;
 using Genetics;
 using UnityEngine;
+using Util;
 
 namespace Organelles.ProximitySensor
 {
@@ -56,7 +57,7 @@ namespace Organelles.ProximitySensor
 
             if (collidersInRange.Count > 0)
             {
-                var (closestCollider, closestDist) = ArgMin(collidersInRange, DistanceToCollider);
+                var (closestCollider, closestDist) = ArrayUtils.ArgMin(collidersInRange, DistanceToCollider);
 
                 var normalizedDist = Mathf.Min(closestDist, 1);
                 spriteRenderer.color = Color.Lerp(Color.HSVToRGB(0, 1f, 1f), spriteRenderer.color, normalizedDist);
@@ -120,23 +121,6 @@ namespace Organelles.ProximitySensor
             var closestPoint = otherCollider.ClosestPoint(pos);
             var distance = (closestPoint - pos).magnitude;
             return distance;
-        }
-
-        private Tuple<T, float> ArgMin<T>(IEnumerable<T> list, Func<T, float> action)
-        {
-            var min = float.MaxValue;
-            T argMin = default;
-            foreach (var item in list)
-            {
-                var val = action.Invoke(item);
-                if (val < min)
-                {
-                    min = val;
-                    argMin = item;
-                }
-            }
-
-            return new Tuple<T, float>(argMin, min);
         }
 
         public override GeneTranscriber<ProximitySensorGene> GetGeneTranscriber() =>

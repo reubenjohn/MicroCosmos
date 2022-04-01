@@ -306,6 +306,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fffd4eddf5ab431eaa0be62ca53a9f17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hunterBaseAGuid: 7f146de4-9367-4bf8-bef0-82b08b5c10c6
+  hunterBaseBGuid: 7f146de4-9367-4bf8-bef0-82b08b5c10c7
+  flagellaIndex: 1
+  birthCanalIndex: 2
+  orificeIndex: 3
+  cellVisibilityRangeRatio: 5
+  cellLayerMask:
+    serializedVersion: 2
+    m_Bits: 2048
+  chemicalBlobLayerMask:
+    serializedVersion: 2
+    m_Bits: 1024
+  inertObstacleLayerMask:
+    serializedVersion: 2
+    m_Bits: 512
 --- !u!1 &123422777
 GameObject:
   m_ObjectHideFlags: 0
