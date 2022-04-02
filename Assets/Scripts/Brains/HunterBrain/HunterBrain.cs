@@ -12,9 +12,7 @@ namespace Brains.HunterBrain
     {
         public const string ResourcePath = "Organelles/HunterBrain";
 
-        public LayerMask cellLayerMask = SimParams.Singleton.cellLayerMask;
-        public LayerMask chemicalBlobLayerMask = SimParams.Singleton.chemicalBlobLayerMask;
-        public LayerMask inertObstacleLayerMask = SimParams.Singleton.inertObstacleLayerMask;
+        private LayerMask proximityLayerMask;
 
         private GenealogyGraphManager graphManager;
         private HunterBrainGene gene;
@@ -24,6 +22,8 @@ namespace Brains.HunterBrain
 
         protected override void Start()
         {
+            proximityLayerMask = SimParams.Singleton.cellLayerMask |
+                                 SimParams.Singleton.inertObstacleLayerMask;
             cell = GetComponentInParent<Cell.Cell>();
             graphManager = GetComponentInParent<GenealogyGraphManager>();
             base.Start();
@@ -92,7 +92,8 @@ namespace Brains.HunterBrain
             var cellTransform = cell.transform;
             cellPos = cellTransform.position;
             var collidersInRange = Physics2D.OverlapCircleAll(cellTransform.position,
-                cellTransform.localScale.magnitude * SimParams.Singleton.cellVisibilityRangeRatio);
+                cellTransform.localScale.magnitude * SimParams.Singleton.cellVisibilityRangeRatio,
+                proximityLayerMask.value);
 
             if (collidersInRange.Length > 0)
             {
@@ -139,7 +140,7 @@ namespace Brains.HunterBrain
         {
             var closestPoint = otherCollider.ClosestPoint(cellPos);
             var distance = (closestPoint - cellPos).magnitude;
-            return distance;
+            return distance == 0 ? float.MaxValue : distance;
         }
 
         private bool IsHomeBase() => cell.GenealogyNode.Guid == hunterAGuid || cell.GenealogyNode.Guid == hunterBGuid;
