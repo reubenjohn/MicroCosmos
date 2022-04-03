@@ -71,6 +71,14 @@
               "children": []
             }
           ]
+        },
+        {
+          "resource": "Organelles/HunterFlag",
+          "name": "HunterFlag-0",
+          "gene": {
+            "hue": 0.5
+          },
+          "children": []
         }
       ]
     },
@@ -109,6 +117,10 @@
               "children": []
             }
           ]
+        },
+        {
+          "state": {},
+          "children": []
         }
       ]
     }
