@@ -126,6 +126,14 @@ namespace Brains.HunterBrain
                 }
             }
 
+            var closestObject_x = closestCollider.transform.position.x;
+            var closestObject_y = closestCollider.transform.position.y;
+
+            var current_x = cellPos.x;
+            var current_y = cellPos.y;
+
+            var current_rotation = cellTransform.rotation.z;
+
             actuatorLogits[SimParams.Singleton.flagellaIndex][0] = 1f; // Force
             actuatorLogits[SimParams.Singleton.flagellaIndex][1] = -0.03f; // Torque
             actuatorLogits[SimParams.Singleton.orificeIndex][0] = 1f; // Eat
