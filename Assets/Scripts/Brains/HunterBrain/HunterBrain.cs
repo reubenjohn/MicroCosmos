@@ -70,7 +70,7 @@ namespace Brains.HunterBrain
 
         protected override void React()
         {
-            if (IsHomeBase()) ReactLikeHomeBase();
+            if (MicroHunters.IsHomeBase(cell)) ReactLikeHomeBase();
             else ReactLikeHunter();
         }
 
@@ -82,6 +82,7 @@ namespace Brains.HunterBrain
 
         private void ReactLikeHunter()
         {
+            // environment.CellCount; // Count of cells in the environment
             var cellTransform = cell.transform;
             cellPos = cellTransform.position;
             var nDetected = Physics2D.OverlapCircleNonAlloc(cellPos,
@@ -101,29 +102,32 @@ namespace Brains.HunterBrain
                 return;
 
             var otherCell = closestCollider.GetComponentInParent<Cell.Cell>();
-            if (otherCell.GenealogyNode.Guid == SimParams.Singleton.hunterBaseAGuid)
+            var classification = MicroHunters.ClassifyCell(otherCell);
+
+            // CellType type = MicroHunters.GetCellType(classification);
+            // HunterTeam team = MicroHunters.GetHunterTeam(classification);
+            // int TeamACount = MicroHunters.TeamAHunters.Count();
+            // int TeamBCount = MicroHunters.TeamAHunters.Count();
+
+            if (classification == CellClassification.BaseA)
             {
                 // Debug.Log("Home base A found");
             }
-            else if (otherCell.GenealogyNode.Guid == SimParams.Singleton.hunterBaseBGuid)
+            else if (classification == CellClassification.BaseB)
             {
                 // Debug.Log("Home base B found");
             }
-            else
+            else if (classification == CellClassification.HunterA)
             {
-                var reproductionGuid =
-                    graphManager.genealogyGraph.GetRelationsTo(otherCell.GenealogyNode.Guid)[0]
-                        .From.Guid;
-                var asexualParentGuid = graphManager.genealogyGraph.GetRelationsTo(reproductionGuid)[0]
-                    .From.Guid;
-                if (asexualParentGuid == SimParams.Singleton.hunterBaseAGuid)
-                {
-                    // Debug.Log("Hunter A found");
-                }
-                else if (asexualParentGuid == SimParams.Singleton.hunterBaseBGuid)
-                {
-                    // Debug.Log("Hunter B found");
-                }
+                // Debug.Log("Hunter A found");
+            }
+            else if (classification == CellClassification.HunterB)
+            {
+                // Debug.Log("Hunter B found");
+            }
+            else if (classification == CellClassification.Sheep)
+            {
+                // Debug.Log("Sheep found");
             }
 
             actuatorLogits[SimParams.Singleton.flagellaIndex][0] = 1f; // Force
@@ -138,9 +142,5 @@ namespace Brains.HunterBrain
             var distance = (closestPoint - cellPos).magnitude;
             return distance == 0 ? float.MaxValue : distance;
         }
-
-        private bool IsHomeBase() =>
-            cell.GenealogyNode.Guid == SimParams.Singleton.hunterBaseAGuid ||
-            cell.GenealogyNode.Guid == SimParams.Singleton.hunterBaseBGuid;
     }
 }
