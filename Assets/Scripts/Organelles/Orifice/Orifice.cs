@@ -1,4 +1,4 @@
-﻿using Environment;
+﻿using System;
 using Genetics;
 using Structural;
 using UnityEngine;
@@ -28,18 +28,19 @@ namespace Organelles.Orifice
 
         public void Actuate(float[] logits)
         {
-            var transferMassRate = cauldron.TotalMass * gene.transferRate * logits[0];
-            if (transferMassRate > 0 && Physics2D.OverlapCollider(orificeCollider, contactFilter, collidersInRange) > 0)
-                foreach (var coll in collidersInRange)
-                    if (coll.CompareTag("ChemicalBlob"))
-                    {
-                        var blob = coll.GetComponent<ChemicalBlob>();
-                        var blobMass = blob.TotalMass;
-                        if (blobMass - transferMassRate < ChemicalBlob.MinBlobSize)
-                            blob.MergeInto(cauldron);
-                        else
-                            blob.TransferTo(cauldron, blob.ToMixture() * (transferMassRate / blobMass));
-                    }
+            var transferRate = cauldron.TotalMass * gene.transferRate * logits[0];
+            if (transferRate == 0 ||
+                Physics2D.OverlapCollider(orificeCollider, contactFilter, collidersInRange) <= 0) return;
+
+            foreach (var coll in collidersInRange)
+                if (coll.CompareTag("Cell"))
+                {
+                    var otherCauldron = coll.GetComponentInParent<CellCauldron.CellCauldron>();
+                    var otherMass = otherCauldron.TotalMass;
+                    var actualMassToTransfer = Math.Sign(transferRate) * Math.Min(Math.Abs(transferRate), otherMass);
+                    var (src, dst) = actualMassToTransfer >= 0 ? (otherCauldron, cauldron) : (cauldron, otherCauldron);
+                    src.TransferTo(dst, src.ToMixture() * (actualMassToTransfer / otherMass));
+                }
         }
 
         public string GetActuatorType() => ActuatorType;

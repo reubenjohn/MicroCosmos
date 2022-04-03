@@ -143,6 +143,7 @@ GameObject:
   - component: {fileID: 107888730}
   - component: {fileID: 107888731}
   - component: {fileID: 107888732}
+  - component: {fileID: 107888733}
   m_Layer: 0
   m_Name: Environment
   m_TagString: Untagged
@@ -307,12 +308,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fffd4eddf5ab431eaa0be62ca53a9f17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hunterBaseAGuid: 7f146de4-9367-4bf8-bef0-82b08b5c10c6
-  hunterBaseBGuid: 7f146de4-9367-4bf8-bef0-82b08b5c10c7
+  hunterBaseAGuidString: 7f146de4-9367-4bf8-bef0-82b08b5c10c6
+  hunterBaseBGuidString: 7f146de4-9367-4bf8-bef0-82b08b5c10c7
   flagellaIndex: 1
   birthCanalIndex: 2
   orificeIndex: 3
-  cellVisibilityRangeRatio: 5
+  hunterVisibilityRangeRatio: 5
+  sheepVisibilityRangeRatio: 3
   cellLayerMask:
     serializedVersion: 2
     m_Bits: 2048
@@ -336,6 +338,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minMassFactor: 2
   maxCellCount: 50
+--- !u!114 &107888733
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 107888720}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa64eae44e954c2e8214d32c0dbe195c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &123422777
 GameObject:
   m_ObjectHideFlags: 0
