@@ -8,7 +8,8 @@
           "Organelles/HunterBrain": 0.6,
           "Organelles/Flagella1": 0.6,
           "Organelles/Membrane1": 0.6,
-          "Organelles/ProximitySensor": 0.6
+          "Organelles/ProximitySensor": 0.6,
+          "Organelles/HunterFlag": 0.6
         },
         "cauldron": {
           "initialCauldron": {
@@ -70,6 +71,14 @@
               "children": []
             }
           ]
+        },
+        {
+          "resource": "Organelles/HunterFlag",
+          "name": "HunterFlag-0",
+          "gene": {
+            "hue": 0.5
+          },
+          "children": []
         }
       ]
     },
