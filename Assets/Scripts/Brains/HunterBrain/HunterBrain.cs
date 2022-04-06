@@ -164,15 +164,13 @@ namespace Brains.HunterBrain
             }
 
             //Vector3 mousePosition = Input.mousePosition;
-            Vector3 targetPosition =new Vector3(-1,-1,0);
+            Vector3 targetPosition =new Vector3(0,0,0);
             
             Vector2 arriveAcceleration = Arrive(targetPosition, cellPos, rb.velocity);
-
-            float flagellaForce = arriveAcceleration.x * Mathf.Cos(Mathf.Deg2Rad*cellTransform.rotation.z) + arriveAcceleration.y * Mathf.Sin(Mathf.Deg2Rad*cellTransform.rotation.z);
             
-            Vector3 mousePosition = targetPosition;
+            Vector3 direction = targetPosition - cellTransform.transform.position;
 
-            Vector3 direction = mousePosition - cellTransform.transform.position;
+            float flagellaForce = Vector2.Dot(arriveAcceleration, direction);
 
             float test_orientation = Mathf.Atan2(direction.y, direction.x)+(float)1.57;
             
@@ -183,8 +181,8 @@ namespace Brains.HunterBrain
 
             float flagellaTorque = Align( target_orientation*Mathf.Deg2Rad, cellTransform.rotation.eulerAngles.z * Mathf.Deg2Rad, rb.angularVelocity*Mathf.Deg2Rad);
             
-            actuatorLogits[SimParams.Singleton.flagellaIndex][0] = -flagellaForce; // Force
-            actuatorLogits[SimParams.Singleton.flagellaIndex][1] = flagellaTorque; // Torque
+            actuatorLogits[SimParams.Singleton.flagellaIndex][0] = (float)0.005*flagellaForce; // Force
+            actuatorLogits[SimParams.Singleton.flagellaIndex][1] = -(float)0.05*flagellaTorque; // Torque
             actuatorLogits[SimParams.Singleton.orificeIndex][0] = 1f; // Eat
         }
 
