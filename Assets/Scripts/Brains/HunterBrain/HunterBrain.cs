@@ -2,6 +2,7 @@
 using System.Linq;
 using Environment;
 using Genetics;
+using GluonGui.Dialog;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using Util;
@@ -19,6 +20,8 @@ namespace Brains.HunterBrain
         private Cell.Cell cell;
         private Vector2 cellPos;
         private Collider2D[] collidersInRange;
+        private Rigidbody2D rb { get; set; }
+
 
         protected override void Start()
         {
@@ -27,6 +30,7 @@ namespace Brains.HunterBrain
             collidersInRange = new Collider2D[20];
 
             cell = GetComponentInParent<Cell.Cell>();
+            rb = GetComponentInParent<Rigidbody2D>();
             graphManager = GetComponentInParent<GenealogyGraphManager>();
             base.Start();
             ResetBrain();
@@ -76,8 +80,36 @@ namespace Brains.HunterBrain
 
         private void ReactLikeHomeBase()
         {
+            var cellTransform = cell.transform;
             actuatorLogits[SimParams.Singleton.birthCanalIndex][0] = 1f; // Birth
+            MicroHunters.ClassifyCell(cell);
+            var hunterCount=MicroHunters.TeamAHunters.Count();
+            if (hunterCount >= 1)
+            {
+                actuatorLogits[SimParams.Singleton.birthCanalIndex][0] = 0f; // Birth
+            }
+
+            Vector3 mousePosition = new Vector3(6, 1, 0);
+
+            Vector3 direction = mousePosition - cellTransform.transform.position;
+
+            float test_orientation = Mathf.Atan2(direction.y, direction.x);
+            
+            float target_orientation = test_orientation*Mathf.Rad2Deg;
+            
+            // float dot = Vector3.Dot(direction, cellTransform.forward);
+            // float target_orientation = Mathf.Acos( dot ) * Mathf.Rad2Deg;  
+
+            float flagellaTorque = Align( target_orientation*Mathf.Deg2Rad, cellTransform.rotation.eulerAngles.z * Mathf.Deg2Rad, rb.angularVelocity*Mathf.Deg2Rad);
+            
+            //actuatorLogits[SimParams.Singleton.flagellaIndex][1] = flagellaTorque; // Torque
+            
+            // print("Mouse position is "+mousePosition);
+            print("Target orientation is " + target_orientation);
+            print("Flagella Torque is "+flagellaTorque);
+
         }
+        
 
 
         private void ReactLikeHunter()
@@ -103,7 +135,7 @@ namespace Brains.HunterBrain
 
             var otherCell = closestCollider.GetComponentInParent<Cell.Cell>();
             var classification = MicroHunters.ClassifyCell(otherCell);
-
+            
             // CellType type = MicroHunters.GetCellType(classification);
             // HunterTeam team = MicroHunters.GetHunterTeam(classification);
             // int TeamACount = MicroHunters.TeamAHunters.Count();
@@ -128,18 +160,31 @@ namespace Brains.HunterBrain
             else if (classification == CellClassification.Sheep)
             {
                 // Debug.Log("Sheep found");
+
             }
 
-            var closestObject_x = closestCollider.transform.position.x;
-            var closestObject_y = closestCollider.transform.position.y;
+            //Vector3 mousePosition = Input.mousePosition;
+            Vector3 targetPosition = otherCell.transform.position;
+            
+            Vector2 arriveAcceleration = Arrive(targetPosition, cellPos, rb.velocity);
 
-            var current_x = cellPos.x;
-            var current_y = cellPos.y;
+            float flagellaForce = arriveAcceleration.x * Mathf.Cos(Mathf.Deg2Rad*cellTransform.rotation.z) + arriveAcceleration.y * Mathf.Sin(Mathf.Deg2Rad*cellTransform.rotation.z);
+            
+            Vector3 mousePosition = targetPosition;
 
-            var current_rotation = cellTransform.rotation.z;
+            Vector3 direction = mousePosition - cellTransform.transform.position;
 
-            actuatorLogits[SimParams.Singleton.flagellaIndex][0] = 1f; // Force
-            actuatorLogits[SimParams.Singleton.flagellaIndex][1] = -0.03f; // Torque
+            float test_orientation = Mathf.Atan2(direction.y, direction.x);
+            
+            float target_orientation = test_orientation*Mathf.Rad2Deg;
+            
+            // float dot = Vector3.Dot(direction, cellTransform.forward);
+            // float target_orientation = Mathf.Acos( dot ) * Mathf.Rad2Deg;  
+
+            float flagellaTorque = Align( target_orientation*Mathf.Deg2Rad, cellTransform.rotation.eulerAngles.z * Mathf.Deg2Rad, rb.angularVelocity*Mathf.Deg2Rad);
+            
+            actuatorLogits[SimParams.Singleton.flagellaIndex][0] = flagellaForce; // Force
+            actuatorLogits[SimParams.Singleton.flagellaIndex][1] = flagellaTorque; // Torque
             actuatorLogits[SimParams.Singleton.orificeIndex][0] = 1f; // Eat
         }
 
@@ -149,6 +194,125 @@ namespace Brains.HunterBrain
             var closestPoint = otherCollider.ClosestPoint(cellPos);
             var distance = (closestPoint - cellPos).magnitude;
             return distance == 0 ? float.MaxValue : distance;
+        }
+
+        private Vector2 Arrive(Vector2 target_position, Vector2 character_position, Vector2 character_velocity)
+        {
+            double maxAcceleration = SimParams.Singleton.maxAcceleration;
+            double maxSpeed = SimParams.Singleton.maxSpeed;
+            double  radiusDecel = SimParams.Singleton.arriveRadiusDecel;
+            double radiusSat = SimParams.Singleton.arriveRadiusSat;
+            double timeToTarget = SimParams.Singleton.arriveTimeToTarget;
+
+            double targetSpeed = 0;
+            Vector2 targetVelocity;
+            
+            Vector2 result;
+            Vector2 direction = target_position - character_position;
+            float distance = Mathf.Sqrt(direction.x * direction.x + direction.y + direction.y);
+
+            //Check if we are there, return no steering
+            if (distance < radiusSat)
+            {
+                targetSpeed = 0;
+            }
+            
+            //If we are outside the slowRadius, then move at max speed
+            else if (distance > radiusDecel)
+            {
+                targetSpeed = maxSpeed;
+            }
+            else
+            {
+                targetSpeed = maxSpeed * distance / radiusDecel;
+            }
+            
+            //The target velocity combines speed and direction
+            targetVelocity = direction;
+            targetVelocity.Normalize();
+            targetVelocity.x *= (float)targetSpeed;
+            targetVelocity.y *= (float)targetSpeed;
+
+            
+            //Acceleration tries to get to target velocity
+
+            result = targetVelocity - character_velocity;
+            result.x /= (float)timeToTarget;
+            result.y /= (float)timeToTarget;
+
+            //Check if acceleration is too fast
+            if (result.magnitude > maxAcceleration)
+            {
+                result.Normalize();
+                result.x *= (float)maxAcceleration;
+                result.y *= (float)maxAcceleration;
+
+            }
+
+            return result;
+
+        }
+
+        private float Align(float target_orientation, float character_orientation, float character_rotation)
+        {
+            Debug.DrawLine(cell.transform.position, Vector2.zero);
+            double maxAngularAcceleration = SimParams.Singleton.maxAngularAcceleration;
+            double maxRotation = SimParams.Singleton.maxRotation;
+            double radiusDecel = SimParams.Singleton.alignRadiusDecel;
+            double radiusSat = SimParams.Singleton.alignRadiusSat;
+            double timeToTarget = SimParams.Singleton.alignTimeToTarget;
+
+            double targetRotation = 0;
+            
+            
+            float result = 0;
+            double rotation = target_orientation - character_orientation;
+
+            if (Mathf.Abs((float)rotation) > 6.28)
+                rotation = (rotation % 6.28);
+            if (rotation > 3.14)
+                rotation -= 3.14;
+            if (rotation < -3.14)
+                rotation += 3.14;
+
+            double rotationSize = Mathf.Abs((float)rotation);
+            
+            
+            
+            //Check if we are there, return no steering
+            if (rotationSize < radiusSat)
+            {
+                targetRotation = 0;
+            }
+            
+            //If we are outside the slowRadius, then use maximum rotation
+            else if (rotationSize > radiusDecel)
+            {
+                targetRotation = maxRotation;
+            }
+            
+            //Otherwise calculate a scaled rotation
+            else
+            {
+                targetRotation = maxRotation * rotationSize/radiusDecel;
+            }
+            
+            //The final target rotation combines speed (already in the variable) and direction
+            targetRotation *= rotation / rotationSize;
+            
+            //Acceleration tries to get to the target rotation
+            result = (float)targetRotation - character_rotation;
+            result /= (float)timeToTarget;
+            
+            //Check if the acceleration is too great
+            float angularAcceleration = Mathf.Abs(result);
+            if (angularAcceleration > maxAngularAcceleration)
+            {
+                result /= angularAcceleration;
+                result *= (float)maxAngularAcceleration;
+            }
+
+            return result;
         }
     }
 }
