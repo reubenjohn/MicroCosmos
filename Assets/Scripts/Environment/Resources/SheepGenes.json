@@ -1,0 +1,48 @@
+﻿{
+  "resource": "Cells/Cell1",
+  "name": "Sheep",
+  "gene": {
+    "nSubOrganelles": {
+      "Organelles/SheepBrain": 0.6,
+      "Organelles/Flagella1": 0.6,
+      "Organelles/Membrane1": 0.6
+    },
+    "cauldron": {
+      "initialCauldron": {
+        "Fat": 0.25,
+        "SkinGrowthFactor": 0.001,
+        "Skin": 0.25
+      }
+    }
+  },
+  "children": [
+    {
+      "resource": "Organelles/SheepBrain",
+      "name": "GeneticBrain1-0",
+      "gene": {},
+      "children": []
+    },
+    {
+      "resource": "Organelles/Flagella1",
+      "name": "Flagella1-0",
+      "gene": {
+        "linearPower": 100,
+        "angularPower": 1000
+      },
+      "children": []
+    },
+    {
+      "resource": "Organelles/Membrane1",
+      "name": "Membrane1-0",
+      "gene": {
+        "radius": 0.125,
+        "nSubOrganelles": {
+          "Organelles/BirthCanal1": 0.6,
+          "Organelles/Orifice1": 0.6
+        }
+      },
+      "children": [
+      ]
+    }
+  ]
+}

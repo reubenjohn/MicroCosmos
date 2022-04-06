@@ -18,7 +18,7 @@ namespace Organelles.BirthCanal
 
         private static readonly Mixture<Substance> UnitFatMix = new MixtureDictionary<Substance>
         {
-            {Substance.Fat, 1f}
+            { Substance.Fat, 1f }
         }.ToMixture();
 
         public Control.BinaryControlVariable birthSignal = new Control.BinaryControlVariable(1);
@@ -54,13 +54,13 @@ namespace Organelles.BirthCanal
             var mamaFat = cauldron[Substance.Fat];
             var mamaMass = cauldron.TotalMass;
             var maxPossibleBabyMass = mamaMass * .4f;
-            var minPossibleBabyMass = mamaMass * .1f;
+            var minPossibleBabyMass = mamaMass * .01f;
             var maxCurrentBabyMass = mamaFat * .5f;
             if (mamaFat > minPossibleBabyMass)
             {
-                var babyGene = (CellGene) geneTree.gene;
+                var babyGene = (CellGene)geneTree.gene;
                 var babyMix = new Mixture<Substance>(
-                    EnumUtils.ParseNamedDictionary<Substance, float>(babyGene.cauldron.initialCauldron)) * mamaMass;
+                    EnumUtils.ParseNamedDictionary<Substance, float>(babyGene.cauldron.initialCauldron));
                 var babyMass = babyMix.TotalMass;
 
                 if (babyMass > maxPossibleBabyMass || babyMass < minPossibleBabyMass || babyMass < Cell.Cell.MinMass)
@@ -83,7 +83,7 @@ namespace Organelles.BirthCanal
         {
             var cellColony = GetComponentInParent<CellColony>();
             var genealogyGraphManager = GetComponentInParent<GenealogyGraphManager>();
-            var childGenealogyNode = genealogyGraphManager.RegisterAsexualCellBirth(new Node[] {cell.GenealogyNode});
+            var childGenealogyNode = genealogyGraphManager.RegisterAsexualCellBirth(new Node[] { cell.GenealogyNode });
             var cellState = Cell.Cell.GetState(
                 childGenealogyNode.Guid,
                 SpawnPoint, transform.rotation,
