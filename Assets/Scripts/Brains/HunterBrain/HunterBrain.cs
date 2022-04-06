@@ -89,11 +89,11 @@ namespace Brains.HunterBrain
                 actuatorLogits[SimParams.Singleton.birthCanalIndex][0] = 0f; // Birth
             }
 
-            Vector3 mousePosition = new Vector3(6, 1, 0);
+            Vector3 mousePosition = new Vector3(0,0,0);
 
             Vector3 direction = mousePosition - cellTransform.transform.position;
 
-            float test_orientation = Mathf.Atan2(direction.y, direction.x);
+            float test_orientation = Mathf.Atan2(direction.y, direction.x)+(float)1.57;
             
             float target_orientation = test_orientation*Mathf.Rad2Deg;
             
@@ -164,7 +164,7 @@ namespace Brains.HunterBrain
             }
 
             //Vector3 mousePosition = Input.mousePosition;
-            Vector3 targetPosition = otherCell.transform.position;
+            Vector3 targetPosition =new Vector3(-1,-1,0);
             
             Vector2 arriveAcceleration = Arrive(targetPosition, cellPos, rb.velocity);
 
@@ -174,7 +174,7 @@ namespace Brains.HunterBrain
 
             Vector3 direction = mousePosition - cellTransform.transform.position;
 
-            float test_orientation = Mathf.Atan2(direction.y, direction.x);
+            float test_orientation = Mathf.Atan2(direction.y, direction.x)+(float)1.57;
             
             float target_orientation = test_orientation*Mathf.Rad2Deg;
             
@@ -183,7 +183,7 @@ namespace Brains.HunterBrain
 
             float flagellaTorque = Align( target_orientation*Mathf.Deg2Rad, cellTransform.rotation.eulerAngles.z * Mathf.Deg2Rad, rb.angularVelocity*Mathf.Deg2Rad);
             
-            actuatorLogits[SimParams.Singleton.flagellaIndex][0] = flagellaForce; // Force
+            actuatorLogits[SimParams.Singleton.flagellaIndex][0] = -flagellaForce; // Force
             actuatorLogits[SimParams.Singleton.flagellaIndex][1] = flagellaTorque; // Torque
             actuatorLogits[SimParams.Singleton.orificeIndex][0] = 1f; // Eat
         }
@@ -267,7 +267,7 @@ namespace Brains.HunterBrain
             
             float result = 0;
             double rotation = target_orientation - character_orientation;
-
+            rotation = rotation % 6.28;
             if (Mathf.Abs((float)rotation) > 6.28)
                 rotation = (rotation % 6.28);
             if (rotation > 3.14)
