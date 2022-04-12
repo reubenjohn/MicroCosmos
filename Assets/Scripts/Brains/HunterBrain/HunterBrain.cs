@@ -2,7 +2,6 @@
 using System.Linq;
 using Environment;
 using Genetics;
-using GluonGui.Dialog;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using Util;
@@ -82,34 +81,13 @@ namespace Brains.HunterBrain
         {
             var cellTransform = cell.transform;
             actuatorLogits[SimParams.Singleton.birthCanalIndex][0] = 1f; // Birth
-            MicroHunters.ClassifyCell(cell);
-            var hunterCount=MicroHunters.TeamAHunters.Count();
-            if (hunterCount >= 1)
+            // MicroHunters.ClassifyCell(cell);
+            // var hunterCount=MicroHunters.TeamAHunters.Count();
+            if (Time.frameCount > 200)
             {
                 actuatorLogits[SimParams.Singleton.birthCanalIndex][0] = 0f; // Birth
             }
-
-            Vector3 mousePosition = new Vector3(0,0,0);
-
-            Vector3 direction = mousePosition - cellTransform.transform.position;
-
-            float test_orientation = Mathf.Atan2(direction.y, direction.x)+(float)1.57;
-            
-            float target_orientation = test_orientation*Mathf.Rad2Deg;
-            
-            // float dot = Vector3.Dot(direction, cellTransform.forward);
-            // float target_orientation = Mathf.Acos( dot ) * Mathf.Rad2Deg;  
-
-            float flagellaTorque = Align( target_orientation*Mathf.Deg2Rad, cellTransform.rotation.eulerAngles.z * Mathf.Deg2Rad, rb.angularVelocity*Mathf.Deg2Rad);
-            
-            //actuatorLogits[SimParams.Singleton.flagellaIndex][1] = flagellaTorque; // Torque
-            
-            // print("Mouse position is "+mousePosition);
-            print("Target orientation is " + target_orientation);
-            print("Flagella Torque is "+flagellaTorque);
-
         }
-        
 
 
         private void ReactLikeHunter()
@@ -135,7 +113,7 @@ namespace Brains.HunterBrain
 
             var otherCell = closestCollider.GetComponentInParent<Cell.Cell>();
             var classification = MicroHunters.ClassifyCell(otherCell);
-            
+
             // CellType type = MicroHunters.GetCellType(classification);
             // HunterTeam team = MicroHunters.GetHunterTeam(classification);
             // int TeamACount = MicroHunters.TeamAHunters.Count();
@@ -160,29 +138,30 @@ namespace Brains.HunterBrain
             else if (classification == CellClassification.Sheep)
             {
                 // Debug.Log("Sheep found");
-
             }
 
             //Vector3 mousePosition = Input.mousePosition;
-            Vector3 targetPosition =new Vector3(0,0,0);
-            
+            var targetPosition = new Vector3(5.9f, 0, 0);
+            Debug.DrawLine(cell.transform.position, targetPosition);
+
             Vector2 arriveAcceleration = Arrive(targetPosition, cellPos, rb.velocity);
-            
+
             Vector3 direction = targetPosition - cellTransform.transform.position;
 
             float flagellaForce = Vector2.Dot(arriveAcceleration, direction);
 
-            float test_orientation = Mathf.Atan2(direction.y, direction.x)+(float)1.57;
-            
-            float target_orientation = test_orientation*Mathf.Rad2Deg;
-            
+            var test_orientation = Mathf.Atan2(direction.y, direction.x);
+
+            float target_orientation = test_orientation * Mathf.Rad2Deg;
+
             // float dot = Vector3.Dot(direction, cellTransform.forward);
             // float target_orientation = Mathf.Acos( dot ) * Mathf.Rad2Deg;  
 
-            float flagellaTorque = Align( target_orientation*Mathf.Deg2Rad, cellTransform.rotation.eulerAngles.z * Mathf.Deg2Rad, rb.angularVelocity*Mathf.Deg2Rad);
-            
-            actuatorLogits[SimParams.Singleton.flagellaIndex][0] = (float)0.005*flagellaForce; // Force
-            actuatorLogits[SimParams.Singleton.flagellaIndex][1] = -(float)0.05*flagellaTorque; // Torque
+            var flagellaTorque = Align(target_orientation * Mathf.Deg2Rad,
+                (cellTransform.rotation.eulerAngles.z - 270) * Mathf.Deg2Rad, rb.angularVelocity * Mathf.Deg2Rad);
+
+            actuatorLogits[SimParams.Singleton.flagellaIndex][0] = (float)0.005 * flagellaForce; // Force
+            actuatorLogits[SimParams.Singleton.flagellaIndex][1] = (float)0.05 * flagellaTorque; // Torque
             actuatorLogits[SimParams.Singleton.orificeIndex][0] = 1f; // Eat
         }
 
@@ -198,13 +177,13 @@ namespace Brains.HunterBrain
         {
             double maxAcceleration = SimParams.Singleton.maxAcceleration;
             double maxSpeed = SimParams.Singleton.maxSpeed;
-            double  radiusDecel = SimParams.Singleton.arriveRadiusDecel;
+            double radiusDecel = SimParams.Singleton.arriveRadiusDecel;
             double radiusSat = SimParams.Singleton.arriveRadiusSat;
             double timeToTarget = SimParams.Singleton.arriveTimeToTarget;
 
             double targetSpeed = 0;
             Vector2 targetVelocity;
-            
+
             Vector2 result;
             Vector2 direction = target_position - character_position;
             float distance = Mathf.Sqrt(direction.x * direction.x + direction.y + direction.y);
@@ -214,7 +193,7 @@ namespace Brains.HunterBrain
             {
                 targetSpeed = 0;
             }
-            
+
             //If we are outside the slowRadius, then move at max speed
             else if (distance > radiusDecel)
             {
@@ -224,14 +203,14 @@ namespace Brains.HunterBrain
             {
                 targetSpeed = maxSpeed * distance / radiusDecel;
             }
-            
+
             //The target velocity combines speed and direction
             targetVelocity = direction;
             targetVelocity.Normalize();
             targetVelocity.x *= (float)targetSpeed;
             targetVelocity.y *= (float)targetSpeed;
 
-            
+
             //Acceleration tries to get to target velocity
 
             result = targetVelocity - character_velocity;
@@ -244,16 +223,13 @@ namespace Brains.HunterBrain
                 result.Normalize();
                 result.x *= (float)maxAcceleration;
                 result.y *= (float)maxAcceleration;
-
             }
 
             return result;
-
         }
 
         private float Align(float target_orientation, float character_orientation, float character_rotation)
         {
-            Debug.DrawLine(cell.transform.position, Vector2.zero);
             double maxAngularAcceleration = SimParams.Singleton.maxAngularAcceleration;
             double maxRotation = SimParams.Singleton.maxRotation;
             double radiusDecel = SimParams.Singleton.alignRadiusDecel;
@@ -261,8 +237,8 @@ namespace Brains.HunterBrain
             double timeToTarget = SimParams.Singleton.alignTimeToTarget;
 
             double targetRotation = 0;
-            
-            
+
+
             float result = 0;
             double rotation = target_orientation - character_orientation;
             rotation = rotation % 6.28;
@@ -274,34 +250,33 @@ namespace Brains.HunterBrain
                 rotation += 3.14;
 
             double rotationSize = Mathf.Abs((float)rotation);
-            
-            
-            
+
+
             //Check if we are there, return no steering
             if (rotationSize < radiusSat)
             {
                 targetRotation = 0;
             }
-            
+
             //If we are outside the slowRadius, then use maximum rotation
             else if (rotationSize > radiusDecel)
             {
                 targetRotation = maxRotation;
             }
-            
+
             //Otherwise calculate a scaled rotation
             else
             {
-                targetRotation = maxRotation * rotationSize/radiusDecel;
+                targetRotation = maxRotation * rotationSize / radiusDecel;
             }
-            
+
             //The final target rotation combines speed (already in the variable) and direction
             targetRotation *= rotation / rotationSize;
-            
+
             //Acceleration tries to get to the target rotation
             result = (float)targetRotation - character_rotation;
             result /= (float)timeToTarget;
-            
+
             //Check if the acceleration is too great
             float angularAcceleration = Mathf.Abs(result);
             if (angularAcceleration > maxAngularAcceleration)
