@@ -160,7 +160,7 @@ namespace Brains.HunterBrain
             var flagellaTorque = Align(target_orientation * Mathf.Deg2Rad,
                 (cellTransform.rotation.eulerAngles.z - 270) * Mathf.Deg2Rad, rb.angularVelocity * Mathf.Deg2Rad);
 
-            actuatorLogits[SimParams.Singleton.flagellaIndex][0] = (float)0.005 * flagellaForce; // Force
+            actuatorLogits[SimParams.Singleton.flagellaIndex][0] = (float)0.015 * flagellaForce; // Force
             actuatorLogits[SimParams.Singleton.flagellaIndex][1] = (float)0.05 * flagellaTorque; // Torque
             actuatorLogits[SimParams.Singleton.orificeIndex][0] = 1f; // Eat
         }
@@ -245,9 +245,9 @@ namespace Brains.HunterBrain
             if (Mathf.Abs((float)rotation) > 6.28)
                 rotation = (rotation % 6.28);
             if (rotation > 3.14)
-                rotation -= 3.14;
+                rotation -= 6.28;
             if (rotation < -3.14)
-                rotation += 3.14;
+                rotation += 6.28;
 
             double rotationSize = Mathf.Abs((float)rotation);
 
