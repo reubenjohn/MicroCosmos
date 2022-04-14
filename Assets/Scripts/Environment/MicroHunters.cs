@@ -11,6 +11,8 @@ namespace Environment
     {
         private static GenealogyGraphManager graphManager;
         public static Cell.Cell[] Hunters { get; private set; }
+        public static Cell.Cell TeamABase { get; set; }
+        public static Cell.Cell TeamBBase { get; set; }
         public static IEnumerable<Cell.Cell> TeamAHunters { get; private set; }
         public static IEnumerable<Cell.Cell> TeamBHunters { get; private set; }
 
