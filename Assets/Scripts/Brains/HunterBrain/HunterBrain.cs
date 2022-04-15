@@ -113,6 +113,7 @@ namespace Brains.HunterBrain
 
             var otherCell = closestCollider.GetComponentInParent<Cell.Cell>();
             var classification = MicroHunters.ClassifyCell(otherCell);
+            var targetPosition = new Vector3(0, 0, 0);
 
             // CellType type = MicroHunters.GetCellType(classification);
             // HunterTeam team = MicroHunters.GetHunterTeam(classification);
@@ -140,8 +141,11 @@ namespace Brains.HunterBrain
                 // Debug.Log("Sheep found");
             }
 
+            if (MicroHunters.ClassifyCell(cell) != classification)
+            {
+                targetPosition = otherCell.transform.position;
+            }
             //Vector3 mousePosition = Input.mousePosition;
-            var targetPosition = new Vector3(5.9f, 0, 0);
             Debug.DrawLine(cell.transform.position, targetPosition);
 
             Vector2 arriveAcceleration = Arrive(targetPosition, cellPos, rb.velocity);
