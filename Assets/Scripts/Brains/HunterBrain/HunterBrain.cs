@@ -19,7 +19,7 @@ namespace Brains.HunterBrain
         private Cell.Cell cell;
         private Vector2 cellPos;
         private Collider2D[] collidersInRange;
-        private Rigidbody2D rb { get; set; }
+        private Rigidbody2D Rb { get; set; }
 
 
         protected override void Start()
@@ -29,7 +29,7 @@ namespace Brains.HunterBrain
             collidersInRange = new Collider2D[20];
 
             cell = GetComponentInParent<Cell.Cell>();
-            rb = GetComponentInParent<Rigidbody2D>();
+            Rb = GetComponentInParent<Rigidbody2D>();
             graphManager = GetComponentInParent<GenealogyGraphManager>();
             base.Start();
             ResetBrain();
@@ -120,49 +120,48 @@ namespace Brains.HunterBrain
             // int TeamACount = MicroHunters.TeamAHunters.Count();
             // int TeamBCount = MicroHunters.TeamAHunters.Count();
 
-            if (classification == CellClassification.BaseA)
+            switch (classification)
             {
-                // Debug.Log("Home base A found");
-            }
-            else if (classification == CellClassification.BaseB)
-            {
-                // Debug.Log("Home base B found");
-            }
-            else if (classification == CellClassification.HunterA)
-            {
-                // Debug.Log("Hunter A found");
-            }
-            else if (classification == CellClassification.HunterB)
-            {
-                // Debug.Log("Hunter B found");
-            }
-            else if (classification == CellClassification.Sheep)
-            {
-                // Debug.Log("Sheep found");
+                case CellClassification.BaseA:
+                    // Debug.Log("Home base A found");
+                    break;
+                case CellClassification.BaseB:
+                    // Debug.Log("Home base B found");
+                    break;
+                case CellClassification.HunterA:
+                    // Debug.Log("Hunter A found");
+                    break;
+                case CellClassification.HunterB:
+                    // Debug.Log("Hunter B found");
+                    break;
+                case CellClassification.Sheep:
+                    // Debug.Log("Sheep found");
+                    break;
             }
 
             if (MicroHunters.ClassifyCell(cell) != classification)
             {
                 targetPosition = otherCell.transform.position;
             }
+
             //Vector3 mousePosition = Input.mousePosition;
             Debug.DrawLine(cell.transform.position, targetPosition);
 
-            Vector2 arriveAcceleration = Arrive(targetPosition, cellPos, rb.velocity);
+            var arriveAcceleration = Arrive(targetPosition, cellPos, Rb.velocity);
 
-            Vector3 direction = targetPosition - cellTransform.transform.position;
+            var direction = targetPosition - cellTransform.transform.position;
 
-            float flagellaForce = Vector2.Dot(arriveAcceleration, direction);
+            var flagellaForce = Vector2.Dot(arriveAcceleration, direction);
 
-            var test_orientation = Mathf.Atan2(direction.y, direction.x);
+            var testOrientation = Mathf.Atan2(direction.y, direction.x);
 
-            float target_orientation = test_orientation * Mathf.Rad2Deg;
+            var targetOrientation = testOrientation * Mathf.Rad2Deg;
 
             // float dot = Vector3.Dot(direction, cellTransform.forward);
             // float target_orientation = Mathf.Acos( dot ) * Mathf.Rad2Deg;  
 
-            var flagellaTorque = Align(target_orientation * Mathf.Deg2Rad,
-                (cellTransform.rotation.eulerAngles.z - 270) * Mathf.Deg2Rad, rb.angularVelocity * Mathf.Deg2Rad);
+            var flagellaTorque = Align(targetOrientation * Mathf.Deg2Rad,
+                (cellTransform.rotation.eulerAngles.z - 270) * Mathf.Deg2Rad, Rb.angularVelocity * Mathf.Deg2Rad);
 
             actuatorLogits[SimParams.Singleton.flagellaIndex][0] = (float)0.015 * flagellaForce; // Force
             actuatorLogits[SimParams.Singleton.flagellaIndex][1] = (float)0.05 * flagellaTorque; // Torque
@@ -177,20 +176,18 @@ namespace Brains.HunterBrain
             return distance == 0 ? float.MaxValue : distance;
         }
 
-        private Vector2 Arrive(Vector2 target_position, Vector2 character_position, Vector2 character_velocity)
+        private static Vector2 Arrive(Vector2 targetPosition, Vector2 characterPosition, Vector2 characterVelocity)
         {
-            double maxAcceleration = SimParams.Singleton.maxAcceleration;
-            double maxSpeed = SimParams.Singleton.maxSpeed;
-            double radiusDecel = SimParams.Singleton.arriveRadiusDecel;
-            double radiusSat = SimParams.Singleton.arriveRadiusSat;
-            double timeToTarget = SimParams.Singleton.arriveTimeToTarget;
+            var maxAcceleration = SimParams.Singleton.maxAcceleration;
+            var maxSpeed = SimParams.Singleton.maxSpeed;
+            var radiusDecel = SimParams.Singleton.arriveRadiusDecel;
+            var radiusSat = SimParams.Singleton.arriveRadiusSat;
+            var timeToTarget = SimParams.Singleton.arriveTimeToTarget;
 
             double targetSpeed = 0;
-            Vector2 targetVelocity;
 
-            Vector2 result;
-            Vector2 direction = target_position - character_position;
-            float distance = Mathf.Sqrt(direction.x * direction.x + direction.y + direction.y);
+            var direction = targetPosition - characterPosition;
+            var distance = Mathf.Sqrt(direction.x * direction.x + direction.y + direction.y);
 
             //Check if we are there, return no steering
             if (distance < radiusSat)
@@ -209,7 +206,7 @@ namespace Brains.HunterBrain
             }
 
             //The target velocity combines speed and direction
-            targetVelocity = direction;
+            var targetVelocity = direction;
             targetVelocity.Normalize();
             targetVelocity.x *= (float)targetSpeed;
             targetVelocity.y *= (float)targetSpeed;
@@ -217,43 +214,40 @@ namespace Brains.HunterBrain
 
             //Acceleration tries to get to target velocity
 
-            result = targetVelocity - character_velocity;
+            var result = targetVelocity - characterVelocity;
             result.x /= (float)timeToTarget;
             result.y /= (float)timeToTarget;
 
             //Check if acceleration is too fast
             if (result.magnitude > maxAcceleration)
             {
-                result.Normalize();
-                result.x *= (float)maxAcceleration;
-                result.y *= (float)maxAcceleration;
+                result = result.normalized * maxAcceleration;
             }
 
             return result;
         }
 
-        private float Align(float target_orientation, float character_orientation, float character_rotation)
+        private static float Align(float targetOrientation, float characterOrientation, float characterRotation)
         {
-            double maxAngularAcceleration = SimParams.Singleton.maxAngularAcceleration;
-            double maxRotation = SimParams.Singleton.maxRotation;
-            double radiusDecel = SimParams.Singleton.alignRadiusDecel;
-            double radiusSat = SimParams.Singleton.alignRadiusSat;
-            double timeToTarget = SimParams.Singleton.alignTimeToTarget;
+            var maxAngularAcceleration = SimParams.Singleton.maxAngularAcceleration;
+            var maxRotation = SimParams.Singleton.maxRotation;
+            var radiusDecel = SimParams.Singleton.alignRadiusDecel;
+            var radiusSat = SimParams.Singleton.alignRadiusSat;
+            var timeToTarget = SimParams.Singleton.alignTimeToTarget;
 
-            double targetRotation = 0;
+            float targetRotation;
 
 
-            float result = 0;
-            double rotation = target_orientation - character_orientation;
-            rotation = rotation % 6.28;
-            if (Mathf.Abs((float)rotation) > 6.28)
-                rotation = (rotation % 6.28);
-            if (rotation > 3.14)
-                rotation -= 6.28;
-            if (rotation < -3.14)
-                rotation += 6.28;
+            var rotation = targetOrientation - characterOrientation;
+            rotation %= 6.28f;
+            if (Mathf.Abs(rotation) > 6.28f)
+                rotation = rotation % 6.28f;
+            if (rotation > 3.14f)
+                rotation -= 6.28f;
+            if (rotation < -3.14f)
+                rotation += 6.28f;
 
-            double rotationSize = Mathf.Abs((float)rotation);
+            var rotationSize = Mathf.Abs(rotation);
 
 
             //Check if we are there, return no steering
@@ -278,16 +272,14 @@ namespace Brains.HunterBrain
             targetRotation *= rotation / rotationSize;
 
             //Acceleration tries to get to the target rotation
-            result = (float)targetRotation - character_rotation;
-            result /= (float)timeToTarget;
+            var result = targetRotation - characterRotation;
+            result /= timeToTarget;
 
             //Check if the acceleration is too great
-            float angularAcceleration = Mathf.Abs(result);
+            var angularAcceleration = Mathf.Abs(result);
             if (angularAcceleration > maxAngularAcceleration)
-            {
-                result /= angularAcceleration;
-                result *= (float)maxAngularAcceleration;
-            }
+                result *= maxAngularAcceleration / angularAcceleration;
+
 
             return result;
         }

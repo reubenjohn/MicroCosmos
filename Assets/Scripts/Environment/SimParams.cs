@@ -18,27 +18,23 @@ namespace Environment
         public int proximitySensorWallIndex = 2;
         public float hunterVisibilityRangeRatio = 5f;
         public float sheepVisibilityRangeRatio = 3f;
-        
-        
+
+
         //Params for Arrive
-        public double maxAcceleration = 5;
+        public float maxAcceleration = 5;
         public double maxSpeed = 5;
         public double arriveRadiusDecel = 1;
         public double arriveRadiusSat = 0.5;
         public double arriveTimeToTarget = 0.25;
-        
-        
-        //Params for Align
-        public double maxRotation = 10;
-        public double maxAngularAcceleration = 1;
-        public double alignRadiusDecel = 1;
-        public double alignRadiusSat = 0.5;
-        public double alignTimeToTarget = 0.25;
 
-        
-        
-        
-        
+
+        //Params for Align
+        public float maxRotation = 10;
+        public float maxAngularAcceleration = 1;
+        public float alignRadiusDecel = 1;
+        public float alignRadiusSat = 0.5f;
+        public float alignTimeToTarget = 0.25f;
+
 
         public LayerMask cellLayerMask;
         public LayerMask chemicalBlobLayerMask;
