@@ -61,8 +61,8 @@
               "resource": "Organelles/Orifice1",
               "name": "Orifice1-0",
               "gene": {
-                "size": 0.25,
-                "transferRate": 0.01,
+                "size": 1,
+                "transferRate": 0.1,
                 "circularMembraneAttachment": {
                   "preferredAngle": 180.0,
                   "angularDisplacement": 30.0
@@ -186,8 +186,8 @@
               "resource": "Organelles/Orifice1",
               "name": "Orifice1-0",
               "gene": {
-                "size": 0.25,
-                "transferRate": 0.01,
+                "size": 1,
+                "transferRate": 0.1,
                 "circularMembraneAttachment": {
                   "preferredAngle": 180.0,
                   "angularDisplacement": 30.0
