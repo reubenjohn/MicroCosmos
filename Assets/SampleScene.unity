@@ -320,7 +320,7 @@ MonoBehaviour:
   maxAcceleration: 2
   maxSpeed: 2
   arriveRadiusDecel: 1
-  arriveRadiusSat: 0.5
+  arriveRadiusSat: 0.01
   arriveTimeToTarget: 0.25
   maxRotation: 10
   maxAngularAcceleration: 12
