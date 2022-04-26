@@ -5,6 +5,7 @@ using Genetics;
 using Newtonsoft.Json.Linq;
 using UnityEngine;
 using Util;
+using Random = UnityEngine.Random;
 
 namespace Brains.HunterBrain
 {
@@ -20,8 +21,12 @@ namespace Brains.HunterBrain
         private Vector2 cellPos;
         private Collider2D[] collidersInRange;
         private Rigidbody2D Rb { get; set; }
-        private CellClassification cell_type;
+        public CellClassification CellClassification { get; private set; }
+        private HunterBrain friendlyBase;
+        private HunterBrain enemyBase;
+        private HunterTeam team;
 
+        private float wanderSeed;
 
         protected override void Start()
         {
@@ -31,7 +36,30 @@ namespace Brains.HunterBrain
 
             cell = GetComponentInParent<Cell.Cell>();
             Rb = GetComponentInParent<Rigidbody2D>();
-            cell_type = MicroHunters.ClassifyCell(cell);
+            CellClassification = MicroHunters.ClassifyCell(cell);
+            team = MicroHunters.GetHunterTeam(CellClassification);
+
+            wanderSeed = Random.Range(-100, 100);
+
+            if (MicroHunters.GetCellType(CellClassification) == CellType.Base)
+            {
+                if (team == HunterTeam.TeamA)
+                    MicroHunters.TeamABase = cell;
+                else
+                    MicroHunters.TeamBBase = cell;
+            }
+            else if (MicroHunters.GetCellType(CellClassification) == CellType.Hunter)
+            {
+                friendlyBase = MicroHunters.GetHunterTeam(CellClassification) == HunterTeam.TeamA
+                    ? MicroHunters.TeamABase.GetComponent<HunterBrain>()
+                    : MicroHunters.TeamBBase.GetComponent<HunterBrain>();
+                enemyBase =
+                    MicroHunters.GetHunterTeam(CellClassification) ==
+                    HunterTeam.TeamA // FIXME once the enemy base also spawns
+                        ? MicroHunters.TeamABase.GetComponent<HunterBrain>()
+                        : MicroHunters.TeamBBase.GetComponent<HunterBrain>();
+            }
+
             graphManager = GetComponentInParent<GenealogyGraphManager>();
             base.Start();
             ResetBrain();
@@ -81,11 +109,6 @@ namespace Brains.HunterBrain
 
         private void ReactLikeHomeBase()
         {
-            var cellTransform = cell.transform;
-            if (MicroHunters.ClassifyCell(cell) == CellClassification.BaseA)
-                MicroHunters.TeamABase = cell;
-            else
-                MicroHunters.TeamBBase = cell;
             actuatorLogits[SimParams.Singleton.birthCanalIndex][0] = 1f; // Birth
             // MicroHunters.ClassifyCell(cell);
             // var hunterCount=MicroHunters.TeamAHunters.Count();
@@ -95,96 +118,78 @@ namespace Brains.HunterBrain
             }
         }
 
-
-        private void ReactLikeHunter()
+        private Vector2 GetTargetPosition()
         {
             // environment.CellCount; // Count of cells in the environment
             var cellTransform = cell.transform;
-            cellPos = cellTransform.position;
-            Vector2 base_position;
-            float angle_to_base = 0f;
-            if (cell_type == CellClassification.HunterA)
-            {
-                base_position = MicroHunters.TeamABase.transform.position;
-                angle_to_base = Mathf.Atan2(base_position.y - cellPos.y, base_position.x - cellPos.x);
-            }
-            else if (cell_type == CellClassification.HunterB)
-            {
-                base_position = MicroHunters.TeamABase.transform.position;
-                angle_to_base = Mathf.Atan2(base_position.y - cellPos.y, base_position.x - cellPos.x);
-            }
-            float wanderAngle = 2 * Mathf.PI * Mathf.PerlinNoise(cellPos.x, cellPos.y);
-            if (angle_to_base != 0f)
-                Debug.DrawLine(cellPos, cellPos + new Vector2(Mathf.Cos(angle_to_base), Mathf.Sin(angle_to_base)), Color.cyan, 1f);
+
             var nDetected = Physics2D.OverlapCircleNonAlloc(cellPos,
                 cellTransform.localScale.magnitude * SimParams.Singleton.hunterVisibilityRangeRatio, collidersInRange,
                 proximityLayerMask.value);
 
             if (nDetected <= 0)
-                return;
+                return WanderTarget();
 
             var (closestCollider, dist) = ArrayUtils.ArgMin(collidersInRange.Take(nDetected), DistanceToCollider);
             if (closestCollider == null)
-                return;
+                return WanderTarget();
 
             var layerFlag = 1 << closestCollider.gameObject.layer;
 
             if ((layerFlag & SimParams.Singleton.cellLayerMask) == 0)
-                return;
+                return WanderTarget();
 
             var otherCell = closestCollider.GetComponentInParent<Cell.Cell>();
-            var classification = MicroHunters.ClassifyCell(otherCell);
-            var targetPosition = new Vector3(0, 0, 0);
+            Vector2 otherPos = otherCell.transform.position;
+            var otherCellClassification = MicroHunters.ClassifyCell(otherCell);
 
-            Vector2 closest_pos;
-            float angle_away_from_closest = 0f;
-            // CellType type = MicroHunters.GetCellType(classification);
-            // HunterTeam team = MicroHunters.GetHunterTeam(classification);
-            // int TeamACount = MicroHunters.TeamAHunters.Count();
-            // int TeamBCount = MicroHunters.TeamAHunters.Count();
+            if (otherCellClassification == CellClassification.Sheep ||
+                MicroHunters.GetHunterTeam(otherCellClassification) != team)
+            {
+                // Debug.Log("Sheep or enemy base/hunter found");
+                return otherPos;
+            }
 
-            if (classification == CellClassification.BaseA)
-            {
-                // Debug.Log("Home base A found");
-            }
-            else if (classification == CellClassification.BaseB)
-            {
-                // Debug.Log("Home base B found");
-            }
-            else if (classification == CellClassification.HunterA)
-            {
-                // Debug.Log("Hunter A found");
-                if (cell_type == CellClassification.HunterA)
-                {
-                    closest_pos = otherCell.transform.position;
-                    angle_away_from_closest = Mathf.Atan2(cellPos.y - closest_pos.y, cellPos.x - closest_pos.x);
-                }
-            }
-            else if (classification == CellClassification.HunterB)
-            {
-                // Debug.Log("Hunter B found");
-                if (cell_type == CellClassification.HunterB)
-                {
-                    closest_pos = otherCell.transform.position;
-                    angle_away_from_closest = Mathf.Atan2(cellPos.y - closest_pos.y, cellPos.x - closest_pos.x);
-                }
-            }
-            else if (classification == CellClassification.Sheep)
-            {
-                // Debug.Log("Sheep found");
-            }
-            
-            if (angle_away_from_closest != 0f)
-                Debug.DrawLine(cellPos, cellPos + new Vector2(Mathf.Cos(angle_away_from_closest), Mathf.Sin(angle_away_from_closest)), Color.white, 1f);
+            return WanderTarget();
+        }
+
+        private Vector2 WanderTarget()
+        {
+            var probe1 = wanderSeed + SimParams.Singleton.wanderFluctuation1 * Time.time;
+            var probe2 = 100f + wanderSeed + SimParams.Singleton.wanderFluctuation2 * Time.time;
+            var wanderRotation = Mathf.PerlinNoise(probe1, probe1)
+                                 + Mathf.PerlinNoise(probe2, probe2)
+                                 - 0.5f
+                                 - 0.5f;
+            var wanderAngle = transform.eulerAngles.z * Mathf.PI / 180f +
+                              SimParams.Singleton.wanderSweep * wanderRotation;
+            // Debug.Log(Mathf.PerlinNoise(Time.time, cellPos.magnitude) -
+            //           Mathf.PerlinNoise(Time.time + 0.1f, cellPos.magnitude));
+            var rangeProbe = -100f + wanderSeed + SimParams.Singleton.wanderRangeFluctuation * Time.time;
+            var targetPosition = cellPos + new Vector2(Mathf.Sin(wanderAngle), Mathf.Cos(wanderAngle)) *
+                (0.5f + Mathf.PerlinNoise(rangeProbe, rangeProbe)) * SimParams.Singleton.wanderRange;
+            return targetPosition;
+        }
+
+        private void ReactLikeHunter()
+        {
+            var cellTransform = cell.transform;
+            cellPos = cellTransform.position;
+            var targetPosition = GetTargetPosition();
+            // if (angleAwayFromClosest != 0f)
+            //     Debug.DrawLine(cellPos,
+            //         cellPos + new Vector2(Mathf.Cos(angleAwayFromClosest), Mathf.Sin(angleAwayFromClosest)),
+            //         Color.white, 1f);
 
             //Vector3 mousePosition = Input.mousePosition;
-            Debug.DrawLine(cell.transform.position, targetPosition);
+            Debug.DrawLine(cellPos, targetPosition);
 
             var arriveAcceleration = Arrive(targetPosition, cellPos, Rb.velocity);
 
-            var direction = targetPosition - cellTransform.transform.position;
+            var direction = targetPosition - cellPos;
 
-            var flagellaForce = Vector2.Dot(arriveAcceleration, direction);
+            var flagellaForce = arriveAcceleration.magnitude * Mathf.Max(0f,
+                Mathf.Cos(Vector2.Angle(arriveAcceleration, direction) * 180 / Mathf.PI));
 
             var testOrientation = Mathf.Atan2(direction.y, direction.x);
 
@@ -196,8 +201,8 @@ namespace Brains.HunterBrain
             var flagellaTorque = Align(targetOrientation * Mathf.Deg2Rad,
                 (cellTransform.rotation.eulerAngles.z - 270) * Mathf.Deg2Rad, Rb.angularVelocity * Mathf.Deg2Rad);
 
-            actuatorLogits[SimParams.Singleton.flagellaIndex][0] = (float)0.015 * flagellaForce; // Force
-            actuatorLogits[SimParams.Singleton.flagellaIndex][1] = (float)0.05 * flagellaTorque; // Torque
+            actuatorLogits[SimParams.Singleton.flagellaIndex][0] = 2f * flagellaForce; // Force
+            actuatorLogits[SimParams.Singleton.flagellaIndex][1] = 0.05f * flagellaTorque; // Torque
             actuatorLogits[SimParams.Singleton.orificeIndex][0] = 1f; // Eat
         }
 
@@ -220,7 +225,7 @@ namespace Brains.HunterBrain
             double targetSpeed = 0;
 
             var direction = targetPosition - characterPosition;
-            var distance = Mathf.Sqrt(direction.x * direction.x + direction.y + direction.y);
+            var distance = Mathf.Sqrt(direction.x * direction.x + direction.y * direction.y);
 
             //Check if we are there, return no steering
             if (distance < radiusSat)
@@ -295,7 +300,7 @@ namespace Brains.HunterBrain
             }
 
             //The final target rotation combines speed (already in the variable) and direction
-            targetRotation *= rotation / rotationSize;
+            targetRotation *= Mathf.Sign(rotation);
 
             //Acceleration tries to get to the target rotation
             var result = targetRotation - characterRotation;

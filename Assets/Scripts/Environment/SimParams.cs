@@ -22,19 +22,25 @@ namespace Environment
 
         //Params for Arrive
         public float maxAcceleration = 5;
-        public double maxSpeed = 5;
-        public double arriveRadiusDecel = 1;
-        public double arriveRadiusSat = 0.5;
-        public double arriveTimeToTarget = 0.25;
+        public float maxSpeed = 5;
+        public float arriveRadiusDecel = 1;
+        public float arriveRadiusSat = 0.5f;
+        public float arriveTimeToTarget = 0.25f;
 
 
         //Params for Align
         public float maxRotation = 10;
         public float maxAngularAcceleration = 1;
         public float alignRadiusDecel = 1;
-        public float alignRadiusSat = 0.5f;
+        public float alignRadiusSat = 0.1f;
         public float alignTimeToTarget = 0.25f;
 
+        //Params for Wander
+        public float wanderFluctuation1 = 0.1f;
+        public float wanderFluctuation2 = 0.4f;
+        public float wanderRangeFluctuation = 0.4f;
+        public float wanderSweep = 6.28f;
+        public float wanderRange = 0.5f;
 
         public LayerMask cellLayerMask;
         public LayerMask chemicalBlobLayerMask;

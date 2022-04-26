@@ -291,7 +291,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 107888720}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d1af75d5d27d42b1a319a304e79f4745, type: 3}
   m_Name: 
@@ -313,8 +313,25 @@ MonoBehaviour:
   flagellaIndex: 1
   birthCanalIndex: 2
   orificeIndex: 3
+  proximitySensorIndex: 0
+  proximitySensorWallIndex: 2
   hunterVisibilityRangeRatio: 5
   sheepVisibilityRangeRatio: 3
+  maxAcceleration: 2
+  maxSpeed: 2
+  arriveRadiusDecel: 1
+  arriveRadiusSat: 0.5
+  arriveTimeToTarget: 0.25
+  maxRotation: 10
+  maxAngularAcceleration: 12
+  alignRadiusDecel: 1
+  alignRadiusSat: 0.1
+  alignTimeToTarget: 0.25
+  wanderFluctuation1: 0.1
+  wanderFluctuation2: 0.4
+  wanderRangeFluctuation: 0.4
+  wanderSweep: 10
+  wanderRange: 1
   cellLayerMask:
     serializedVersion: 2
     m_Bits: 2048
