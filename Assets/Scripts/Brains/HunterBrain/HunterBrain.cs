@@ -20,6 +20,7 @@ namespace Brains.HunterBrain
         private Vector2 cellPos;
         private Collider2D[] collidersInRange;
         private Rigidbody2D Rb { get; set; }
+        private CellClassification cell_type;
 
 
         protected override void Start()
@@ -30,6 +31,7 @@ namespace Brains.HunterBrain
 
             cell = GetComponentInParent<Cell.Cell>();
             Rb = GetComponentInParent<Rigidbody2D>();
+            cell_type = MicroHunters.ClassifyCell(cell);
             graphManager = GetComponentInParent<GenealogyGraphManager>();
             base.Start();
             ResetBrain();
@@ -80,6 +82,10 @@ namespace Brains.HunterBrain
         private void ReactLikeHomeBase()
         {
             var cellTransform = cell.transform;
+            if (MicroHunters.ClassifyCell(cell) == CellClassification.BaseA)
+                MicroHunters.TeamABase = cell;
+            else
+                MicroHunters.TeamBBase = cell;
             actuatorLogits[SimParams.Singleton.birthCanalIndex][0] = 1f; // Birth
             // MicroHunters.ClassifyCell(cell);
             // var hunterCount=MicroHunters.TeamAHunters.Count();
@@ -95,6 +101,21 @@ namespace Brains.HunterBrain
             // environment.CellCount; // Count of cells in the environment
             var cellTransform = cell.transform;
             cellPos = cellTransform.position;
+            Vector2 base_position;
+            float angle_to_base = 0f;
+            if (cell_type == CellClassification.HunterA)
+            {
+                base_position = MicroHunters.TeamABase.transform.position;
+                angle_to_base = Mathf.Atan2(base_position.y - cellPos.y, base_position.x - cellPos.x);
+            }
+            else if (cell_type == CellClassification.HunterB)
+            {
+                base_position = MicroHunters.TeamABase.transform.position;
+                angle_to_base = Mathf.Atan2(base_position.y - cellPos.y, base_position.x - cellPos.x);
+            }
+            float wanderAngle = 2 * Mathf.PI * Mathf.PerlinNoise(cellPos.x, cellPos.y);
+            if (angle_to_base != 0f)
+                Debug.DrawLine(cellPos, cellPos + new Vector2(Mathf.Cos(angle_to_base), Mathf.Sin(angle_to_base)), Color.cyan, 1f);
             var nDetected = Physics2D.OverlapCircleNonAlloc(cellPos,
                 cellTransform.localScale.magnitude * SimParams.Singleton.hunterVisibilityRangeRatio, collidersInRange,
                 proximityLayerMask.value);
@@ -115,34 +136,46 @@ namespace Brains.HunterBrain
             var classification = MicroHunters.ClassifyCell(otherCell);
             var targetPosition = new Vector3(0, 0, 0);
 
+            Vector2 closest_pos;
+            float angle_away_from_closest = 0f;
             // CellType type = MicroHunters.GetCellType(classification);
             // HunterTeam team = MicroHunters.GetHunterTeam(classification);
             // int TeamACount = MicroHunters.TeamAHunters.Count();
             // int TeamBCount = MicroHunters.TeamAHunters.Count();
 
-            switch (classification)
+            if (classification == CellClassification.BaseA)
             {
-                case CellClassification.BaseA:
-                    // Debug.Log("Home base A found");
-                    break;
-                case CellClassification.BaseB:
-                    // Debug.Log("Home base B found");
-                    break;
-                case CellClassification.HunterA:
-                    // Debug.Log("Hunter A found");
-                    break;
-                case CellClassification.HunterB:
-                    // Debug.Log("Hunter B found");
-                    break;
-                case CellClassification.Sheep:
-                    // Debug.Log("Sheep found");
-                    break;
+                // Debug.Log("Home base A found");
             }
-
-            if (MicroHunters.ClassifyCell(cell) != classification)
+            else if (classification == CellClassification.BaseB)
             {
-                targetPosition = otherCell.transform.position;
+                // Debug.Log("Home base B found");
             }
+            else if (classification == CellClassification.HunterA)
+            {
+                // Debug.Log("Hunter A found");
+                if (cell_type == CellClassification.HunterA)
+                {
+                    closest_pos = otherCell.transform.position;
+                    angle_away_from_closest = Mathf.Atan2(cellPos.y - closest_pos.y, cellPos.x - closest_pos.x);
+                }
+            }
+            else if (classification == CellClassification.HunterB)
+            {
+                // Debug.Log("Hunter B found");
+                if (cell_type == CellClassification.HunterB)
+                {
+                    closest_pos = otherCell.transform.position;
+                    angle_away_from_closest = Mathf.Atan2(cellPos.y - closest_pos.y, cellPos.x - closest_pos.x);
+                }
+            }
+            else if (classification == CellClassification.Sheep)
+            {
+                // Debug.Log("Sheep found");
+            }
+            
+            if (angle_away_from_closest != 0f)
+                Debug.DrawLine(cellPos, cellPos + new Vector2(Mathf.Cos(angle_away_from_closest), Mathf.Sin(angle_away_from_closest)), Color.white, 1f);
 
             //Vector3 mousePosition = Input.mousePosition;
             Debug.DrawLine(cell.transform.position, targetPosition);
