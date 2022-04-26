@@ -102,8 +102,8 @@ namespace Brains.HunterBrain
                 // Debug.Log("Hunter found");
             }
 
-            actuatorLogits[SimParams.Singleton.flagellaIndex][0] = 0f; // Force
-            actuatorLogits[SimParams.Singleton.flagellaIndex][1] = 0f; // Torque
+            actuatorLogits[SimParams.Singleton.flagellaIndex][0] = 0.1f; // Force
+            actuatorLogits[SimParams.Singleton.flagellaIndex][1] = 0.1f; // Torque
         }
 
         private float DistanceToCollider(Collider2D otherCollider)
