@@ -238,14 +238,7 @@ namespace Brains.HunterBrain
             float targetRotation;
 
 
-            var rotation = targetOrientation - characterOrientation;
-            rotation %= 6.28f;
-            if (Mathf.Abs(rotation) > 6.28f)
-                rotation = rotation % 6.28f;
-            if (rotation > 3.14f)
-                rotation -= 6.28f;
-            if (rotation < -3.14f)
-                rotation += 6.28f;
+            var rotation = SpacialUtils.NormalizeOrientation(targetOrientation - characterOrientation);
 
             var rotationSize = Mathf.Abs(rotation);
 
