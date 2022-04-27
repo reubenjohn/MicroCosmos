@@ -23,7 +23,7 @@ namespace Brains.HunterBrain
         private Cell.Cell cell;
         private CellCauldron cellCauldron;
         private Vector2 cellPos;
-        private readonly Collider2D[] collidersInRange = new Collider2D[1];
+        private readonly Collider2D[] collidersInRange = new Collider2D[10];
         private Rigidbody2D Rb { get; set; }
         public CellClassification CellClassification { get; private set; }
         private HunterBrain friendlyBase;
@@ -228,9 +228,12 @@ namespace Brains.HunterBrain
         {
             var closestPointOnBase = baseCollider.ClosestPoint(orificeCollider.transform.position);
             var closestPointOnOrifice = orificeCollider.ClosestPoint(closestPointOnBase);
-            Debug.DrawLine(closestPointOnOrifice, closestPointOnBase, Color.blue);
             if ((closestPointOnBase - closestPointOnOrifice).magnitude < 0.2f)
+            {
+                Debug.DrawLine(closestPointOnOrifice, closestPointOnBase, Color.blue);
                 return -1f;
+            }
+
             return 1f;
         }
 
