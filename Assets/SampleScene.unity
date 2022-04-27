@@ -315,7 +315,7 @@ MonoBehaviour:
   orificeIndex: 3
   proximitySensorIndex: 0
   proximitySensorWallIndex: 2
-  hunterVisibilityRangeRatio: 5
+  hunterVisibilityRangeRatio: 1
   sheepVisibilityRangeRatio: 3
   maxAcceleration: 2
   maxSpeed: 2
@@ -333,7 +333,7 @@ MonoBehaviour:
   wanderSweep: 10
   wanderRange: 1
   resumeHuntMass: 1
-  returnToBaseMass: 1
+  returnToBaseMass: 2
   cellLayerMask:
     serializedVersion: 2
     m_Bits: 2048

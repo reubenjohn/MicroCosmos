@@ -129,29 +129,32 @@ namespace Brains.HunterBrain
             }
         }
 
-        private (Vector2 position, bool) GetTargetPosition()
+        private Vector2 GetTargetPosition()
         {
             if (cellCauldron.TotalMass > SimParams.Singleton.returnToBaseMass)
-                return (friendlyBase.transform.position, true);
+                return friendlyBase.transform.position;
 
             // environment.CellCount; // Count of cells in the environment
             var cellTransform = cell.transform;
 
+            Debug.DrawLine(cellPos,
+                cellPos + (Vector2)cell.transform.up * cellTransform.localScale.magnitude *
+                SimParams.Singleton.hunterVisibilityRangeRatio, Color.red);
             var nDetected = Physics2D.OverlapCircleNonAlloc(cellPos,
                 cellTransform.localScale.magnitude * SimParams.Singleton.hunterVisibilityRangeRatio, collidersInRange,
                 proximityLayerMask.value);
 
             if (nDetected <= 0)
-                return (WanderTarget(), false);
+                return WanderTarget();
 
             var (closestCollider, dist) = ArrayUtils.ArgMin(collidersInRange.Take(nDetected), DistanceToCollider);
             if (closestCollider == null)
-                return (WanderTarget(), false);
+                return WanderTarget();
 
             var layerFlag = 1 << closestCollider.gameObject.layer;
 
             if ((layerFlag & SimParams.Singleton.cellLayerMask) == 0)
-                return (WanderTarget(), false);
+                return WanderTarget();
 
             var otherCell = closestCollider.GetComponentInParent<Cell.Cell>();
             Vector2 otherPos = otherCell.transform.position;
@@ -159,16 +162,16 @@ namespace Brains.HunterBrain
 
             if (otherCellClassification == friendlyBase.CellClassification &&
                 cellCauldron.TotalMass > SimParams.Singleton.resumeHuntMass)
-                return (friendlyBase.transform.position, true);
+                return friendlyBase.transform.position;
 
             if (otherCellClassification == CellClassification.Sheep ||
                 MicroHunters.GetHunterTeam(otherCellClassification) != team)
             {
                 // Debug.Log("Sheep or enemy base/hunter found");
-                return (otherPos, false);
+                return otherPos;
             }
 
-            return (WanderTarget(), false);
+            return WanderTarget();
         }
 
         private Vector2 WanderTarget()
@@ -193,7 +196,7 @@ namespace Brains.HunterBrain
         {
             var cellTransform = cell.transform;
             cellPos = cellTransform.position;
-            var (targetPosition, isTargetFriendly) = GetTargetPosition();
+            var targetPosition = GetTargetPosition();
             actuatorLogits[SimParams.Singleton.orificeIndex][0] = ComputeEatActivation(); // Eat
             // if (angleAwayFromClosest != 0f)
             //     Debug.DrawLine(cellPos,
@@ -228,7 +231,7 @@ namespace Brains.HunterBrain
         {
             var closestPointOnBase = baseCollider.ClosestPoint(orificeCollider.transform.position);
             var closestPointOnOrifice = orificeCollider.ClosestPoint(closestPointOnBase);
-            if ((closestPointOnBase - closestPointOnOrifice).magnitude < 0.2f)
+            if ((closestPointOnBase - closestPointOnOrifice).magnitude < 0.1f)
             {
                 Debug.DrawLine(closestPointOnOrifice, closestPointOnBase, Color.blue);
                 return -1f;
