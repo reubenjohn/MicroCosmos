@@ -332,6 +332,8 @@ MonoBehaviour:
   wanderRangeFluctuation: 0.4
   wanderSweep: 10
   wanderRange: 1
+  resumeHuntMass: 1
+  returnToBaseMass: 1
   cellLayerMask:
     serializedVersion: 2
     m_Bits: 2048

@@ -42,6 +42,10 @@ namespace Environment
         public float wanderSweep = 6.28f;
         public float wanderRange = 0.5f;
 
+        // Policy Params
+        public float resumeHuntMass = 1f;
+        public float returnToBaseMass = 2f;
+
         public LayerMask cellLayerMask;
         public LayerMask chemicalBlobLayerMask;
         public LayerMask inertObstacleLayerMask;

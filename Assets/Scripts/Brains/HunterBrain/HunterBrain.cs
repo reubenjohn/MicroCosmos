@@ -3,6 +3,9 @@ using System.Linq;
 using Environment;
 using Genetics;
 using Newtonsoft.Json.Linq;
+using Organelles.CellCauldron;
+using Organelles.Membrane;
+using Organelles.Orifice;
 using UnityEngine;
 using Util;
 using Random = UnityEngine.Random;
@@ -18,8 +21,9 @@ namespace Brains.HunterBrain
         private GenealogyGraphManager graphManager;
         private HunterBrainGene gene;
         private Cell.Cell cell;
+        private CellCauldron cellCauldron;
         private Vector2 cellPos;
-        private Collider2D[] collidersInRange;
+        private readonly Collider2D[] collidersInRange = new Collider2D[1];
         private Rigidbody2D Rb { get; set; }
         public CellClassification CellClassification { get; private set; }
         private HunterBrain friendlyBase;
@@ -27,14 +31,17 @@ namespace Brains.HunterBrain
         private HunterTeam team;
 
         private float wanderSeed;
+        private Collider2D orificeCollider;
+        private Collider2D baseCollider;
+        private ContactFilter2D contactFilter = new ContactFilter2D();
 
         protected override void Start()
         {
             proximityLayerMask = SimParams.Singleton.cellLayerMask |
                                  SimParams.Singleton.inertObstacleLayerMask;
-            collidersInRange = new Collider2D[20];
 
             cell = GetComponentInParent<Cell.Cell>();
+            cellCauldron = GetComponentInParent<CellCauldron>();
             Rb = GetComponentInParent<Rigidbody2D>();
             CellClassification = MicroHunters.ClassifyCell(cell);
             team = MicroHunters.GetHunterTeam(CellClassification);
@@ -50,14 +57,18 @@ namespace Brains.HunterBrain
             }
             else if (MicroHunters.GetCellType(CellClassification) == CellType.Hunter)
             {
+                orificeCollider = cell.GetComponentInChildren<Orifice>().GetComponentInChildren<Collider2D>();
                 friendlyBase = MicroHunters.GetHunterTeam(CellClassification) == HunterTeam.TeamA
-                    ? MicroHunters.TeamABase.GetComponent<HunterBrain>()
-                    : MicroHunters.TeamBBase.GetComponent<HunterBrain>();
+                    ? MicroHunters.TeamABase.GetComponentInChildren<HunterBrain>()
+                    : MicroHunters.TeamBBase.GetComponentInChildren<HunterBrain>();
                 enemyBase =
                     MicroHunters.GetHunterTeam(CellClassification) ==
                     HunterTeam.TeamA // FIXME once the enemy base also spawns
-                        ? MicroHunters.TeamABase.GetComponent<HunterBrain>()
-                        : MicroHunters.TeamBBase.GetComponent<HunterBrain>();
+                        ? MicroHunters.TeamABase.GetComponentInChildren<HunterBrain>()
+                        : MicroHunters.TeamBBase.GetComponentInChildren<HunterBrain>();
+
+                baseCollider = friendlyBase.cell.GetComponentInChildren<Membrane>()
+                    .GetComponentInChildren<Collider2D>();
             }
 
             graphManager = GetComponentInParent<GenealogyGraphManager>();
@@ -118,8 +129,11 @@ namespace Brains.HunterBrain
             }
         }
 
-        private Vector2 GetTargetPosition()
+        private (Vector2 position, bool) GetTargetPosition()
         {
+            if (cellCauldron.TotalMass > SimParams.Singleton.returnToBaseMass)
+                return (friendlyBase.transform.position, true);
+
             // environment.CellCount; // Count of cells in the environment
             var cellTransform = cell.transform;
 
@@ -128,29 +142,33 @@ namespace Brains.HunterBrain
                 proximityLayerMask.value);
 
             if (nDetected <= 0)
-                return WanderTarget();
+                return (WanderTarget(), false);
 
             var (closestCollider, dist) = ArrayUtils.ArgMin(collidersInRange.Take(nDetected), DistanceToCollider);
             if (closestCollider == null)
-                return WanderTarget();
+                return (WanderTarget(), false);
 
             var layerFlag = 1 << closestCollider.gameObject.layer;
 
             if ((layerFlag & SimParams.Singleton.cellLayerMask) == 0)
-                return WanderTarget();
+                return (WanderTarget(), false);
 
             var otherCell = closestCollider.GetComponentInParent<Cell.Cell>();
             Vector2 otherPos = otherCell.transform.position;
             var otherCellClassification = MicroHunters.ClassifyCell(otherCell);
 
+            if (otherCellClassification == friendlyBase.CellClassification &&
+                cellCauldron.TotalMass > SimParams.Singleton.resumeHuntMass)
+                return (friendlyBase.transform.position, true);
+
             if (otherCellClassification == CellClassification.Sheep ||
                 MicroHunters.GetHunterTeam(otherCellClassification) != team)
             {
                 // Debug.Log("Sheep or enemy base/hunter found");
-                return otherPos;
+                return (otherPos, false);
             }
 
-            return WanderTarget();
+            return (WanderTarget(), false);
         }
 
         private Vector2 WanderTarget()
@@ -175,7 +193,8 @@ namespace Brains.HunterBrain
         {
             var cellTransform = cell.transform;
             cellPos = cellTransform.position;
-            var targetPosition = GetTargetPosition();
+            var (targetPosition, isTargetFriendly) = GetTargetPosition();
+            actuatorLogits[SimParams.Singleton.orificeIndex][0] = ComputeEatActivation(); // Eat
             // if (angleAwayFromClosest != 0f)
             //     Debug.DrawLine(cellPos,
             //         cellPos + new Vector2(Mathf.Cos(angleAwayFromClosest), Mathf.Sin(angleAwayFromClosest)),
@@ -203,7 +222,16 @@ namespace Brains.HunterBrain
 
             actuatorLogits[SimParams.Singleton.flagellaIndex][0] = 2f * flagellaForce; // Force
             actuatorLogits[SimParams.Singleton.flagellaIndex][1] = 0.05f * flagellaTorque; // Torque
-            actuatorLogits[SimParams.Singleton.orificeIndex][0] = 1f; // Eat
+        }
+
+        private float ComputeEatActivation()
+        {
+            var closestPointOnBase = baseCollider.ClosestPoint(orificeCollider.transform.position);
+            var closestPointOnOrifice = orificeCollider.ClosestPoint(closestPointOnBase);
+            Debug.DrawLine(closestPointOnOrifice, closestPointOnBase, Color.blue);
+            if ((closestPointOnBase - closestPointOnOrifice).magnitude < 0.2f)
+                return -1f;
+            return 1f;
         }
 
 

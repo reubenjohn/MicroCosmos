@@ -36,10 +36,13 @@ namespace Organelles.Orifice
                 if (coll.CompareTag("Cell"))
                 {
                     var otherCauldron = coll.GetComponentInParent<CellCauldron.CellCauldron>();
+                    if (otherCauldron == cauldron) break;
                     var otherMass = otherCauldron.TotalMass;
                     var actualMassToTransfer = Math.Sign(transferRate) * Math.Min(Math.Abs(transferRate), otherMass);
+                    if (actualMassToTransfer < 0)
+                        Debug.Log("");
                     var (src, dst) = actualMassToTransfer >= 0 ? (otherCauldron, cauldron) : (cauldron, otherCauldron);
-                    src.TransferTo(dst, src.ToMixture() * (actualMassToTransfer / otherMass));
+                    src.TransferTo(dst, src.ToMixture() * (Math.Abs(actualMassToTransfer) / otherMass));
                 }
         }
 
