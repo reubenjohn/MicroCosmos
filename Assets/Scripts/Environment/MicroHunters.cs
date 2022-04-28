@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Brains.HunterBrain;
 using Genealogy.Graph;
 using UnityEngine;
 
@@ -10,19 +11,19 @@ namespace Environment
     public class MicroHunters : MonoBehaviour
     {
         private static GenealogyGraphManager graphManager;
-        public static Cell.Cell[] Hunters { get; private set; }
+        public static HunterBrain[] Hunters { get; private set; }
         public static Cell.Cell TeamABase { get; set; }
         public static Cell.Cell TeamBBase { get; set; }
-        public static IEnumerable<Cell.Cell> TeamAHunters { get; private set; }
-        public static IEnumerable<Cell.Cell> TeamBHunters { get; private set; }
+        public static IEnumerable<HunterBrain> TeamAHunters { get; private set; }
+        public static IEnumerable<HunterBrain> TeamBHunters { get; private set; }
 
 
         private void Start()
         {
             graphManager = GetComponentInChildren<GenealogyGraphManager>();
-            Hunters = Array.Empty<Cell.Cell>();
-            TeamAHunters = Array.Empty<Cell.Cell>();
-            TeamBHunters = Array.Empty<Cell.Cell>();
+            Hunters = Array.Empty<HunterBrain>();
+            TeamAHunters = Array.Empty<HunterBrain>();
+            TeamBHunters = Array.Empty<HunterBrain>();
             StartCoroutine(StartStatsPlotting());
         }
 
@@ -30,9 +31,9 @@ namespace Environment
         {
             while (true)
             {
-                Hunters = GetComponentsInChildren<Cell.Cell>();
-                TeamAHunters = Hunters.Where(cell => GetHunterTeam(ClassifyCell(cell)) == HunterTeam.TeamA);
-                TeamBHunters = Hunters.Where(cell => GetHunterTeam(ClassifyCell(cell)) == HunterTeam.TeamB);
+                Hunters = GetComponentsInChildren<HunterBrain>();
+                TeamAHunters = Hunters.Where(hunter => GetHunterTeam(ClassifyCell(hunter.cell)) == HunterTeam.TeamA);
+                TeamBHunters = Hunters.Where(hunter => GetHunterTeam(ClassifyCell(hunter.cell)) == HunterTeam.TeamB);
                 yield return new WaitForSeconds(2);
             }
         }

@@ -20,7 +20,7 @@ namespace Brains.HunterBrain
 
         private GenealogyGraphManager graphManager;
         private HunterBrainGene gene;
-        private Cell.Cell cell;
+        public Cell.Cell cell;
         private CellCauldron cellCauldron;
         private Vector2 cellPos;
         private readonly Collider2D[] collidersInRange = new Collider2D[10];

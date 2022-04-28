@@ -40,6 +40,12 @@ namespace Organelles.Membrane
 
         private void Update()
         {
+            if (cauldron.TotalMass == 0)
+            {
+                cell.Die();
+                return;
+            }
+
             var relativeInnerRadius = RelativeInnerRadius;
             ringInnerMask.transform.localScale = Vector3.one * relativeInnerRadius;
             var ratio = ThicknessRatio(relativeInnerRadius);
