@@ -174,6 +174,20 @@ namespace Brains.HunterBrain
             return WanderTarget();
         }
 
+        private Vector2 CohesionTarget(Vector2 WanderTargetPostion)
+        {
+            Vector2 basePosition = friendlyBase.transform.position;
+            float cellMass = cellCauldron.TotalMass;
+            float baseMass = friendlyBase.cellCauldron.TotalMass;
+            float angleToBase = Mathf.Atan2(basePosition.y - cellPos.y, basePosition.x - cellPos.x);
+            Vector2 baseVector = cellPos + new Vector2(Mathf.Cos(angleToBase), Mathf.Sin(angleToBase));
+            var targetPosition = WanderTargetPostion + baseVector * (cellMass / baseMass) * SimParams.Singleton.cohesionCoeff;
+            Debug.DrawLine(cellPos, WanderTargetPostion, Color.green);
+            // Debug.DrawLine(cellPos, basePosition, Color.yellow);
+            Debug.DrawLine(cellPos, baseVector, Color.magenta);
+            return targetPosition;
+        }
+
         private Vector2 WanderTarget()
         {
             var probe1 = wanderSeed + SimParams.Singleton.wanderFluctuation1 * Time.time;
@@ -189,7 +203,7 @@ namespace Brains.HunterBrain
             var rangeProbe = -100f + wanderSeed + SimParams.Singleton.wanderRangeFluctuation * Time.time;
             var targetPosition = cellPos + new Vector2(Mathf.Sin(wanderAngle), Mathf.Cos(wanderAngle)) *
                 (0.5f + Mathf.PerlinNoise(rangeProbe, rangeProbe)) * SimParams.Singleton.wanderRange;
-            return targetPosition;
+            return CohesionTarget(targetPosition);
         }
 
         private void ReactLikeHunter()
