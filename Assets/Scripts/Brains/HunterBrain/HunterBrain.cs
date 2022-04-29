@@ -22,6 +22,7 @@ namespace Brains.HunterBrain
         private HunterBrainGene gene;
         public Cell.Cell cell;
         private CellCauldron cellCauldron;
+        private Transform cellTransform;
         private Vector2 cellPos;
         private readonly Collider2D[] collidersInRange = new Collider2D[10];
         private Rigidbody2D Rb { get; set; }
@@ -78,7 +79,8 @@ namespace Brains.HunterBrain
 
         public string GetNodeName() => gameObject.name;
 
-        Transform ILivingComponent.OnInheritGene(object inheritedGene) => OnInheritGene((HunterBrainGene)inheritedGene);
+        Transform ILivingComponent.OnInheritGene(object inheritedGene) =>
+            OnInheritGene((HunterBrainGene) inheritedGene);
 
         public GeneTranscriber<HunterBrainGene> GetGeneTranscriber() => HunterBrainGeneTranscriber.Singleton;
 
@@ -98,7 +100,9 @@ namespace Brains.HunterBrain
 
         public JObject GetState() => new JObject();
 
-        public void SetState(JObject state) { }
+        public void SetState(JObject state)
+        {
+        }
 
         public ILivingComponent[] GetSubLivingComponents() => new ILivingComponent[] { };
 
@@ -114,6 +118,8 @@ namespace Brains.HunterBrain
 
         protected override void React()
         {
+            cellTransform = cell.transform;
+            cellPos = cellTransform.position;
             if (MicroHunters.IsHomeBase(cell)) ReactLikeHomeBase();
             else ReactLikeHunter();
         }
@@ -123,10 +129,10 @@ namespace Brains.HunterBrain
             actuatorLogits[SimParams.Singleton.birthCanalIndex][0] = 1f; // Birth
             // MicroHunters.ClassifyCell(cell);
             // var hunterCount=MicroHunters.TeamAHunters.Count();
-            if (Time.frameCount > 200)
-            {
-                actuatorLogits[SimParams.Singleton.birthCanalIndex][0] = 0f; // Birth
-            }
+            // if (Time.frameCount > 200)
+            // {
+            //     actuatorLogits[SimParams.Singleton.birthCanalIndex][0] = 0f; // Birth
+            // }
         }
 
         private Vector2 GetTargetPosition()
@@ -137,24 +143,21 @@ namespace Brains.HunterBrain
             // environment.CellCount; // Count of cells in the environment
             var cellTransform = cell.transform;
 
-            Debug.DrawLine(cellPos,
-                cellPos + (Vector2)cell.transform.up * cellTransform.localScale.magnitude *
-                SimParams.Singleton.hunterVisibilityRangeRatio, Color.red);
             var nDetected = Physics2D.OverlapCircleNonAlloc(cellPos,
                 cellTransform.localScale.magnitude * SimParams.Singleton.hunterVisibilityRangeRatio, collidersInRange,
                 proximityLayerMask.value);
 
             if (nDetected <= 0)
-                return WanderTarget();
+                return WanderTarget() + ComputeElectrostaticForce();
 
             var (closestCollider, dist) = ArrayUtils.ArgMin(collidersInRange.Take(nDetected), DistanceToCollider);
             if (closestCollider == null)
-                return WanderTarget();
+                return WanderTarget() + ComputeElectrostaticForce();
 
             var layerFlag = 1 << closestCollider.gameObject.layer;
 
             if ((layerFlag & SimParams.Singleton.cellLayerMask) == 0)
-                return WanderTarget();
+                return WanderTarget() + ComputeElectrostaticForce();
 
             var otherCell = closestCollider.GetComponentInParent<Cell.Cell>();
             Vector2 otherPos = otherCell.transform.position;
@@ -171,7 +174,38 @@ namespace Brains.HunterBrain
                 return otherPos;
             }
 
-            return WanderTarget();
+            return WanderTarget() + ComputeElectrostaticForce();
+        }
+
+        private Vector2 ComputeElectrostaticForce()
+        {
+            var totalForce = Vector2.zero;
+            var totalPotential = 0.0f;
+            var currentCharge = cell.Cauldron.TotalMass;
+            foreach (var hunter in MicroHunters.Hunters)
+            {
+                var sign = (MicroHunters.GetHunterTeam(hunter.CellClassification) ==
+                            MicroHunters.GetHunterTeam(MicroHunters.ClassifyCell(cell)))
+                    ? 1
+                    : -1;
+                var sheepSign = MicroHunters.ClassifyCell(cell) == CellClassification.Sheep ? -1 : 1;
+                var charge = hunter.cell.Cauldron.TotalMass;
+                var distance = (hunter.cellPos - cellPos).magnitude;
+                if (distance > 0)
+                {
+                    var force = sign * (currentCharge * charge) / (distance * distance) *
+                                (cellPos - hunter.cellPos).normalized;
+                    Debug.DrawLine(cellPos, cellPos + force, sign == 1 ? Color.red : Color.green);
+                    var potential = sign * (currentCharge * charge) / distance;
+                    totalForce += force;
+                    totalPotential += sheepSign * potential;
+                }
+
+                totalForce *= Mathf.Sign(totalPotential);
+            }
+
+            Debug.DrawLine(cellPos, cellPos + totalForce, totalPotential >= 0 ? Color.cyan : Color.magenta);
+            return totalForce;
         }
 
         private Vector2 WanderTarget()
@@ -194,8 +228,6 @@ namespace Brains.HunterBrain
 
         private void ReactLikeHunter()
         {
-            var cellTransform = cell.transform;
-            cellPos = cellTransform.position;
             var targetPosition = GetTargetPosition();
             actuatorLogits[SimParams.Singleton.orificeIndex][0] = ComputeEatActivation(); // Eat
             // if (angleAwayFromClosest != 0f)
@@ -280,15 +312,15 @@ namespace Brains.HunterBrain
             //The target velocity combines speed and direction
             var targetVelocity = direction;
             targetVelocity.Normalize();
-            targetVelocity.x *= (float)targetSpeed;
-            targetVelocity.y *= (float)targetSpeed;
+            targetVelocity.x *= (float) targetSpeed;
+            targetVelocity.y *= (float) targetSpeed;
 
 
             //Acceleration tries to get to target velocity
 
             var result = targetVelocity - characterVelocity;
-            result.x /= (float)timeToTarget;
-            result.y /= (float)timeToTarget;
+            result.x /= (float) timeToTarget;
+            result.y /= (float) timeToTarget;
 
             //Check if acceleration is too fast
             if (result.magnitude > maxAcceleration)
