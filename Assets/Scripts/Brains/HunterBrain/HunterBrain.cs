@@ -208,6 +208,17 @@ namespace Brains.HunterBrain
             return totalForce;
         }
 
+        private Vector2 CohesionForce()
+        {
+            Vector2 basePosition = friendlyBase.transform.position;
+            var angleToBase = Mathf.Atan2(basePosition.y - cellPos.y, basePosition.x - cellPos.x);
+            var cohesionStrength = cellCauldron.TotalMass / friendlyBase.cellCauldron.TotalMass *
+                                   SimParams.Singleton.cohesionCoeff;
+            var cohesionForce = cohesionStrength * new Vector2(Mathf.Cos(angleToBase), Mathf.Sin(angleToBase));
+            Debug.DrawLine(cellPos, cellPos + cohesionForce, Color.yellow);
+            return cohesionForce;
+        }
+
         private Vector2 WanderTarget()
         {
             var probe1 = wanderSeed + SimParams.Singleton.wanderFluctuation1 * Time.time;
@@ -223,7 +234,7 @@ namespace Brains.HunterBrain
             var rangeProbe = -100f + wanderSeed + SimParams.Singleton.wanderRangeFluctuation * Time.time;
             var targetPosition = cellPos + new Vector2(Mathf.Sin(wanderAngle), Mathf.Cos(wanderAngle)) *
                 (0.5f + Mathf.PerlinNoise(rangeProbe, rangeProbe)) * SimParams.Singleton.wanderRange;
-            return targetPosition;
+            return targetPosition + CohesionForce();
         }
 
         private void ReactLikeHunter()
