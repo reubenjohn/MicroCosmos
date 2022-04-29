@@ -34,7 +34,9 @@ namespace Environment
                 Hunters = GetComponentsInChildren<HunterBrain>();
                 TeamAHunters = Hunters.Where(hunter => GetHunterTeam(ClassifyCell(hunter.cell)) == HunterTeam.TeamA);
                 TeamBHunters = Hunters.Where(hunter => GetHunterTeam(ClassifyCell(hunter.cell)) == HunterTeam.TeamB);
-                yield return new WaitForSeconds(2);
+                foreach (var hunterBrain in Hunters)
+                    hunterBrain.ComputeAndCacheElectrostaticForce();
+                yield return new WaitForSeconds(.5f);
             }
         }
 

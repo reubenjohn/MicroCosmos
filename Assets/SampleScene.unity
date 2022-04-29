@@ -333,8 +333,9 @@ MonoBehaviour:
   wanderSweep: 10
   wanderRange: 1
   cohesionCoeff: 10
+  centerAttractionCoeff: 0.25
   resumeHuntMass: 1
-  returnToBaseMass: 2
+  returnToBaseMass: 4
   cellLayerMask:
     serializedVersion: 2
     m_Bits: 2048

@@ -41,9 +41,10 @@ namespace Environment
         public float wanderRangeFluctuation = 0.4f;
         public float wanderSweep = 6.28f;
         public float wanderRange = 0.5f;
-        
+
         //Params for Cohesion
-        public float cohesionCoeff = 1.0f;
+        public float cohesionCoeff = 10f;
+        public float centerAttractionCoeff = 0.1f;
 
         // Policy Params
         public float resumeHuntMass = 1f;
