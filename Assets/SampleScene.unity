@@ -332,6 +332,7 @@ MonoBehaviour:
   wanderRangeFluctuation: 0.4
   wanderSweep: 10
   wanderRange: 1
+  cohesionCoeff: 10
   resumeHuntMass: 1
   returnToBaseMass: 2
   cellLayerMask:
