@@ -14,7 +14,7 @@
         "cauldron": {
           "initialCauldron": {
             "Fat": 0.25,
-            "SkinGrowthFactor": 0.001,
+            "SkinGrowthFactor": 0,
             "Skin": 0.25
           }
         }
@@ -90,7 +90,7 @@
         "cauldron": {
           "chemicals": {
             "Fat": 25,
-            "SkinGrowthFactor": 0.01,
+            "SkinGrowthFactor": 0,
             "Skin": 5
           },
           "convertBabyFat": false
@@ -139,7 +139,7 @@
         "cauldron": {
           "initialCauldron": {
             "Fat": 0.25,
-            "SkinGrowthFactor": 0.001,
+            "SkinGrowthFactor": 0,
             "Skin": 0.25
           }
         }
@@ -207,7 +207,7 @@
         "cauldron": {
           "chemicals": {
             "Fat": 25,
-            "SkinGrowthFactor": 0.01,
+            "SkinGrowthFactor": 0,
             "Skin": 5
           },
           "convertBabyFat": false
