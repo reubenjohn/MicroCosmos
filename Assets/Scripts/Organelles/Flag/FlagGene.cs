@@ -1,13 +1,13 @@
 using System;
 
-namespace Organelles.HunterFlag
+namespace Organelles.Flag
 {
     [Serializable]
-    public class HunterFlagGene
+    public class FlagGene
     {
         public float hue = 0.5f;
 
-        public HunterFlagGene(float hue)
+        public FlagGene(float hue)
         {
             this.hue = hue;
         }

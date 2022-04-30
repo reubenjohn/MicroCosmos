@@ -5,7 +5,8 @@
     "nSubOrganelles": {
       "Organelles/SheepBrain": 0.6,
       "Organelles/Flagella1": 0.6,
-      "Organelles/Membrane1": 0.6
+      "Organelles/Membrane1": 0.6,
+      "Organelles/SheepFlag": 0.6
     },
     "cauldron": {
       "initialCauldron": {
@@ -43,6 +44,14 @@
       },
       "children": [
       ]
+    },
+    {
+      "resource": "Organelles/SheepFlag",
+      "name": "SheepFlag-0",
+      "gene": {
+        "hue": 0.5
+      },
+      "children": []
     }
   ]
 }

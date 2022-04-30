@@ -31,11 +31,21 @@ namespace Environment
         {
             while (true)
             {
-                Hunters = GetComponentsInChildren<HunterBrain>();
-                TeamAHunters = Hunters.Where(hunter => GetHunterTeam(ClassifyCell(hunter.cell)) == HunterTeam.TeamA);
-                TeamBHunters = Hunters.Where(hunter => GetHunterTeam(ClassifyCell(hunter.cell)) == HunterTeam.TeamB);
-                foreach (var hunterBrain in Hunters)
-                    hunterBrain.ComputeAndCacheElectrostaticForce();
+                try
+                {
+                    Hunters = GetComponentsInChildren<HunterBrain>();
+                    TeamAHunters =
+                        Hunters.Where(hunter => GetHunterTeam(ClassifyCell(hunter.cell)) == HunterTeam.TeamA);
+                    TeamBHunters =
+                        Hunters.Where(hunter => GetHunterTeam(ClassifyCell(hunter.cell)) == HunterTeam.TeamB);
+                    foreach (var hunterBrain in Hunters)
+                        hunterBrain.ComputeAndCacheElectrostaticForce();
+                }
+                catch
+                {
+                    // ignored
+                }
+
                 yield return new WaitForSeconds(.5f);
             }
         }

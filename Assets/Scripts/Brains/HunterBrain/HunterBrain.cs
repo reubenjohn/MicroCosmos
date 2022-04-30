@@ -196,7 +196,7 @@ namespace Brains.HunterBrain
                 {
                     var force = sign * (currentCharge * charge) / (distance * distance) *
                                 (cellPos - hunter.cellPos).normalized;
-                    Debug.DrawLine(cellPos, cellPos + force, sign == 1 ? Color.red : Color.green);
+                    Debug.DrawLine(cellPos, cellPos + force, sign == 1 ? Color.red : Color.green, 0.5f);
                     var potential = sign * (currentCharge * charge) / distance;
                     totalForce += force;
                     totalPotential += sheepSign * potential;
@@ -205,7 +205,7 @@ namespace Brains.HunterBrain
                 totalForce *= Mathf.Sign(totalPotential);
             }
 
-            Debug.DrawLine(cellPos, cellPos + totalForce, totalPotential >= 0 ? Color.cyan : Color.magenta);
+            Debug.DrawLine(cellPos, cellPos + totalForce, totalPotential >= 0 ? Color.cyan : Color.magenta, 0.5f);
             (electrostaticForce, electrostaticPotential) = (totalForce, totalPotential);
         }
 
